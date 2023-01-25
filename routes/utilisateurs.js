@@ -15,7 +15,7 @@ router.get('/', async function (req, res, next) {
 /* GET un utilisateur. */
 router.get('/:id', async function (req, res, next) {
     try {
-        const resultat = await utilisateurs.getOne(req.query.page, req.params.id);
+        const resultat = await utilisateurs.getOne(req.params.id);
         console.log(resultat.data);
 
         if (resultat.data.length === 0) {

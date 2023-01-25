@@ -19,11 +19,9 @@ async function getMultiple(page = 1) {
 }
 
 //Fonction permettant de récupérer un utilisateur via son ID
-async function getOne(page = 1, id) {
-    const offset = helper.getOffset(page, config.listPerPage);
+async function getOne(id) {
     const rows = await db.query(
-        `SELECT * 
-      FROM F_UTILISATEURS WHERE ID=${id} LIMIT ${offset},${config.listPerPage}`
+        `SELECT * FROM F_UTILISATEURS WHERE ID=${id}`
     );
     const data = helper.emptyOrRows(rows);
     const meta = { page };
