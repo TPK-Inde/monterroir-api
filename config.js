@@ -6,6 +6,6 @@ const config = {
       password: "",
       database: "monterroir",
     },
-    listPerPage: 10,
+    listPerPage: 25,
   };
   module.exports = config;
