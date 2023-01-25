@@ -1,7 +1,5 @@
-if (process.env.NODE_ENV == "dev") {require('dotenv').config({path:"./.ENV.dev"});} else {require('dotenv');}
+require('dotenv');
 const express = require('express');
-
-console.log("Environnement = " + process.env.NODE_ENV);
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");
