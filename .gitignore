@@ -1,2 +1,3 @@
 #Répertoire des dépendances
 node_modules
+.ENV.dev

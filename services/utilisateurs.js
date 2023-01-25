@@ -10,12 +10,8 @@ async function getMultiple(page = 1) {
       FROM F_UTILISATEURS LIMIT ${offset},${config.listPerPage}`
     );
     const data = helper.emptyOrRows(rows);
-    const meta = { page };
 
-    return {
-        data,
-        meta
-    }
+    return data;
 }
 
 //Fonction permettant de récupérer un utilisateur via son ID
@@ -23,13 +19,9 @@ async function getOne(id) {
     const rows = await db.query(
         `SELECT * FROM F_UTILISATEURS WHERE ID=${id}`
     );
-    const data = helper.emptyOrRows(rows);
-    const meta = { page };
 
-    return {
-        data,
-        meta
-    }
+    return rows;
+    
 }
 
 //Fonction d'ajour d'un utilisateur
@@ -38,9 +30,9 @@ async function ajout(nouvelleUtilisateur) {
         `INSERT INTO F_UTILISATEURS 
         (NOM, PRENOM, DATE_DE_NAISSANCE, ADRESSE_EMAIL, ADRESSE_RUE, ADRESSE_CODE_POSTAL, ADRESSE_VILLE, STATUT, MOT_DE_PASSE, PHOTO_DE_PROFIL)
         VALUES 
-        ('${nouvelleUtilisateur.NOM}', '${nouvelleUtilisateur.PRENOM}', '${nouvelleUtilisateur.DATE_DE_NAISSANCE}', '${nouvelleUtilisateur.ADRESSE_RUE}', 
-        '${nouvelleUtilisateur.ADRESSE_EMAIL}', '${nouvelleUtilisateur.ADRESSE_CODE_POSTAL}', '${nouvelleUtilisateur.ADRESSE_VILLE}', 
-        '${nouvelleUtilisateur.STATUT}', '${nouvelleUtilisateur.MOT_DE_PASSE}', '${nouvelleUtilisateur.PHOTO_DE_PROFIL}')`
+        ('${nouvelleUtilisateur.nom}', '${nouvelleUtilisateur.prenom}', '${nouvelleUtilisateur.date_de_naissance}', '${nouvelleUtilisateur.adresse_rue}', 
+        '${nouvelleUtilisateur.adresse_email}', '${nouvelleUtilisateur.adresse_code_postal}', '${nouvelleUtilisateur.adresse_ville}', 
+        '${nouvelleUtilisateur.statut}', '${nouvelleUtilisateur.mot_de_passe}', '${nouvelleUtilisateur.photo_de_profil}')`
     );
 
     let message = "Échec de la création d'une nouvelle utiilisateur";
@@ -56,9 +48,9 @@ async function ajout(nouvelleUtilisateur) {
 async function modification(id, utilisateur) {
     const result = await db.query(
         `UPDATE F_UTILISATEURS 
-        SET NOM='${utilisateur.NOM}', PRENOM='${utilisateur.PRENOM}', DATE_DE_NAISSANCE='${utilisateur.DATE_DE_NAISSANCE}',
-        ADRESSE_EMAIL='${utilisateur.ADRESSE_EMAIL}', ADRESSE_RUE='${utilisateur.ADRESSE_RUE}', ADRESSE_CODE_POSTAL='${utilisateur.ADRESSE_CODE_POSTAL}',
-        ADRESSE_VILLE='${utilisateur.ADRESSE_VILLE}', STATUT='${utilisateur.STATUT}', MOT_DE_PASSE='${utilisateur.MOT_DE_PASSE}', PHOTO_DE_PROFIL='${utilisateur.PHOTO_DE_PROFIL}'
+        SET NOM='${utilisateur.nom}', PRENOM='${utilisateur.prenom}', DATE_DE_NAISSANCE='${utilisateur.date_de_naissance}',
+        ADRESSE_EMAIL='${utilisateur.adresse_email}', ADRESSE_RUE='${utilisateur.adresse_rue}', ADRESSE_CODE_POSTAL='${utilisateur.adresse_code_postal}',
+        ADRESSE_VILLE='${utilisateur.adresse_ville}', STATUT='${utilisateur.statut}', MOT_DE_PASSE='${utilisateur.mot_de_passe}', PHOTO_DE_PROFIL='${utilisateur.photo_de_profil}'
         WHERE ID=${id}`
     );
 
