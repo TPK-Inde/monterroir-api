@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const utilisateurs = require('../services/utilisateurs');
+const utilisateurs = require('../services/utilisateurs.js');
 
 /**
  * @swagger
@@ -29,14 +29,7 @@ const utilisateurs = require('../services/utilisateurs');
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', async function (req, res, next) {
-    try {
-        res.json(await utilisateurs.getMultiple(req.query.page));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la récupéreration de tous les utilisateurs `, err.message);
-        next(err);
-    }
-});
+router.get('/', utilisateurs.findAll);
 
 /**
  * @swagger
@@ -67,22 +60,7 @@ router.get('/', async function (req, res, next) {
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', async function (req, res, next) {
-    try {
-        const resultat = await utilisateurs.getOne(req.params.id);
-
-        if (resultat.length === 0) {
-            res.status(204); //204 = NoContent
-        }
-        else {
-            res.json(resultat);
-        }
-
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la récupéreration d'un utilisateur `, err.message);
-        next(err);
-    }
-});
+router.get('/:id', utilisateurs.findOne);
 
 /**
  * @swagger
@@ -106,18 +84,13 @@ router.get('/:id', async function (req, res, next) {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Utilisateur'
+ *       400:
+ *         description: Un élément est manquant dans la requête
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', async function (req, res, next) {
-    try {
-        res.status(201).json(await utilisateurs.ajout(req.body));
-    } catch (err) {
-        console.error("Une erreur c'est produite lors de la création d'un nouvelle utilisateur", err.message);
-        next(err);
-    }
-});
+router.post('/', utilisateurs.addOne);
 
 /**
  * @swagger
@@ -154,14 +127,7 @@ router.post('/', async function (req, res, next) {
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', async function (req, res, next) {
-    try {
-        res.json(await utilisateurs.modification(req.params.id, req.body));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la modification d'un utilisateur`, err.message);
-        next(err);
-    }
-});
+router.put('/:id', utilisateurs.update);
 
 /**
  * @swagger
@@ -190,14 +156,7 @@ router.put('/:id', async function (req, res, next) {
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', async function (req, res, next) {
-    try {
-        res.status(204).json(await utilisateurs.suppression(req.params.id));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la suppression d'un utilisateur`, err.message);
-        next(err);
-    }
-});
+router.delete('/:id', utilisateurs.delete);
 
 //Documentation du schéma Utilisateur
 /**
@@ -207,61 +166,61 @@ router.delete('/:id', async function (req, res, next) {
  *     Utilisateur:
  *       type: object
  *       required:
- *         - nom
- *         - prenom
- *         - date_de_naissance
- *         - adresse_email
- *         - adresse_rue
- *         - adresse_code_postal
- *         - adresse_ville
- *         - mot_de_passe
+ *         - NOM
+ *         - PRENOM
+ *         - DATE_DE_NAISSANCE
+ *         - ADRESSE_EMAIL
+ *         - ADRESSE_RUE
+ *         - ADRESSE_CODE_POSTAL
+ *         - ADRESSE_VILLE
+ *         - MOT_DE_PASSE
  *       properties:
- *         id:
+ *         ID_UTILISATEUR:
  *           type: int
  *           description: ID de l'utilisateur auto-généré
- *         nom:
+ *         ID_STATUT_COMPTE:
+ *           type: int
+ *           description: ID du statut du compte
+ *         NOM:
  *           type: string
  *           description: Nom de famille de l'utilisateur
- *         prenom:
+ *         PRENOM:
  *           type: string
  *           description: Prénom de l'utilisateur
- *         date_de_naissance:
+ *         DATE_DE_NAISSANCE:
  *           type: date
  *           description: Date de naissance de l'utilisateur
- *         adresse_email:
+ *         ADRESSE_EMAIL:
  *           type: string
  *           format: Adresse email de l'utilisateur
  *           description: The date the book was added
- *         adresse_rue:
+ *         ADRESSE_RUE:
  *           type: string
  *           description: Rue de l'adresse de l'utilisateur
- *         adresse_code_postal:
+ *         ADRESSE_CODE_POSTAL:
  *           type: string
  *           description: Code postal de l'adresse de l'utilisateur
- *         adresse_ville:
+ *         ADRESSE_VILLE:
  *           type: string
- *           description: Ville de l'adresse de l'utilisateur
- *         statut:
- *           type: string
- *           description: Statut de l'utilisateur
- *         mot_de_passe:
+ *           description: Ville de l'adresse de l'utilisateur=
+ *         MOT_DE_PASSE:
  *           type: string
  *           description: Mot de passe de l'utilisateur (BCRYPT)
- *         photo_de_profil:
- *           type: string
- *           description: Lien vers l'image de la photo de profil de l'utilisateur
+ *         PHOTO_DE_PROFIL:
+ *           type: text
+ *           description: Photo de profil de l'utilisateur BASE 64
  *       example:
- *         id : 1
- *         nom : "Dupond"
- *         prenom : "Marc"
- *         date_de_naissance : 1995-03-10
- *         adresse_email : "marc.dupond@exemple.com"
- *         adresse_rue : "14 Rue du Général"
- *         adresse_code_postal : "76600"
- *         adresse_ville : "Le Havre"
- *         statut : Utilisateur
- *         mot_de_passe : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
- *         photo_de_profil : image/2023/12/example.png
+ *         ID_UTILISATEUR : 1
+ *         ID_STATUT_COMPTE : 1 
+ *         NOM : "Dupond"
+ *         PRENOM : "Marc"
+ *         DATE_DE_NAISSANCE : 1995-03-10
+ *         ADRESSE_EMAIL : "marc.dupond@exemple.com"
+ *         ADRESSE_RUE : "14 Rue du Général"
+ *         ADRESSE_CODE_POSTAL : "76600"
+ *         ADRESSE_VILLE : "Le Havre"
+ *         MOT_DE_PASSE : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
+ *         PHOTO_DE_PROFIL : "image/2023/12/example.png"
  */
 
 module.exports = router;
