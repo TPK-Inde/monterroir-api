@@ -17,7 +17,7 @@ const utilisateurs = require('../services/utilisateurs.js');
  *         schema:
  *           type: string
  *         required: false
- *         description: Le numéro de page (Par défaut, il vaut 1)
+ *         description: Le numéro de page (1 par défaut)
  *     responses:
  *       200:
  *         description: La récupération de la liste est réussit.
@@ -67,6 +67,55 @@ router.get('/:id', utilisateurs.findOne);
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
+ * /utilisateurs/authentification/{ADRESSE_EMAIL}/{MOT_DE_PASSE}:
+ *   get:
+ *     summary: Permet de vérifier l'authentification d'un utilisateur
+ *     tags: [Utilisateurs]
+ *     parameters:
+ *       - in: path
+ *         name: ADRESSE_EMAIL
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Adresse email de l'utilisateur
+ *       - in: path
+ *         name: MOT_DE_PASSE
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Mot de passe de l'utilisateur 
+ *     responses:
+ *       200:
+ *         description: Résultat de l'authentification.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageAvecBoolean'
+ *             example:
+ *               -  resultat: true
+ *                  message: "Authentification réussit"
+ *               -  resultat: false
+ *                  message: "Authentification non valide"
+ *       400:
+ *         description: L'utilisateur n'a pas été trouvé.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageAvecBoolean'
+ *             example:
+ *               -  resultat: false
+ *                  message: "Aucun utilisateur trouvé avec cette adresse email"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
+router.get('/authentification/:ADRESSE_EMAIL/:MOT_DE_PASSE', utilisateurs.authUser);
+
+/**
+ * @swagger
+ * tags:
+ *   name: Utilisateurs
+ *   description: CRUD utilisateur
  * /utilisateurs:
  *   post:
  *     summary: Permet d'ajouter un nouvelle utilisateur
@@ -79,13 +128,21 @@ router.get('/:id', utilisateurs.findOne);
  *            $ref: '#/components/schemas/Utilisateur'
  *     responses:
  *       201:
- *         description: La modification de l'utilisateur a réussit.
+ *         description: L'ajout de l'utilisateur a réussit.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Création de l'utilisateur réussit"  
  *       400:
  *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille" 
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -120,9 +177,19 @@ router.post('/', utilisateurs.addOne);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Utilisateur mis à jour"
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille" 
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -146,12 +213,22 @@ router.put('/:id', utilisateurs.update);
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
- *       204:
+ *       200:
  *         description: La suppression de l'utilisateur a réussit.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "L'utilisateur id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?" 
+ *       400:
+ *         description: Quelque chose a empêché la suppression de l'utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille"                
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -221,6 +298,36 @@ router.delete('/:id', utilisateurs.delete);
  *         ADRESSE_VILLE : "Le Havre"
  *         MOT_DE_PASSE : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
  *         PHOTO_DE_PROFIL : "image/2023/12/example.png"
+ *     UtilisateurAuthentification:
+ *       type: object
+ *       required:
+ *         - ADRESSE_EMAIL
+ *         - MOT_DE_PASSE
+ *       properties:
+ *         ADRESSE_EMAIL:
+ *           type: string
+ *           description: Adresse email de l'utilisateur
+ *         MOT_DE_PASSE:
+ *           type: string
+ *           description: Mot de passe
+ *       example:
+ *         ADRESSE_EMAIL: "joe.doe@exemple.com" 
+ *         MOT_DE_PASSE: "MonSuperMotDePasse"
+ *     Message:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           description: Message de retour 
+ *     MessageAvecBoolean:
+ *       type: object
+ *       properties:
+ *         resultat:
+ *           type: boolean
+ *           description: Booléan de retour
+ *         message:
+ *           type: string
+ *           description: Message de retour  
  */
 
 module.exports = router;

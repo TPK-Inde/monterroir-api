@@ -1,6 +1,8 @@
 const db = require('../models/db');
 const Utilisateur = db.utilisateurs;
 const config = require('../config');
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 //Fonction permettant de récupérer la liste de tous les utilisateurs
 exports.findAll = (req, res) => {
@@ -38,6 +40,34 @@ exports.findOne = (req, res) => {
     })
 }
 
+//Fonction permettant de retourner un booléan si l'identifiant et mot de passe valide
+exports.authUser = (req, res) => {
+    const donneesUtilisateur = {       
+        ADRESSE_EMAIL: req.params.ADRESSE_EMAIL,
+        MOT_DE_PASSE: req.params.MOT_DE_PASSE
+    };
+
+    Utilisateur.findOne({ where : { ADRESSE_EMAIL: donneesUtilisateur.ADRESSE_EMAIL }})
+    .then(async data => {
+        if (data){
+            if (await validateUser(donneesUtilisateur.MOT_DE_PASSE, data.MOT_DE_PASSE)){
+                res.status(200).send({ resultat: true, message : "Authentification réussit" });
+            }
+            else{
+                res.status(200).send({ resultat: false, message : "Authentification non valide" });
+            }            
+        }
+        else{
+            res.status(400).send({ resultat: false, message : "Aucun utilisateur trouvé avec cette adresse email" });
+        }        
+    })
+    .catch(err => {
+        res.status(500).send({
+            message: err.message ||  "Une erreur c'est produite lors de la récupération d'un utilisateur"
+        });
+    })
+}
+
 //Fonction d'ajout d'un utilisateur
 exports.addOne = (req, res) => {
     const donneesUtilisateur = {
@@ -50,12 +80,12 @@ exports.addOne = (req, res) => {
         ADRESSE_RUE: req.body.ADRESSE_RUE,
         ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
         ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-        MOT_DE_PASSE: req.body.MOT_DE_PASSE,
+        MOT_DE_PASSE: hashPassword(req.body.MOT_DE_PASSE),
         PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL
 
     };
 
-    const donneesValide = verificationIntegriteDonnees(donneesUtilisateur);
+    const donneesValide = checkDataIntegrity(donneesUtilisateur);
 
     if (donneesValide){
         res.status(400).send({
@@ -83,9 +113,12 @@ exports.update = (req, res) => {
         res.status(400).send({message: "Veuillez entrer un id utilisateur à modifier"})
     }
 
+    //Todo : Si l'utilisateur n'est pas ADMIN alors la modification de statut de compte n'est pas autorisé
+
     Utilisateur.findByPk(idUser)
-    .then(data => {
+    .then(async data => {
         const donneesUtilisateur = {
+            ID_STATUT_COMPTE: req.body.ID_STATUT_COMPTE, //Todo : Si pas admin alors on prend dans data
             NOM: req.body.NOM,
             PRENOM: req.body.PRENOM,
             DATE_DE_NAISSANCE: req.body.DATE_DE_NAISSANCE,
@@ -93,11 +126,13 @@ exports.update = (req, res) => {
             ADRESSE_RUE: req.body.ADRESSE_RUE,
             ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
             ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-            MOT_DE_PASSE: req.body.MOT_DE_PASSE,
+            MOT_DE_PASSE: await hashPassword(req.body.MOT_DE_PASSE),
             PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL    
         };
+
+        console.log(donneesUtilisateur.MOT_DE_PASSE);
     
-        const donneesValide = verificationIntegriteDonnees(donneesUtilisateur);
+        const donneesValide = checkDataIntegrity(donneesUtilisateur);
     
         if (donneesValide){
             res.status(400).send({
@@ -138,12 +173,35 @@ exports.delete = (req, res) => {
     })
     .catch(err => {
         res.status(500).send({message: `Impossible de supprimer l'utilisateur id ${idUser}`})
+    })    
+}
+
+//Permet de valider le mot de passe avec le hash en base
+function validateUser(password, hash) {
+    return new Promise((resolve, reject) => {
+        bcrypt
+        .compare(password, hash)
+        .then(res => { resolve(res) })
+        .catch(err => { reject(err.message) })
+    })        
+}
+
+//Fonction pour hashé le mot de passe
+function hashPassword(password){
+    return new Promise((resolve, reject) => {
+        bcrypt
+        .hash(password, saltRounds)
+        .then(hash => {   
+            resolve(hash);
+        })
+        .catch(err => reject(err.message))
     })
+
     
 }
 
 //Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
-function verificationIntegriteDonnees(donneesUtilisateur){
+function checkDataIntegrity(donneesUtilisateur){
     if (!donneesUtilisateur.NOM) {return "Veuillez entrer un nom de famille"}
     if (!donneesUtilisateur.PRENOM) {return "Veuillez entrer un prénom"}
     if (!donneesUtilisateur.DATE_DE_NAISSANCE) {return "Veuillez entrer une date de naissance"}
@@ -153,6 +211,5 @@ function verificationIntegriteDonnees(donneesUtilisateur){
     if (!donneesUtilisateur.ADRESSE_VILLE) {return "Veuillez entrer la ville de votre adresse"}
     if (!donneesUtilisateur.MOT_DE_PASSE) {return "Veuillez entrer un mot de passe"}
     if (!donneesUtilisateur.PHOTO_DE_PROFIL) {return "Veuillez entrer une photo de profil"}
-    return null;
-    
+    return null;    
 }
