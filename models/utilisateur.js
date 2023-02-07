@@ -8,6 +8,9 @@ module.exports = (sequelize, Sequelize) => {
       ID_STATUT_COMPTE : {
         type: Sequelize.INTEGER(1)
       },
+      PSEUDONYME : {
+        type: Sequelize.STRING
+      },
       NOM : {
         type: Sequelize.STRING
       },

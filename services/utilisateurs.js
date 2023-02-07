@@ -35,7 +35,7 @@ exports.findOne = (req, res) => {
     })
     .catch(err => {
         res.status(500).send({
-            message: err.message ||  "Une erreur c'est produite lors de la récupération d'un utilisateur"
+            message: err.message ||  "Une erreur s'est produite lors de la récupération d'un utilisateur"
         });
     })
 }
@@ -63,7 +63,7 @@ exports.authUser = (req, res) => {
     })
     .catch(err => {
         res.status(500).send({
-            message: err.message ||  "Une erreur c'est produite lors de la récupération d'un utilisateur"
+            message: err.message ||  "Une erreur s'est produite lors de la récupération d'un utilisateur"
         });
     })
 }
@@ -73,6 +73,7 @@ exports.addOne = (req, res) => {
     const donneesUtilisateur = {
         ID_UTILISATEUR: null,        
         ID_STATUT_COMPTE: 1, // Pour la création du compte, ID du statut correspond au libellé "Utilisateur"
+        PSEUDONYME: req.body.PSEUDONYME,
         NOM: req.body.NOM,
         PRENOM: req.body.PRENOM,
         DATE_DE_NAISSANCE: req.body.DATE_DE_NAISSANCE,
@@ -99,7 +100,7 @@ exports.addOne = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: err.message || "Une erreur c'est produite lors de la création d'un utilisateur"
+                message: err.message || "Une erreur s'est produite lors de la création d'un utilisateur"
             });
         })
     }
@@ -119,6 +120,7 @@ exports.update = (req, res) => {
     .then(async data => {
         const donneesUtilisateur = {
             ID_STATUT_COMPTE: req.body.ID_STATUT_COMPTE, //Todo : Si pas admin alors on prend dans data
+            PSEUDONYME: req.body.PSEUDONYME,
             NOM: req.body.NOM,
             PRENOM: req.body.PRENOM,
             DATE_DE_NAISSANCE: req.body.DATE_DE_NAISSANCE,
@@ -146,7 +148,7 @@ exports.update = (req, res) => {
             })
             .catch(err => {
                 res.status(500).send({
-                    message: err.message || "Une erreur c'est produite lors de la création d'un utilisateur"
+                    message: err.message || "Une erreur s'est produite lors de la création d'un utilisateur"
                 });
             })
         }
@@ -202,6 +204,7 @@ function hashPassword(password){
 
 //Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
 function checkDataIntegrity(donneesUtilisateur){
+    if (!donneesUtilisateur.PSEUDONYME) {return "Veuillez entrer un pseudonyme"}
     if (!donneesUtilisateur.NOM) {return "Veuillez entrer un nom de famille"}
     if (!donneesUtilisateur.PRENOM) {return "Veuillez entrer un prénom"}
     if (!donneesUtilisateur.DATE_DE_NAISSANCE) {return "Veuillez entrer une date de naissance"}

@@ -243,6 +243,7 @@ router.delete('/:id', utilisateurs.delete);
  *     Utilisateur:
  *       type: object
  *       required:
+ *         - PSEUDONYME
  *         - NOM
  *         - PRENOM
  *         - DATE_DE_NAISSANCE
@@ -258,6 +259,9 @@ router.delete('/:id', utilisateurs.delete);
  *         ID_STATUT_COMPTE:
  *           type: int
  *           description: ID du statut du compte
+ *         PSEUDONYME:
+ *           type: string
+ *           description: Pseudo de l'utilisateur 
  *         NOM:
  *           type: string
  *           description: Nom de famille de l'utilisateur
