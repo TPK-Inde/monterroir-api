@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const utilisateurs = require('../services/utilisateurs');
+const utilisateurs = require('../services/utilisateurs.js');
 
 /**
  * @swagger
@@ -17,7 +17,7 @@ const utilisateurs = require('../services/utilisateurs');
  *         schema:
  *           type: string
  *         required: false
- *         description: Le numéro de page (Par défaut, il vaut 1)
+ *         description: Le numéro de page (1 par défaut)
  *     responses:
  *       200:
  *         description: La récupération de la liste est réussit.
@@ -29,14 +29,7 @@ const utilisateurs = require('../services/utilisateurs');
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', async function (req, res, next) {
-    try {
-        res.json(await utilisateurs.getMultiple(req.query.page));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la récupéreration de tous les utilisateurs `, err.message);
-        next(err);
-    }
-});
+router.get('/', utilisateurs.findAll);
 
 /**
  * @swagger
@@ -67,22 +60,56 @@ router.get('/', async function (req, res, next) {
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', async function (req, res, next) {
-    try {
-        const resultat = await utilisateurs.getOne(req.params.id);
+router.get('/:id', utilisateurs.findOne);
 
-        if (resultat.length === 0) {
-            res.status(204); //204 = NoContent
-        }
-        else {
-            res.json(resultat);
-        }
-
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la récupéreration d'un utilisateur `, err.message);
-        next(err);
-    }
-});
+/**
+ * @swagger
+ * tags:
+ *   name: Utilisateurs
+ *   description: CRUD utilisateur
+ * /utilisateurs/authentification/{ADRESSE_EMAIL}/{MOT_DE_PASSE}:
+ *   get:
+ *     summary: Permet de vérifier l'authentification d'un utilisateur
+ *     tags: [Utilisateurs]
+ *     parameters:
+ *       - in: path
+ *         name: ADRESSE_EMAIL
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Adresse email de l'utilisateur
+ *       - in: path
+ *         name: MOT_DE_PASSE
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: Mot de passe de l'utilisateur 
+ *     responses:
+ *       200:
+ *         description: Résultat de l'authentification.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageAvecBoolean'
+ *             example:
+ *               -  resultat: true
+ *                  message: "Authentification réussit"
+ *               -  resultat: false
+ *                  message: "Authentification non valide"
+ *       400:
+ *         description: L'utilisateur n'a pas été trouvé.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/MessageAvecBoolean'
+ *             example:
+ *               -  resultat: false
+ *                  message: "Aucun utilisateur trouvé avec cette adresse email"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
+router.get('/authentification/:ADRESSE_EMAIL/:MOT_DE_PASSE', utilisateurs.authUser);
 
 /**
  * @swagger
@@ -101,23 +128,26 @@ router.get('/:id', async function (req, res, next) {
  *            $ref: '#/components/schemas/Utilisateur'
  *     responses:
  *       201:
- *         description: La modification de l'utilisateur a réussit.
+ *         description: L'ajout de l'utilisateur a réussit.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Création de l'utilisateur réussit"  
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille" 
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', async function (req, res, next) {
-    try {
-        res.status(201).json(await utilisateurs.ajout(req.body));
-    } catch (err) {
-        console.error("Une erreur c'est produite lors de la création d'un nouvelle utilisateur", err.message);
-        next(err);
-    }
-});
+router.post('/', utilisateurs.addOne);
 
 /**
  * @swagger
@@ -147,21 +177,24 @@ router.post('/', async function (req, res, next) {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Utilisateur mis à jour"
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille" 
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', async function (req, res, next) {
-    try {
-        res.json(await utilisateurs.modification(req.params.id, req.body));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la modification d'un utilisateur`, err.message);
-        next(err);
-    }
-});
+router.put('/:id', utilisateurs.update);
 
 /**
  * @swagger
@@ -180,24 +213,27 @@ router.put('/:id', async function (req, res, next) {
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
- *       204:
+ *       200:
  *         description: La suppression de l'utilisateur a réussit.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "L'utilisateur id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?" 
+ *       400:
+ *         description: Quelque chose a empêché la suppression de l'utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un nom de famille"                
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', async function (req, res, next) {
-    try {
-        res.status(204).json(await utilisateurs.suppression(req.params.id));
-    } catch (err) {
-        console.error(`Une erreur c'est produite lors de la suppression d'un utilisateur`, err.message);
-        next(err);
-    }
-});
+router.delete('/:id', utilisateurs.delete);
 
 //Documentation du schéma Utilisateur
 /**
@@ -207,61 +243,95 @@ router.delete('/:id', async function (req, res, next) {
  *     Utilisateur:
  *       type: object
  *       required:
- *         - nom
- *         - prenom
- *         - date_de_naissance
- *         - adresse_email
- *         - adresse_rue
- *         - adresse_code_postal
- *         - adresse_ville
- *         - mot_de_passe
+ *         - PSEUDONYME
+ *         - NOM
+ *         - PRENOM
+ *         - DATE_DE_NAISSANCE
+ *         - ADRESSE_EMAIL
+ *         - ADRESSE_RUE
+ *         - ADRESSE_CODE_POSTAL
+ *         - ADRESSE_VILLE
+ *         - MOT_DE_PASSE
  *       properties:
- *         id:
+ *         ID_UTILISATEUR:
  *           type: int
  *           description: ID de l'utilisateur auto-généré
- *         nom:
+ *         ID_STATUT_COMPTE:
+ *           type: int
+ *           description: ID du statut du compte
+ *         PSEUDONYME:
+ *           type: string
+ *           description: Pseudo de l'utilisateur 
+ *         NOM:
  *           type: string
  *           description: Nom de famille de l'utilisateur
- *         prenom:
+ *         PRENOM:
  *           type: string
  *           description: Prénom de l'utilisateur
- *         date_de_naissance:
+ *         DATE_DE_NAISSANCE:
  *           type: date
  *           description: Date de naissance de l'utilisateur
- *         adresse_email:
+ *         ADRESSE_EMAIL:
  *           type: string
  *           format: Adresse email de l'utilisateur
  *           description: The date the book was added
- *         adresse_rue:
+ *         ADRESSE_RUE:
  *           type: string
  *           description: Rue de l'adresse de l'utilisateur
- *         adresse_code_postal:
+ *         ADRESSE_CODE_POSTAL:
  *           type: string
  *           description: Code postal de l'adresse de l'utilisateur
- *         adresse_ville:
+ *         ADRESSE_VILLE:
  *           type: string
- *           description: Ville de l'adresse de l'utilisateur
- *         statut:
- *           type: string
- *           description: Statut de l'utilisateur
- *         mot_de_passe:
+ *           description: Ville de l'adresse de l'utilisateur=
+ *         MOT_DE_PASSE:
  *           type: string
  *           description: Mot de passe de l'utilisateur (BCRYPT)
- *         photo_de_profil:
- *           type: string
- *           description: Lien vers l'image de la photo de profil de l'utilisateur
+ *         PHOTO_DE_PROFIL:
+ *           type: text
+ *           description: Photo de profil de l'utilisateur BASE 64
  *       example:
- *         id : 1
- *         nom : "Dupond"
- *         prenom : "Marc"
- *         date_de_naissance : 1995-03-10
- *         adresse_email : "marc.dupond@exemple.com"
- *         adresse_rue : "14 Rue du Général"
- *         adresse_code_postal : "76600"
- *         adresse_ville : "Le Havre"
- *         statut : Utilisateur
- *         mot_de_passe : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
- *         photo_de_profil : image/2023/12/example.png
+ *         ID_UTILISATEUR : 1
+ *         ID_STATUT_COMPTE : 1 
+ *         NOM : "Dupond"
+ *         PRENOM : "Marc"
+ *         DATE_DE_NAISSANCE : 1995-03-10
+ *         ADRESSE_EMAIL : "marc.dupond@exemple.com"
+ *         ADRESSE_RUE : "14 Rue du Général"
+ *         ADRESSE_CODE_POSTAL : "76600"
+ *         ADRESSE_VILLE : "Le Havre"
+ *         MOT_DE_PASSE : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
+ *         PHOTO_DE_PROFIL : "image/2023/12/example.png"
+ *     UtilisateurAuthentification:
+ *       type: object
+ *       required:
+ *         - ADRESSE_EMAIL
+ *         - MOT_DE_PASSE
+ *       properties:
+ *         ADRESSE_EMAIL:
+ *           type: string
+ *           description: Adresse email de l'utilisateur
+ *         MOT_DE_PASSE:
+ *           type: string
+ *           description: Mot de passe
+ *       example:
+ *         ADRESSE_EMAIL: "joe.doe@exemple.com" 
+ *         MOT_DE_PASSE: "MonSuperMotDePasse"
+ *     Message:
+ *       type: object
+ *       properties:
+ *         message:
+ *           type: string
+ *           description: Message de retour 
+ *     MessageAvecBoolean:
+ *       type: object
+ *       properties:
+ *         resultat:
+ *           type: boolean
+ *           description: Booléan de retour
+ *         message:
+ *           type: string
+ *           description: Message de retour  
  */
 
 module.exports = router;
