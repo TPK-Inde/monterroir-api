@@ -2,6 +2,12 @@ const express = require('express');
 const router = express.Router();
 const utilisateurs = require('../services/utilisateurs.js');
 
+//Constante de middleware
+const jwtAuthentification = require("../middleware/jwtAuthentification.js");
+
+//Todo : Vérifier le rôle et authorisation
+//Todo : Ajouter dans la doc le 401 "Non autorisé"
+
 /**
  * @swagger
  * tags:
@@ -9,6 +15,8 @@ const utilisateurs = require('../services/utilisateurs.js');
  *   description: CRUD utilisateur
  * /utilisateurs:
  *   get:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Permet de récupérer la liste des utilisateurs, (25 retours par page)
  *     tags: [Utilisateurs]
  *     parameters:
@@ -25,11 +33,13 @@ const utilisateurs = require('../services/utilisateurs.js');
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Utilisateur'
+ *       401:
+ *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', utilisateurs.findAll);
+router.get('/', jwtAuthentification, utilisateurs.findAll);
 
 /**
  * @swagger
@@ -38,6 +48,8 @@ router.get('/', utilisateurs.findAll);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   get:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Permet de récupérer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -56,11 +68,13 @@ router.get('/', utilisateurs.findAll);
  *               $ref: '#/components/schemas/Utilisateur'
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
+ *       401:
+ *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', utilisateurs.findOne);
+router.get('/:id', jwtAuthentification, utilisateurs.findOne);
 
 /**
  * @swagger
@@ -111,6 +125,8 @@ router.post('/authentification', utilisateurs.authUser);
  *   description: CRUD utilisateur
  * /utilisateurs:
  *   post:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Permet d'ajouter un nouvelle utilisateur
  *     tags: [Utilisateurs]
  *     requestBody:
@@ -136,11 +152,13 @@ router.post('/authentification', utilisateurs.authUser);
  *               $ref: '#/components/schemas/Message'
  *             example:
  *               message: "Veuillez entrer un nom de famille" 
+ *       401:
+ *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', utilisateurs.addOne);
+router.post('/', jwtAuthentification, utilisateurs.addOne);
 
 /**
  * @swagger
@@ -149,6 +167,8 @@ router.post('/', utilisateurs.addOne);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   put:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Permet de modifier un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -183,11 +203,13 @@ router.post('/', utilisateurs.addOne);
  *               $ref: '#/components/schemas/Message'
  *             example:
  *               message: "Veuillez entrer un nom de famille" 
+ *       401:
+ *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', utilisateurs.update);
+router.put('/:id', jwtAuthentification, utilisateurs.update);
 
 /**
  * @swagger
@@ -196,6 +218,8 @@ router.put('/:id', utilisateurs.update);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   delete:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Permet de supprimer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -221,17 +245,26 @@ router.put('/:id', utilisateurs.update);
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Veuillez entrer un nom de famille"                
+ *               message: "Veuillez entrer un nom de famille"  
+ *       401:
+ *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !              
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', utilisateurs.delete);
+router.delete('/:id', jwtAuthentification, utilisateurs.delete);
 
 //Documentation du schéma Utilisateur
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *   security:
+ *     - bearerAuth : []
  *   schemas:
  *     Utilisateur:
  *       type: object
