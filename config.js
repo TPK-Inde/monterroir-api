@@ -13,5 +13,6 @@ const config = {
       }
     },
     listPerPage: process.env.LISTE_PAR_PAGE,
+    token_secret: process.env.TOKEN_SECRET
   };
   module.exports = config;

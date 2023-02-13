@@ -67,23 +67,16 @@ router.get('/:id', utilisateurs.findOne);
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs/authentification/{ADRESSE_EMAIL}/{MOT_DE_PASSE}:
- *   get:
+ * /utilisateurs/authentification:
+ *   post:
  *     summary: Permet de vérifier l'authentification d'un utilisateur
  *     tags: [Utilisateurs]
- *     parameters:
- *       - in: path
- *         name: ADRESSE_EMAIL
- *         schema:
- *           type: string
- *         required: true
- *         description: Adresse email de l'utilisateur
- *       - in: path
- *         name: MOT_DE_PASSE
- *         schema:
- *           type: string
- *         required: true
- *         description: Mot de passe de l'utilisateur 
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/UtilisateurAuthentification'
  *     responses:
  *       200:
  *         description: Résultat de l'authentification.
@@ -109,7 +102,7 @@ router.get('/:id', utilisateurs.findOne);
  *         description: Erreur du serveur interne
  *
  */
-router.get('/authentification/:ADRESSE_EMAIL/:MOT_DE_PASSE', utilisateurs.authUser);
+router.post('/authentification', utilisateurs.authUser);
 
 /**
  * @swagger
