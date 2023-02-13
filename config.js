@@ -13,5 +13,7 @@ const config = {
       }
     },
     listPerPage: process.env.LISTE_PAR_PAGE,
+    token_secret: process.env.TOKEN_SECRET, //Clé privée
+    token_life: process.env.TOKEN_LIFE //Durée de vie d'un token
   };
   module.exports = config;

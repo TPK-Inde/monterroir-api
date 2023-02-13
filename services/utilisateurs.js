@@ -3,6 +3,7 @@ const Utilisateur = db.utilisateurs;
 const config = require('../config');
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
+const jwt = require('jsonwebtoken');
 
 //Fonction permettant de récupérer la liste de tous les utilisateurs
 exports.findAll = (req, res) => {
@@ -43,15 +44,17 @@ exports.findOne = (req, res) => {
 //Fonction permettant de retourner un booléan si l'identifiant et mot de passe valide
 exports.authUser = (req, res) => {
     const donneesUtilisateur = {       
-        ADRESSE_EMAIL: req.params.ADRESSE_EMAIL,
-        MOT_DE_PASSE: req.params.MOT_DE_PASSE
-    };
+        ADRESSE_EMAIL: req.body.ADRESSE_EMAIL,
+        MOT_DE_PASSE: req.body.MOT_DE_PASSE
+    };    
 
     Utilisateur.findOne({ where : { ADRESSE_EMAIL: donneesUtilisateur.ADRESSE_EMAIL }})
     .then(async data => {
         if (data){
             if (await validateUser(donneesUtilisateur.MOT_DE_PASSE, data.MOT_DE_PASSE)){
-                res.status(200).send({ resultat: true, message : "Authentification réussit" });
+                let token = await generateAccessToken(data);
+
+                res.status(200).send({ resultat: true, message : "Authentification réussit", token : token });
             }
             else{
                 res.status(200).send({ resultat: false, message : "Authentification non valide" });
@@ -83,7 +86,6 @@ exports.addOne = (req, res) => {
         ADRESSE_VILLE: req.body.ADRESSE_VILLE,
         MOT_DE_PASSE: hashPassword(req.body.MOT_DE_PASSE),
         PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL
-
     };
 
     const donneesValide = checkDataIntegrity(donneesUtilisateur);
@@ -128,11 +130,9 @@ exports.update = (req, res) => {
             ADRESSE_RUE: req.body.ADRESSE_RUE,
             ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
             ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-            MOT_DE_PASSE: await hashPassword(req.body.MOT_DE_PASSE),
+            MOT_DE_PASSE: req.body.MOT_DE_PASSE.length > 8 ? await hashPassword(req.body.MOT_DE_PASSE) : data.MOT_DE_PASSE, //Si pas de mot de passe alors on change pas
             PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL    
         };
-
-        console.log(donneesUtilisateur.MOT_DE_PASSE);
     
         const donneesValide = checkDataIntegrity(donneesUtilisateur);
     
@@ -174,6 +174,7 @@ exports.delete = (req, res) => {
         }
     })
     .catch(err => {
+        console.log("Une erreur c'est produite lors de la suppression d'un utilisateur : " + err.message)
         res.status(500).send({message: `Impossible de supprimer l'utilisateur id ${idUser}`})
     })    
 }
@@ -197,10 +198,15 @@ function hashPassword(password){
             resolve(hash);
         })
         .catch(err => reject(err.message))
-    })
-
-    
+    })    
 }
+
+//Fonction permettant de générer un token
+function generateAccessToken(donneesUtilisateur) {
+    return new Promise((resolve, reject) => {
+        resolve(jwt.sign({ "ID_UTILISATEUR" : donneesUtilisateur.ID_UTILISATEUR, "PSEUDONYME" : donneesUtilisateur.PSEUDONYME }, config.token_secret, { expiresIn: config.token_life }))
+    })
+  }
 
 //Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
 function checkDataIntegrity(donneesUtilisateur){
