@@ -6,7 +6,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 //Constante de route
-const utilisateursRouter = require("./routes/utilisateurs.js");
+const utilisateursRouter = require("./routes/utilisateurs.route.js");
 
 const app = express();
 
@@ -31,13 +31,27 @@ const optionsSwagger = {
         url: "https://spdx.org/licenses/MIT.html",
       },
     },
+    components:{
+      securitySchemes:{
+        bearerAuth:{
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
+        }
+      }
+    },
+    security:[
+      {
+        bearerAuth: [],
+      }
+    ],
     servers: [
       {
         url: "http://localhost:" + process.env.PORT,
       },
     ],
   },
-  apis: ["./routes/*.js"],
+  apis: ["./routes/*.js", "./schema/*.js"],
 };
 
 const specs = swaggerJsdoc(optionsSwagger);

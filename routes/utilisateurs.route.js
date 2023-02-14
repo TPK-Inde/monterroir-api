@@ -5,9 +5,6 @@ const utilisateurs = require('../services/utilisateurs.js');
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.js");
 
-//Todo : Vérifier le rôle et authorisation
-//Todo : Ajouter dans la doc le 401 "Non autorisé"
-
 /**
  * @swagger
  * tags:
@@ -15,8 +12,6 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.js");
  *   description: CRUD utilisateur
  * /utilisateurs:
  *   get:
- *     security:
- *       - bearerAuth: []
  *     summary: Permet de récupérer la liste des utilisateurs, (25 retours par page)
  *     tags: [Utilisateurs]
  *     parameters:
@@ -39,7 +34,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.js");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', jwtAuthentification, utilisateurs.findAll);
+router.get('/', jwtAuthentification, utilisateurs.findAll); //Route nécessitant un token
 
 /**
  * @swagger
@@ -48,8 +43,6 @@ router.get('/', jwtAuthentification, utilisateurs.findAll);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   get:
- *     security:
- *       - bearerAuth: []
  *     summary: Permet de récupérer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -74,7 +67,7 @@ router.get('/', jwtAuthentification, utilisateurs.findAll);
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', jwtAuthentification, utilisateurs.findOne);
+router.get('/:id', jwtAuthentification, utilisateurs.findOne); //Route nécessitant un token
 
 /**
  * @swagger
@@ -125,8 +118,6 @@ router.post('/authentification', utilisateurs.authUser);
  *   description: CRUD utilisateur
  * /utilisateurs:
  *   post:
- *     security:
- *       - bearerAuth: []
  *     summary: Permet d'ajouter un nouvelle utilisateur
  *     tags: [Utilisateurs]
  *     requestBody:
@@ -151,14 +142,12 @@ router.post('/authentification', utilisateurs.authUser);
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Veuillez entrer un nom de famille" 
- *       401:
- *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
+ *               message: "Veuillez entrer un nom de famille"
  *       500:
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', jwtAuthentification, utilisateurs.addOne);
+router.post('/', utilisateurs.addOne);
 
 /**
  * @swagger
@@ -167,8 +156,6 @@ router.post('/', jwtAuthentification, utilisateurs.addOne);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   put:
- *     security:
- *       - bearerAuth: []
  *     summary: Permet de modifier un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -209,7 +196,7 @@ router.post('/', jwtAuthentification, utilisateurs.addOne);
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, utilisateurs.update);
+router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessitant un token
 
 /**
  * @swagger
@@ -218,8 +205,6 @@ router.put('/:id', jwtAuthentification, utilisateurs.update);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   delete:
- *     security:
- *       - bearerAuth: []
  *     summary: Permet de supprimer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
@@ -252,112 +237,6 @@ router.put('/:id', jwtAuthentification, utilisateurs.update);
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, utilisateurs.delete);
-
-//Documentation du schéma Utilisateur
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     bearerAuth:
- *       type: http
- *       scheme: bearer
- *       bearerFormat: JWT
- *   security:
- *     - bearerAuth : []
- *   schemas:
- *     Utilisateur:
- *       type: object
- *       required:
- *         - PSEUDONYME
- *         - NOM
- *         - PRENOM
- *         - DATE_DE_NAISSANCE
- *         - ADRESSE_EMAIL
- *         - ADRESSE_RUE
- *         - ADRESSE_CODE_POSTAL
- *         - ADRESSE_VILLE
- *         - MOT_DE_PASSE
- *       properties:
- *         ID_UTILISATEUR:
- *           type: int
- *           description: ID de l'utilisateur auto-généré
- *         ID_STATUT_COMPTE:
- *           type: int
- *           description: ID du statut du compte
- *         PSEUDONYME:
- *           type: string
- *           description: Pseudo de l'utilisateur 
- *         NOM:
- *           type: string
- *           description: Nom de famille de l'utilisateur
- *         PRENOM:
- *           type: string
- *           description: Prénom de l'utilisateur
- *         DATE_DE_NAISSANCE:
- *           type: date
- *           description: Date de naissance de l'utilisateur
- *         ADRESSE_EMAIL:
- *           type: string
- *           format: Adresse email de l'utilisateur
- *           description: The date the book was added
- *         ADRESSE_RUE:
- *           type: string
- *           description: Rue de l'adresse de l'utilisateur
- *         ADRESSE_CODE_POSTAL:
- *           type: string
- *           description: Code postal de l'adresse de l'utilisateur
- *         ADRESSE_VILLE:
- *           type: string
- *           description: Ville de l'adresse de l'utilisateur=
- *         MOT_DE_PASSE:
- *           type: string
- *           description: Mot de passe de l'utilisateur (BCRYPT)
- *         PHOTO_DE_PROFIL:
- *           type: text
- *           description: Photo de profil de l'utilisateur BASE 64
- *       example:
- *         ID_UTILISATEUR : 1
- *         ID_STATUT_COMPTE : 1 
- *         NOM : "Dupond"
- *         PRENOM : "Marc"
- *         DATE_DE_NAISSANCE : 1995-03-10
- *         ADRESSE_EMAIL : "marc.dupond@exemple.com"
- *         ADRESSE_RUE : "14 Rue du Général"
- *         ADRESSE_CODE_POSTAL : "76600"
- *         ADRESSE_VILLE : "Le Havre"
- *         MOT_DE_PASSE : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
- *         PHOTO_DE_PROFIL : "image/2023/12/example.png"
- *     UtilisateurAuthentification:
- *       type: object
- *       required:
- *         - ADRESSE_EMAIL
- *         - MOT_DE_PASSE
- *       properties:
- *         ADRESSE_EMAIL:
- *           type: string
- *           description: Adresse email de l'utilisateur
- *         MOT_DE_PASSE:
- *           type: string
- *           description: Mot de passe
- *       example:
- *         ADRESSE_EMAIL: "joe.doe@exemple.com" 
- *         MOT_DE_PASSE: "MonSuperMotDePasse"
- *     Message:
- *       type: object
- *       properties:
- *         message:
- *           type: string
- *           description: Message de retour 
- *     MessageAvecBoolean:
- *       type: object
- *       properties:
- *         resultat:
- *           type: boolean
- *           description: Booléan de retour
- *         message:
- *           type: string
- *           description: Message de retour  
- */
+router.delete('/:id', jwtAuthentification, utilisateurs.delete); //Route nécessitant un token
 
 module.exports = router;

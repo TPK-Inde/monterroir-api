@@ -48,8 +48,6 @@ exports.authUser = (req, res) => {
         MOT_DE_PASSE: req.body.MOT_DE_PASSE
     };    
 
-    
-
     Utilisateur.findOne({ where : { ADRESSE_EMAIL: donneesUtilisateur.ADRESSE_EMAIL }})
     .then(async data => {
         if (data){
@@ -88,7 +86,6 @@ exports.addOne = (req, res) => {
         ADRESSE_VILLE: req.body.ADRESSE_VILLE,
         MOT_DE_PASSE: hashPassword(req.body.MOT_DE_PASSE),
         PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL
-
     };
 
     const donneesValide = checkDataIntegrity(donneesUtilisateur);
@@ -133,11 +130,9 @@ exports.update = (req, res) => {
             ADRESSE_RUE: req.body.ADRESSE_RUE,
             ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
             ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-            MOT_DE_PASSE: await hashPassword(req.body.MOT_DE_PASSE), //Todo : Si pas de mot de passe alors on change pas
+            MOT_DE_PASSE: req.body.MOT_DE_PASSE.length > 8 ? await hashPassword(req.body.MOT_DE_PASSE) : data.MOT_DE_PASSE, //Si pas de mot de passe alors on change pas
             PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL    
         };
-
-        console.log(donneesUtilisateur.MOT_DE_PASSE);
     
         const donneesValide = checkDataIntegrity(donneesUtilisateur);
     
@@ -179,6 +174,7 @@ exports.delete = (req, res) => {
         }
     })
     .catch(err => {
+        console.log("Une erreur c'est produite lors de la suppression d'un utilisateur : " + err.message)
         res.status(500).send({message: `Impossible de supprimer l'utilisateur id ${idUser}`})
     })    
 }
