@@ -84,13 +84,16 @@ exports.addOne = async (req, res) => {
         ADRESSE_RUE: req.body.ADRESSE_RUE,
         ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
         ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-        MOT_DE_PASSE: req.body.MOT_DE_PASSE.length > 8 ? await hashPassword(req.body.MOT_DE_PASSE) : "",
+        MOT_DE_PASSE: req.body.MOT_DE_PASSE,
         PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL
-    };    
+    };
 
-    console.log(donneesUtilisateur.MOT_DE_PASSE);
+    const donneesValide = checkDataIntegrity(donneesUtilisateur, true);
 
-    const donneesValide = checkDataIntegrity(donneesUtilisateur);
+    //Si les données sont valides, alors on Hash le mot de passe
+    async () => {
+        await hashPassword(req.body.MOT_DE_PASSE);
+    } 
 
     if (donneesValide){
         res.status(400).send({
@@ -211,7 +214,7 @@ function generateAccessToken(donneesUtilisateur) {
   }
 
 //Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
-function checkDataIntegrity(donneesUtilisateur){
+function checkDataIntegrity(donneesUtilisateur, isUserCreation = false){
     if (!donneesUtilisateur.PSEUDONYME) {return "Veuillez entrer un pseudonyme"}
     if (!donneesUtilisateur.NOM) {return "Veuillez entrer un nom de famille"}
     if (!donneesUtilisateur.PRENOM) {return "Veuillez entrer un prénom"}
@@ -220,7 +223,33 @@ function checkDataIntegrity(donneesUtilisateur){
     if (!donneesUtilisateur.ADRESSE_RUE) {return "Veuillez entrer la rue de votre adresse"}
     if (!donneesUtilisateur.ADRESSE_CODE_POSTAL) {return "Veuillez entrer le code postal de votre adresse"}
     if (!donneesUtilisateur.ADRESSE_VILLE) {return "Veuillez entrer la ville de votre adresse"}
-    if (!donneesUtilisateur.MOT_DE_PASSE) {return "Votre mot de passe est vide ou ne respecte pas le minimum sécurité"}
     if (!donneesUtilisateur.PHOTO_DE_PROFIL) {return "Veuillez entrer une photo de profil"}
+
+    if (isUserCreation){
+        var caractereMinusculeRegex = new RegExp("^(?=.*[a-z])");
+        var caractereMajusculeRegex = new RegExp("^(?=.*[A-Z])");
+        var chiffreRegex = new RegExp("^(?=.*[0-9])");
+        var caractereSpecialRegex = new RegExp("^(?=.*[!@#\$%\^&\*])");
+        var longueurRegex = new RegExp("^(?=.{8,})");
+        if (!caractereMinusculeRegex.test(donneesUtilisateur.MOT_DE_PASSE)) {
+            return "Votre mot de passe doit contenir au moins une minuscule";
+        }
+        else if (!caractereMajusculeRegex.test(donneesUtilisateur.MOT_DE_PASSE)) {
+            return "Votre mot de passe doit contenir au moins une majuscule";
+        }
+        else if (!chiffreRegex.test(donneesUtilisateur.MOT_DE_PASSE)) {
+            return "Votre mot de passe doit contenir au moins un chiffre";
+        }
+        else if (!caractereSpecialRegex.test(donneesUtilisateur.MOT_DE_PASSE)) {
+            return "Votre mot de passe doit contenir au moins un caractère spécial";
+        }
+        else if (!longueurRegex.test(donneesUtilisateur.MOT_DE_PASSE)) {
+            return "Votre mot de passe doit faire au moins 8 caractères";
+        }        
+    }
+    else{        
+    if (!donneesUtilisateur.MOT_DE_PASSE) {return "Veuillez entrer un mot de passe"}
+    }
+
     return null;    
 }
