@@ -72,7 +72,7 @@ exports.authUser = (req, res) => {
 }
 
 //Fonction d'ajout d'un utilisateur
-exports.addOne = (req, res) => {
+exports.addOne = async (req, res) => {
     const donneesUtilisateur = {
         ID_UTILISATEUR: null,        
         ID_STATUT_COMPTE: 1, // Pour la création du compte, ID du statut correspond au libellé "Utilisateur"
@@ -84,9 +84,11 @@ exports.addOne = (req, res) => {
         ADRESSE_RUE: req.body.ADRESSE_RUE,
         ADRESSE_CODE_POSTAL: req.body.ADRESSE_CODE_POSTAL,
         ADRESSE_VILLE: req.body.ADRESSE_VILLE,
-        MOT_DE_PASSE: hashPassword(req.body.MOT_DE_PASSE),
+        MOT_DE_PASSE: req.body.MOT_DE_PASSE.length > 8 ? await hashPassword(req.body.MOT_DE_PASSE) : "",
         PHOTO_DE_PROFIL: req.body.PHOTO_DE_PROFIL
-    };
+    };    
+
+    console.log(donneesUtilisateur.MOT_DE_PASSE);
 
     const donneesValide = checkDataIntegrity(donneesUtilisateur);
 
@@ -218,7 +220,7 @@ function checkDataIntegrity(donneesUtilisateur){
     if (!donneesUtilisateur.ADRESSE_RUE) {return "Veuillez entrer la rue de votre adresse"}
     if (!donneesUtilisateur.ADRESSE_CODE_POSTAL) {return "Veuillez entrer le code postal de votre adresse"}
     if (!donneesUtilisateur.ADRESSE_VILLE) {return "Veuillez entrer la ville de votre adresse"}
-    if (!donneesUtilisateur.MOT_DE_PASSE) {return "Veuillez entrer un mot de passe"}
+    if (!donneesUtilisateur.MOT_DE_PASSE) {return "Votre mot de passe est vide ou ne respecte pas le minimum sécurité"}
     if (!donneesUtilisateur.PHOTO_DE_PROFIL) {return "Veuillez entrer une photo de profil"}
     return null;    
 }
