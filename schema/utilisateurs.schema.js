@@ -55,7 +55,8 @@
  *           description: Photo de profil de l'utilisateur BASE 64
  *       example:
  *         ID_UTILISATEUR : 1
- *         ID_STATUT_COMPTE : 1 
+ *         ID_STATUT_COMPTE : 1
+ *         PSEUDONYME: "Marc_Dupond"
  *         NOM : "Dupond"
  *         PRENOM : "Marc"
  *         DATE_DE_NAISSANCE : 1995-03-10
