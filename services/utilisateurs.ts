@@ -15,13 +15,13 @@ exports.findAll = (req: { query: { page: number; }; }, res: { status: (arg0: num
         })
         .catch((err: { message: any; }) => {
             res.status(500).send({
-                message: err.message || "Une erreur c'est produite lors de la récupération de tous les utilisateurs"
+                message: err.message || "Une erreur s'est produite lors de la récupération de tous les utilisateurs"
             });
         })
 }
 
 //Fonction permettant de récupérer un utilisateur via son ID
-exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Utilisateur | { message: string }): void; new(): any; }; }; }) => {
+exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Utilisateur | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
     const idUser = req.params.id;
 
     Utilisateur.findByPk(idUser)
@@ -30,7 +30,7 @@ exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number)
                 res.status(200).send(data);
             }
             else {
-                res.status(204).send({ message: "Aucun utilisateur trouvé avec l'ID indiqué" });
+                res.sendStatus(204);
             }
         })
         .catch((err: { message: any; }) => {
@@ -160,7 +160,7 @@ exports.delete = (req: { params: { id: number; }; }, res: { send: (arg0: { messa
             }
         })
         .catch((err: { message: string; }) => {
-            console.log("Une erreur c'est produite lors de la suppression d'un utilisateur : " + err.message)
+            console.log("Une erreur s'est produite lors de la suppression d'un utilisateur : " + err.message)
             res.status(500).send({ message: `Impossible de supprimer l'utilisateur id ${idUser}` })
         })
 }
