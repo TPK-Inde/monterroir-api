@@ -14,6 +14,7 @@
  *         - ADRESSE_RUE
  *         - ADRESSE_CODE_POSTAL
  *         - ADRESSE_VILLE
+ *         - DESCRIPTION
  *         - DATE_CREATION
  *         - ACTIF
  *       properties:
@@ -47,6 +48,9 @@
  *         DATE_CREATION:
  *           type: date
  *           description: Date de création de la vitrine
+ *         DESCRIPTION:
+ *           type: string
+ *           description: Description de la vitrine
  *         ACTIF:
  *           type: boolean
  *           description: Champ permettant de déterminer si une vitrine est activé ou non
@@ -60,6 +64,7 @@
  *         ADRESSE_RUE : "14 Rue du Général"
  *         ADRESSE_CODE_POSTAL : "76600"
  *         ADRESSE_VILLE : "Le Havre"
+ *         DESCRIPTION : "Vendeur de choux depuis 10 ans"
  *         DATE_CREATION : 2022-01-01
  *         ACTIF : true
  */

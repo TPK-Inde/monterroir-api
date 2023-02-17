@@ -40,6 +40,9 @@ export class Vitrine extends Model<Vitrine> {
   ADRESSE_VILLE: string;
 
   @Column
+  DESCRIPTION: string;
+
+  @Column
   DATE_CREATION: Date;
 
   @Column
