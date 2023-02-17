@@ -251,7 +251,7 @@ router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessita
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "L'utilisateur id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?" 
+ *               message: "La suppression de l'utilisateur a réussit" 
  *       400:
  *         description: Quelque chose a empêché la suppression de l'utilisateur
  *         content:
@@ -259,7 +259,7 @@ router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessita
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Veuillez entrer un nom de famille"  
+ *               message: "L'utilisateur id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?"  
  *       401:
  *         description: Token vide ou invalide
  *       403:

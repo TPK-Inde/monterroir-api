@@ -134,7 +134,7 @@ exports.update = (req: { params: { id: number; }; body: Utilisateur }, res: { st
                     })
                     .catch((err: { message: any; }) => {
                         res.status(500).send({
-                            message: err.message || "Une erreur s'est produite lors de la création d'un utilisateur"
+                            message: err.message || "Une erreur s'est produite lors de la modification d'un utilisateur"
                         });
                     })
             }
