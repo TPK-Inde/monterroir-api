@@ -169,6 +169,7 @@ function checkDataIntegrity(donneesVitrine: Vitrine) {
   if (!donneesVitrine.ADRESSE_RUE) { return "Veuillez entrer la rue de votre adresse" }
   if (!donneesVitrine.ADRESSE_CODE_POSTAL) { return "Veuillez entrer le code postal de votre adresse" }
   if (!donneesVitrine.ADRESSE_VILLE) { return "Veuillez entrer la ville de votre adresse" }
+  if (!donneesVitrine.DESCRIPTION) { return "Veuillez entrer une description" }
   if (!donneesVitrine.DATE_CREATION) { return "La date de création est absent de la requête !" }
   if (donneesVitrine.ACTIF == undefined) { return "Le champ 'Actif' est absent de la requête !" }
 
