@@ -161,8 +161,6 @@ exports.delete = (req: { params: { id: number; }; }, res: { send: (arg0: { messa
 
 //Fonction permettant de vérifier l'intégrité des données avant ajout ou modification
 function checkDataIntegrity(donneesVitrine: Vitrine) {
-  console.log(donneesVitrine.ACTIF);
-
   if (!donneesVitrine.ID_UTILISATEUR) { return "L'ID de l'utilisateur n'est pas défini dans la requête !" }
   if (!donneesVitrine.ID_CATEGORIE_VITRINE) { return "Veuillez définir une catégorie de vitrine " }
   if (!donneesVitrine.ID_TYPE_VITRINE) { return "Veuillez définir un type de vitrine" }
