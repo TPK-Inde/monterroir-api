@@ -1,16 +1,18 @@
 require('dotenv');
-const express = require('express');
+import express from 'express';
+const db = require("./sequelize/db"); //NE PAS RETIRER, PERMET D'INITIER LA CONNEXION A LA BASE DE DONNEES
+//Todo : Trouver un autre moyen d'initier la connexion
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 //Constante de route
-const utilisateursRouter = require("./routes/utilisateurs.route.js");
+const utilisateursRouter = require("./routes/utilisateurs.route.ts");
 
 const app = express();
 
-app.use((req, res, next) => {
+app.use((req: any, res: { setHeader: (arg0: string, arg1: string) => void; }, next: () => void) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', '*');
@@ -31,16 +33,16 @@ const optionsSwagger = {
         url: "https://spdx.org/licenses/MIT.html",
       },
     },
-    components:{
-      securitySchemes:{
-        bearerAuth:{
+    components: {
+      securitySchemes: {
+        bearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
         }
       }
     },
-    security:[
+    security: [
       {
         bearerAuth: [],
       }
@@ -51,7 +53,7 @@ const optionsSwagger = {
       },
     ],
   },
-  apis: ["./routes/*.js", "./schema/*.js"],
+  apis: ["./routes/*.ts", "./schema/*.ts"],
 };
 
 const specs = swaggerJsdoc(optionsSwagger);

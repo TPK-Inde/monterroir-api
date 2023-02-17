@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+
 const router = express.Router();
-const utilisateurs = require('../services/utilisateurs.js');
+const utilisateurs = require('../services/utilisateurs.ts');
 
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.js");
+const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
 
 /**
  * @swagger
@@ -156,7 +157,7 @@ router.post('/', utilisateurs.addOne);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   put:
- *     summary: Permet de modifier un utilisateur en fonction de son ID
+ *     summary: Permet de modifier un utilisateur en fonction de son ID, si le mot de passe n'est pas renseigné le mot de passe ne change pas
  *     tags: [Utilisateurs]
  *     parameters:
  *       - in: path
