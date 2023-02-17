@@ -1,9 +1,10 @@
-const express = require('express');
+import express from 'express';
+
 const router = express.Router();
-const utilisateurs = require('../services/utilisateurs.js');
+const utilisateurs = require('../services/utilisateurs.ts');
 
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.js");
+const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
 
 /**
  * @swagger
@@ -29,7 +30,17 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.js");
  *             schema:
  *               $ref: '#/components/schemas/Utilisateur'
  *       401:
- *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
+ *               
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -62,7 +73,16 @@ router.get('/', jwtAuthentification, utilisateurs.findAll); //Route nécessitant
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
  *       401:
- *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -156,7 +176,7 @@ router.post('/', utilisateurs.addOne);
  *   description: CRUD utilisateur
  * /utilisateurs/{id}:
  *   put:
- *     summary: Permet de modifier un utilisateur en fonction de son ID
+ *     summary: Permet de modifier un utilisateur en fonction de son ID, si le mot de passe n'est pas renseigné le mot de passe ne change pas
  *     tags: [Utilisateurs]
  *     parameters:
  *       - in: path
@@ -191,7 +211,16 @@ router.post('/', utilisateurs.addOne);
  *             example:
  *               message: "Veuillez entrer un nom de famille" 
  *       401:
- *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -232,7 +261,16 @@ router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessita
  *             example:
  *               message: "Veuillez entrer un nom de famille"  
  *       401:
- *         description: Vous ne disposez pas des droits nécessaires pour effectuer cette action !              
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"              
  *       500:
  *         description: Erreur du serveur interne
  *
