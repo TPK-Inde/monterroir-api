@@ -22,7 +22,7 @@ exports.findAllActive = (req: { query: { page: number; }; }, res: { status: (arg
   const numPage: number = req.query.page || 1;
 
   //On renvoi un maximum de X vitrines (X = config.listPerPage)
-  Vitrine.findAll({ where: { ACTIF: true }, limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
+  Vitrine.findAll({ where: { ACTIVATE: true }, limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
     .then((data: Vitrine[]) => {
       res.status(200).send(data);
     })
@@ -57,7 +57,7 @@ exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number)
 exports.findFromUser = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Vitrine[] | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
   const idUtilisateur = req.params.id;
 
-  Vitrine.findAll({ where: { ID_UTILISATEUR: idUtilisateur } })
+  Vitrine.findAll({ where: { ID_USER: idUtilisateur } })
     .then((data: Vitrine[]) => {
       if (data) {
         res.status(200).send(data);
@@ -78,7 +78,7 @@ exports.findFromUser = (req: { params: { id: any; }; }, res: { status: (arg0: nu
 exports.addOne = (req: { body: Vitrine }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
   //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Vitrine ainsi que du champ "Actif"
   req.body.ID_VITRINE = 0;
-  req.body.ACTIF = false;
+  req.body.ACTIVATE = false;
 
   const donneesValide = checkDataIntegrity(req.body);
 
@@ -112,7 +112,7 @@ exports.update = (req: { params: { id: number; }; body: Vitrine }, res: { status
     .then(async (data) => {
       //Les élements qui ne doivent pas changer
       req.body.ID_VITRINE = data!.ID_VITRINE;
-      req.body.ID_UTILISATEUR = data!.ID_UTILISATEUR;
+      req.body.ID_USER = data!.ID_USER;
 
       const donneesValide = checkDataIntegrity(req.body);
 
@@ -161,17 +161,17 @@ exports.delete = (req: { params: { id: number; }; }, res: { send: (arg0: { messa
 
 //Fonction permettant de vérifier l'intégrité des données avant ajout ou modification
 function checkDataIntegrity(donneesVitrine: Vitrine) {
-  if (!donneesVitrine.ID_UTILISATEUR) { return "L'ID de l'utilisateur n'est pas défini dans la requête !" }
-  if (!donneesVitrine.ID_CATEGORIE_VITRINE) { return "Veuillez définir une catégorie de vitrine " }
+  if (!donneesVitrine.ID_USER) { return "L'ID de l'utilisateur n'est pas défini dans la requête !" }
+  if (!donneesVitrine.ID_CATEGORY_VITRINE) { return "Veuillez définir une catégorie de vitrine " }
   if (!donneesVitrine.ID_TYPE_VITRINE) { return "Veuillez définir un type de vitrine" }
-  if (!donneesVitrine.NOM) { return "Veuillez définir un nom de vitrine" }
-  if (!donneesVitrine.PHOTO) { return "Veuillez définir une image à votre vitrine" }
-  if (!donneesVitrine.ADRESSE_RUE) { return "Veuillez entrer la rue de votre adresse" }
-  if (!donneesVitrine.ADRESSE_CODE_POSTAL) { return "Veuillez entrer le code postal de votre adresse" }
-  if (!donneesVitrine.ADRESSE_VILLE) { return "Veuillez entrer la ville de votre adresse" }
+  if (!donneesVitrine.NAME) { return "Veuillez définir un nom de vitrine" }
+  if (!donneesVitrine.IMAGE) { return "Veuillez définir une image à votre vitrine" }
+  if (!donneesVitrine.ADDRESS_STREET) { return "Veuillez entrer la rue de votre adresse" }
+  if (!donneesVitrine.ADDRESS_ZIP_CODE) { return "Veuillez entrer le code postal de votre adresse" }
+  if (!donneesVitrine.ADDRESS_CITY) { return "Veuillez entrer la ville de votre adresse" }
   if (!donneesVitrine.DESCRIPTION) { return "Veuillez entrer une description" }
-  if (!donneesVitrine.DATE_CREATION) { return "La date de création est absent de la requête !" }
-  if (donneesVitrine.ACTIF == undefined) { return "Le champ 'Actif' est absent de la requête !" }
+  if (!donneesVitrine.CREATION_DATE) { return "La date de création est absent de la requête !" }
+  if (donneesVitrine.ACTIVATE == undefined) { return "Le champ 'Actif' est absent de la requête !" }
 
   return null;
 }

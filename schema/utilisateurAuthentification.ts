@@ -6,16 +6,16 @@
  *     UtilisateurAuthentification:
  *       type: object
  *       required:
- *         - ADRESSE_EMAIL
- *         - MOT_DE_PASSE
+ *         - EMAIL
+ *         - PASSWORD
  *       properties:
- *         ADRESSE_EMAIL:
+ *         EMAIL:
  *           type: string
  *           description: Adresse email de l'utilisateur
- *         MOT_DE_PASSE:
+ *         PASSWORD:
  *           type: string
  *           description: Mot de passe
  *       example:
- *         ADRESSE_EMAIL: "joe.doe@exemple.com" 
- *         MOT_DE_PASSE: "MonSuperMotDePasse"
+ *         EMAIL: "joe.doe@exemple.com" 
+ *         PASSWORD: "MonSuperMotDePasse"
  */

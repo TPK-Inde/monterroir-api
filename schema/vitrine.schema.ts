@@ -6,65 +6,65 @@
  *     Vitrine:
  *       type: object
  *       required:
- *         - ID_UTILISATEUR
- *         - ID_CATEGORIE_VITRINE
+ *         - ID_USER
+ *         - ID_CATEGORY_VITRINE
  *         - ID_TYPE_VITRINE
- *         - NOM
- *         - PHOTO
- *         - ADRESSE_RUE
- *         - ADRESSE_CODE_POSTAL
- *         - ADRESSE_VILLE
+ *         - NAME
+ *         - IMAGE
+ *         - ADDRESS_STREET
+ *         - ADDRESS_ZIP_CODE
+ *         - ADDRESS_CITY
  *         - DESCRIPTION
- *         - DATE_CREATION
- *         - ACTIF
+ *         - CREATION_DATE
+ *         - ACTIVATE
  *       properties:
  *         ID_VITRINE:
  *           type: int
  *           description: ID de la vitrine (Auto généré)
- *         ID_UTILISATEUR:
+ *         ID_USER:
  *           type: int
  *           description: ID de l'utilisateur propriétaire de la vitrine
- *         ID_CATEGORIE_VITRINE:
+ *         ID_CATEGORY_VITRINE:
  *           type: int
  *           description: ID de la catégorie de la vitrine
  *         ID_TYPE_VITRINE:
  *           type: int
  *           description: ID du type de la vitrine
- *         NOM:
+ *         NAME:
  *           type: string
  *           description: Nom de la vitrine
- *         PHOTO:
+ *         IMAGE:
  *           type: string
  *           description: Photo de la vitrine (en base 64)
- *         ADRESSE_RUE:
+ *         ADDRESS_STREET:
  *           type: string
  *           description: Rue de l'adresse de l'utilisateur
- *         ADRESSE_CODE_POSTAL:
+ *         ADDRESS_ZIP_CODE:
  *           type: string
  *           description: Code postal de l'adresse de l'utilisateur
- *         ADRESSE_VILLE:
+ *         ADDRESS_CITY:
  *           type: string
  *           description: Ville de l'adresse de l'utilisateur=
- *         DATE_CREATION:
+ *         CREATION_DATE:
  *           type: date
  *           description: Date de création de la vitrine
  *         DESCRIPTION:
  *           type: string
  *           description: Description de la vitrine
- *         ACTIF:
+ *         ACTIVATE:
  *           type: boolean
  *           description: Champ permettant de déterminer si une vitrine est activé ou non
  *       example:
  *         ID_VITRINE : 1
- *         ID_UTILISATEUR : 1
- *         ID_CATEGORIE_VITRINE : 1
+ *         ID_USER : 1
+ *         ID_CATEGORY_VITRINE : 1
  *         ID_TYPE_VITRINE : 1
- *         NOM : "Les choux de la ferme"
- *         PHOTO : "IMAGE_BASE_64"
- *         ADRESSE_RUE : "14 Rue du Général"
- *         ADRESSE_CODE_POSTAL : "76600"
- *         ADRESSE_VILLE : "Le Havre"
+ *         NAME : "Les choux de la ferme"
+ *         IMAGE : "IMAGE_BASE_64"
+ *         ADDRESS_STREET : "14 Rue du Général"
+ *         ADDRESS_ZIP_CODE : "76600"
+ *         ADDRESS_CITY : "Le Havre"
  *         DESCRIPTION : "Vendeur de choux depuis 10 ans"
- *         DATE_CREATION : 2022-01-01
- *         ACTIF : true
+ *         CREATION_DATE : 2022-01-01
+ *         ACTIVATE : true
  */
