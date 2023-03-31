@@ -6,43 +6,43 @@ import {
 //Todo : Ajouter le lien de dépendance avec la table P_STATUT_COMPTE
 @Table({
   timestamps: false,
-  tableName: 'f_utilisateurs'
+  tableName: 'f_users'
 })
-export class Utilisateur extends Model<Utilisateur> {
+export class User extends Model<User> {
   @PrimaryKey
   @Column
-  ID_UTILISATEUR: number;
+  ID_USER: number;
 
   @Column
-  ID_STATUT_COMPTE: number;
+  ID_ACCOUNT_STATUS: number;
 
   @Column
-  PSEUDONYME: string;
+  PSEUDONYM: string;
 
   @Column
-  NOM: string;
+  LAST_NAME: string;
 
   @Column
-  PRENOM: string;
+  FIRST_NAME: string;
 
   @Column
-  DATE_DE_NAISSANCE: Date;
+  DATE_OF_BIRTH: Date;
 
   @Column
-  ADRESSE_EMAIL: string;
+  EMAIL: string;
 
   @Column
-  ADRESSE_RUE: string;
+  ADDRESS_STREET: string;
 
   @Column
-  ADRESSE_CODE_POSTAL: string;
+  ADDRESS_ZIP_CODE: string;
 
   @Column
-  ADRESSE_VILLE: string;
+  ADDRESS_CITY: string;
 
   @Column
-  MOT_DE_PASSE: string;
+  PASSWORD: string;
 
   @Column
-  PHOTO_DE_PROFIL: string;
+  PROFIL_PICTURE: string;
 }

@@ -14,37 +14,37 @@ export class Vitrine extends Model<Vitrine> {
 
   //Todo : Ajouter le lien avec la table F_Utilisateur
   @Column
-  ID_UTILISATEUR: number;
+  ID_USER: number;
 
   //Todo ; Ajouter le lien avec la table P_Categorie_vitrine 
   @Column
-  ID_CATEGORIE_VITRINE: number;
+  ID_CATEGORY_VITRINE: number;
 
   //Todo : Ajouter le lien avec la table P_Type_Vitrine
   @Column
   ID_TYPE_VITRINE: number;
 
   @Column
-  NOM: string;
+  NAME: string;
 
   @Column
-  PHOTO: string;
+  IMAGE: string;
 
   @Column
-  ADRESSE_RUE: string;
+  ADDRESS_STREET: string;
 
   @Column
-  ADRESSE_CODE_POSTAL: string;
+  ADDRESS_ZIP_CODE: string;
 
   @Column
-  ADRESSE_VILLE: string;
+  ADDRESS_CITY: string;
 
   @Column
   DESCRIPTION: string;
 
   @Column
-  DATE_CREATION: Date;
+  CREATION_DATE: Date;
 
   @Column
-  ACTIF: Boolean;
+  ACTIVATE: Boolean;
 }

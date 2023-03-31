@@ -6,64 +6,64 @@
  *     Utilisateur:
  *       type: object
  *       required:
- *         - PSEUDONYME
- *         - NOM
- *         - PRENOM
- *         - DATE_DE_NAISSANCE
- *         - ADRESSE_EMAIL
- *         - ADRESSE_RUE
- *         - ADRESSE_CODE_POSTAL
- *         - ADRESSE_VILLE
- *         - MOT_DE_PASSE
+ *         - PSEUDONYM
+ *         - LAST_NAME
+ *         - FIRST_NAME
+ *         - DATE_OF_BIRTH
+ *         - EMAIL
+ *         - ADDRESS_STREET
+ *         - ADDRESS_ZIP_CODE
+ *         - ADDRESS_CITY
+ *         - PASSWORD
  *       properties:
- *         ID_UTILISATEUR:
+ *         ID_USER:
  *           type: int
  *           description: ID de l'utilisateur auto-généré
- *         ID_STATUT_COMPTE:
+ *         ID_ACCOUNT_STATUS:
  *           type: int
  *           description: ID du statut du compte
- *         PSEUDONYME:
+ *         PSEUDONYM:
  *           type: string
  *           description: Pseudo de l'utilisateur 
- *         NOM:
+ *         LAST_NAME:
  *           type: string
  *           description: Nom de famille de l'utilisateur
- *         PRENOM:
+ *         FIRST_NAME:
  *           type: string
  *           description: Prénom de l'utilisateur
- *         DATE_DE_NAISSANCE:
+ *         DATE_OF_BIRTH:
  *           type: date
  *           description: Date de naissance de l'utilisateur
- *         ADRESSE_EMAIL:
+ *         EMAIL:
  *           type: string
  *           format: Adresse email de l'utilisateur
  *           description: The date the book was added
- *         ADRESSE_RUE:
+ *         ADDRESS_STREET:
  *           type: string
  *           description: Rue de l'adresse de l'utilisateur
- *         ADRESSE_CODE_POSTAL:
+ *         ADDRESS_ZIP_CODE:
  *           type: string
  *           description: Code postal de l'adresse de l'utilisateur
- *         ADRESSE_VILLE:
+ *         ADDRESS_CITY:
  *           type: string
  *           description: Ville de l'adresse de l'utilisateur=
- *         MOT_DE_PASSE:
+ *         PASSWORD:
  *           type: string
  *           description: Mot de passe de l'utilisateur (BCRYPT)
- *         PHOTO_DE_PROFIL:
+ *         PROFIL_PICTURE:
  *           type: text
  *           description: Photo de profil de l'utilisateur BASE 64
  *       example:
- *         ID_UTILISATEUR : 1
- *         ID_STATUT_COMPTE : 1
- *         PSEUDONYME: "Marc_Dupond"
- *         NOM : "Dupond"
- *         PRENOM : "Marc"
- *         DATE_DE_NAISSANCE : 1995-03-10
- *         ADRESSE_EMAIL : "marc.dupond@exemple.com"
- *         ADRESSE_RUE : "14 Rue du Général"
- *         ADRESSE_CODE_POSTAL : "76600"
- *         ADRESSE_VILLE : "Le Havre"
- *         MOT_DE_PASSE : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
- *         PHOTO_DE_PROFIL : "image/2023/12/example.png"
+ *         ID_USER : 1
+ *         ID_ACCOUNT_STATUS : 1
+ *         PSEUDONYM: "Marc_Dupond"
+ *         LAST_NAME : "Dupond"
+ *         FIRST_NAME : "Marc"
+ *         DATE_OF_BIRTH : 1995-03-10
+ *         EMAIL : "marc.dupond@exemple.com"
+ *         ADDRESS_STREET : "14 Rue du Général"
+ *         ADDRESS_ZIP_CODE : "76600"
+ *         ADDRESS_CITY : "Le Havre"
+ *         PASSWORD : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
+ *         PROFIL_PICTURE : "image/2023/12/example.png"
  */

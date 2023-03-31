@@ -1,7 +1,7 @@
 import express from 'express';
 
 const router = express.Router();
-const utilisateurs = require('../services/utilisateurs.ts');
+const users = require('../services/user.ts');
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
@@ -11,7 +11,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs:
+ * /users:
  *   get:
  *     summary: Permet de récupérer la liste des utilisateurs, (25 retours par page)
  *     tags: [Utilisateurs]
@@ -45,14 +45,14 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', jwtAuthentification, utilisateurs.findAll); //Route nécessitant un token
+router.get('/', jwtAuthentification, users.findAll); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs/{id}:
+ * /users/{id}:
  *   get:
  *     summary: Permet de récupérer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
@@ -87,14 +87,14 @@ router.get('/', jwtAuthentification, utilisateurs.findAll); //Route nécessitant
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', jwtAuthentification, utilisateurs.findOne); //Route nécessitant un token
+router.get('/:id', jwtAuthentification, users.findOne); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs/authentification:
+ * /users/authentification:
  *   post:
  *     summary: Permet de vérifier l'authentification d'un utilisateur
  *     tags: [Utilisateurs]
@@ -129,14 +129,14 @@ router.get('/:id', jwtAuthentification, utilisateurs.findOne); //Route nécessit
  *         description: Erreur du serveur interne
  *
  */
-router.post('/authentification', utilisateurs.authUser);
+router.post('/authentification', users.authUser);
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs:
+ * /users:
  *   post:
  *     summary: Permet d'ajouter un nouvelle utilisateur
  *     tags: [Utilisateurs]
@@ -167,14 +167,14 @@ router.post('/authentification', utilisateurs.authUser);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', utilisateurs.addOne);
+router.post('/', users.addOne);
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs/{id}:
+ * /users/{id}:
  *   put:
  *     summary: Permet de modifier un utilisateur en fonction de son ID, si le mot de passe n'est pas renseigné le mot de passe ne change pas
  *     tags: [Utilisateurs]
@@ -225,14 +225,14 @@ router.post('/', utilisateurs.addOne);
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessitant un token
+router.put('/:id', jwtAuthentification, users.update); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /utilisateurs/{id}:
+ * /users/{id}:
  *   delete:
  *     summary: Permet de supprimer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
@@ -275,6 +275,6 @@ router.put('/:id', jwtAuthentification, utilisateurs.update); //Route nécessita
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, utilisateurs.delete); //Route nécessitant un token
+router.delete('/:id', jwtAuthentification, users.delete); //Route nécessitant un token
 
 module.exports = router;

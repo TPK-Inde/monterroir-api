@@ -64,14 +64,14 @@ app.use(
   swaggerUi.setup(specs)
 );
 
-app.get("/api-docs.json", function(req, res){
+app.get("/api-docs.json", function (req, res) {
   res.status(200).send(specs);
 });
 
 app.use(express.json());
 
 //Routes API
-app.use("/utilisateurs", utilisateursRouter);
+app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
 
 module.exports = app;
