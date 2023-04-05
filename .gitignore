@@ -1,3 +1,4 @@
 #Répertoire des dépendances
 node_modules
 .ENV.development
+.ENV
