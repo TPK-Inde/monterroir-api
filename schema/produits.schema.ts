@@ -1,4 +1,4 @@
-//Documentation du schéma Utilisateur
+//Documentation du schéma des produits
 /**
  * @swagger
  * components:
