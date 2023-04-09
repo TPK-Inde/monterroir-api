@@ -15,6 +15,6 @@
  *           type: string
  *           description: Libellé de la catégorie
  *       example:
- *         ID_USER : 1
+ *         ID_CATEGORY_VITRINE : 1
  *         WORDING : "Potager"
  */

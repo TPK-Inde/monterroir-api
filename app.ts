@@ -10,6 +10,7 @@ const swaggerUi = require("swagger-ui-express");
 //Constante de route
 const utilisateursRouter = require("./routes/utilisateurs.route.ts");
 const vitrinesRouter = require("./routes/vitrines.route.ts");
+const categoriesVitrineRouter = require("./routes/categorieVitrine.route.ts");
 
 const app = express();
 
@@ -73,5 +74,6 @@ app.use(express.json());
 //Routes API
 app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
+app.use("/categoriesVitrine", categoriesVitrineRouter);
 
 module.exports = app;
