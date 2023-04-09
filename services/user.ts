@@ -192,7 +192,7 @@ function hashPassword(password: string): Promise<string> {
 //Fonction permettant de générer un token
 function generateAccessToken(donneesUtilisateur: User) {
     return new Promise((resolve, reject) => {
-        resolve(jwt.sign({ "ID_UTILISATEUR": donneesUtilisateur.ID_USER, "PSEUDONYME": donneesUtilisateur.PSEUDONYM }, config.token_secret, { expiresIn: config.token_life }))
+        resolve(jwt.sign({ "ID_USER": donneesUtilisateur.ID_USER, "PSEUDONYM": donneesUtilisateur.PSEUDONYM }, config.token_secret, { expiresIn: config.token_life }))
     })
 }
 
