@@ -3,7 +3,7 @@ import { Vitrine } from "../models/Vitrine";
 import jwt_decode from "jwt-decode";
 import { User } from "../models/User";
 
-//Fonction permettant de récupérer un utilisateur via son ID
+//Fonction permettant de récupérer un produit via son ID
 exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Product | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
     const idProduct = req.params.id;
 
@@ -23,7 +23,7 @@ exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number)
         })
 }
 
-//Fonction d'ajout d'un utilisateur
+//Fonction d'ajout d'un porduit
 exports.addOne = async (req: { body: Product, headers: { [x: string]: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
     //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Produit
     req.body.ID_PRODUCT = 0;
@@ -59,7 +59,7 @@ exports.addOne = async (req: { body: Product, headers: { [x: string]: any; }; },
     }
 }
 
-//Fonction de modification d'un utilisateur
+//Fonction de modification d'un produit
 exports.update = (req: { params: { id: number; }; body: Product, headers: { [x: string]: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
     const idProduct = req.params.id;
 
@@ -109,7 +109,7 @@ exports.update = (req: { params: { id: number; }; body: Product, headers: { [x: 
         })
 }
 
-//Fonction de suppression d'un utilisateur
+//Fonction de suppression d'un produit
 exports.delete = async (req: { params: { id: number; }, headers: { [x: string]: any; }; }, res: { send: (arg0: { message: string; }) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: string; }): void; new(): any; }; }; }) => {
     const idProduct = req.params.id;
 
