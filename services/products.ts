@@ -23,7 +23,7 @@ exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number)
         })
 }
 
-//Fonction d'ajout d'un porduit
+//Fonction d'ajout d'un produit
 exports.addOne = async (req: { body: Product, headers: { [x: string]: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
     //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Produit
     req.body.ID_PRODUCT = 0;
@@ -115,7 +115,7 @@ exports.delete = async (req: { params: { id: number; }, headers: { [x: string]: 
 
     await Product.findByPk(idProduct)
         .then(async data => {
-            if (data == null){ res.status(400).send({ message: `Le produit id ${idProduct} n'existe pas, il ne peux donc pas être supprimé` }) }
+            if (data == null){ res.status(400).send({ message: `Le produit id ${idProduct} n'existe pas, il ne peut donc pas être supprimé` }) }
 
             //Vérification si propriétaire vitrine 
             const ownerCheck = await checkVitrineOwner(data!.ID_VITRINE, req.headers['authorization'])
@@ -133,7 +133,7 @@ exports.delete = async (req: { params: { id: number; }, headers: { [x: string]: 
                             res.send({ message: `Le produit id ${idProduct} a bien été supprimé` })
                         }
                         else {
-                            res.status(400).send({ message: `Le produit id ${idProduct} n'a pas pu être supprimé, peut-être que cette id n'exite pas ?` })
+                            res.status(400).send({ message: `Le produit id ${idProduct} n'a pas pu être supprimé, peut-être que cet id n'exite pas ?` })
                         }
                     })
                     .catch((err: { message: string; }) => {
