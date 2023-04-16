@@ -1,4 +1,5 @@
 require('dotenv');
+import bodyParser from 'body-parser';
 import express from 'express';
 const db = require("./sequelize/db"); //NE PAS RETIRER, PERMET D'INITIER LA CONNEXION A LA BASE DE DONNEES
 //Todo : Trouver un autre moyen d'initier la connexion
@@ -69,6 +70,7 @@ app.get("/api-docs.json", function (req, res) {
   res.status(200).send(specs);
 });
 
+app.use(bodyParser.json());
 app.use(express.json());
 
 //Routes API

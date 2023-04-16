@@ -2,8 +2,6 @@ import { CommentRepository } from "../Lib/Repositories/CommentRepository";
 import { Comment } from "../models/Comment";
 import { CommentDTO } from "../Lib/DTO/CommentDTO";
 import { Request, Response } from 'express';
-import { error } from "console";
-import { ParamsDictionary } from "express-serve-static-core";
 
 class Comments {
     // Constructor 
@@ -67,7 +65,7 @@ class Comments {
             try {
                 await commentRepository.GetUserComments(req.params.ID_USER)
                 .then((data: Comment[]) => {
-                    if(data != null){
+                    if(data != null && data.length > 0){
                         res.status(200).send(data);
                     } else {
                         res.status(204).send();
@@ -90,18 +88,49 @@ class Comments {
     // Post Method
     public async PostNewComment(req: Request, res: Response) {
         const commentRepository = new CommentRepository();
+        console.log(req.body.ID_USER)
         try {
             let newComment: CommentDTO = new CommentDTO;
-            newComment.ID_RATE = req.body.ID_RATE
-            newComment.ID_USER = req.body.ID_USER
-            newComment.ID_PARENT = req.body.ID_PARENT
-            newComment.COMMENT = req.body.COMMENT
-            newComment.DATE = req.body.DATE
+            if(req.body.ID_RATE != null) {
+                newComment.ID_RATE = req.body.ID_RATE
+            } else {
+                res.status(400).send({
+                    message: "L'ID_RATE est NULL"
+                })
+            }
+            if(req.body.ID_USER != null){
+                newComment.ID_USER = req.body.ID_USER
+            } else {
+                res.status(400).send({
+                    message: "L'ID_USER est NULL"
+                })
+            }
+            if(req.body.ID_PARENT != null){
+                newComment.ID_PARENT = req.body.ID_PARENT
+            } else {
+                res.status(400).send({
+                    message: "L'ID_PARENT est NULL"
+                })
+            }
+            if(req.body.COMMENT != null){
+                newComment.COMMENT = req.body.COMMENT
+            } else {
+                res.status(400).send({
+                    message: "Le COMMENT est NULL"
+                })
+            }
+            if(req.body.DATE != null){
+                newComment.DATE = req.body.DATE
+            } else {
+                res.status(400).send({
+                    message: "La DATE est NULL"
+                })
+            }
             await commentRepository.PostNewComment(newComment)
                 .then(() => res.status(204).send())
                 .catch((err: { message: any; }) => {
                     res.status(400).send({
-                        message: err.message || "Une erreur s'est produite de l'envoi du nouveau commentaire"
+                        message: err.message || "Une erreur s'est produite de l'envoi du nouveau commentaire, l'un des paramètres est NULL"
                     })
                 })
         } catch (error: any) {
@@ -138,26 +167,45 @@ class Comments {
     public async DeleteComment(req: Request, res: Response) {
         const commentRepository = new CommentRepository();
         try {
-            commentRepository.DeleteComment(req.params.ID_COMMENT)
-            .then(rowDeleted => {
-                if(rowDeleted == 1){
-                    res.status(200).send({ 
-                        message: `Le commentaire d'ID_COMMENT ${req.params.ID_COMMENT} a bien été supprimé.`});
-                } else {
+            if(parseInt(req.params.ID_COMMENT) > 0) {
+                commentRepository.DeleteComment(req.params.ID_COMMENT)
+                .then(rowDeleted => {
+                    if(rowDeleted == 1){
+                        res.status(200).send({ 
+                            message: `Le commentaire d'ID_COMMENT ${req.params.ID_COMMENT} a bien été supprimé.`});
+                    } else {
+                        res.status(400).send({
+                            message: `Le commentaire d'ID_COMMENT ${req.params.ID_COMMENT} n'a pas pu être supprimé (rowDeleted = ${rowDeleted})`
+                        });
+                    }
+                }).catch((err: {message: any;}) => {
                     res.status(400).send({
-                        message: `Le commentaire d'ID_COMMENT ${req.params.ID_COMMENT} n'a pas pu être supprimé (rowDeleted = ${rowDeleted})`
-                    });
-                }
-            }).catch((err: {message: any;}) => {
-                res.status(400).send({
-                    message: err.message || "Une erreur s'est produite lors de la suppression du commentaire."
+                        message: err.message || "Une erreur s'est produite lors de la suppression du commentaire."
+                    })
                 })
-            })
+            } else {
+                res.status(400).send({
+                    message: "l'ID n'est pas correcte."
+                })
+            }
         }catch (error: any) {
             res.status(500).send({
                 message: error.message || "Une erreur s'est produite lors de la suppression du commentaire."
             })
         }
+    }
+
+    
+    private CheckFuckingData(req: Request): boolean {
+        console.log(req.body.bodyParser.COMMENT);
+    //     let property: keyof typeof dataToCheck;
+    //     for(property in dataToCheck) {
+    //         if(dataToCheck[property] == null) {
+    //             return false
+    //         }
+    //         console.log(`property = ${property}, dataToCheck[property] = ${dataToCheck[property]}`)
+    //     }
+        return true;
     }
 }
 
