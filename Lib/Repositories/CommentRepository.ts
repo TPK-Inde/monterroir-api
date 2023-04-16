@@ -18,11 +18,7 @@ export class CommentRepository implements ICommentRepository {
     }
     async GetCommentById(id: string): Promise<Comment|null> {
         const comment = await this.commentRepository.findByPk(id);
-        if (comment != null) {
-            return comment
-        } else {
-            return new Comment();
-        }
+        return comment;
     }
     async GetUserComments(userId: string): Promise<Comment[]> {        
         const commentsOfuser = await this.commentRepository.findAll({
@@ -38,7 +34,7 @@ export class CommentRepository implements ICommentRepository {
         }
     }
     async PostNewComment(newComment: CommentDTO): Promise<void> {
-        const postComment = await this.commentRepository.create({
+        await this.commentRepository.create({
             ID_RATE: newComment.ID_RATE,
             ID_USER: newComment.ID_USER,
             ID_PARENT: newComment.ID_PARENT,
@@ -59,17 +55,17 @@ export class CommentRepository implements ICommentRepository {
             }
         });
     }
-    async DeleteComment(commentId: string, res: Response): Promise<void> {
+    async DeleteComment(commentId: string): Promise<number> {
+        let rowIsDeleted: number = 0;
         await this.commentRepository.destroy({
             where: {
                 ID_COMMENT: commentId
             }
-        }).then((num: number) => {
-            if(num == 1) {
-                res.send({message: `Le commentaire d'ID_COMMENT ${commentId} a bien été supprimé.`})
-            } else {
-                res.status(400).send({message: `Le commentaire d'ID_COMMENT ${commentId} n'a pas pu être supprimé. Veuillez vérifier que cet ID_COMMENT existe.`})
+        }).then(rowDeleted => {
+            if(rowDeleted === 1) {
+                rowIsDeleted = 1;
             }
         })
-    }
+        return rowIsDeleted
+    }    
 }

@@ -9,5 +9,5 @@ export interface ICommentRepository {
     GetUserComments(userId: string): Promise<Comment[]>;
     PostNewComment(newComment: CommentDTO): void;
     PutComment(commentToModify: CommentDTO): void;
-    DeleteComment(commentId: string, res: Response): void;
+    DeleteComment(commentId: string): Promise<number>;
 }
