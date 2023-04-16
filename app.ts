@@ -1,4 +1,5 @@
 require('dotenv');
+import bodyParser from 'body-parser';
 import express from 'express';
 const db = require("./sequelize/db"); //NE PAS RETIRER, PERMET D'INITIER LA CONNEXION A LA BASE DE DONNEES
 //Todo : Trouver un autre moyen d'initier la connexion
@@ -10,6 +11,7 @@ const swaggerUi = require("swagger-ui-express");
 //Constante de route
 const utilisateursRouter = require("./routes/utilisateurs.route.ts");
 const vitrinesRouter = require("./routes/vitrines.route.ts");
+const commentsRouter = require("./routes/comments.route.ts");
 const productsRouter = require("./routes/products.route.ts");
 
 const app = express();
@@ -69,11 +71,13 @@ app.get("/api-docs.json", function (req, res) {
   res.status(200).send(specs);
 });
 
+app.use(bodyParser.json());
 app.use(express.json());
 
 //Routes API
 app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
+app.use("/comments", commentsRouter);
 app.use("/products", productsRouter);
 
 module.exports = app;
