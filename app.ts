@@ -12,6 +12,7 @@ const swaggerUi = require("swagger-ui-express");
 const utilisateursRouter = require("./routes/utilisateurs.route.ts");
 const vitrinesRouter = require("./routes/vitrines.route.ts");
 const commentsRouter = require("./routes/comments.route.ts");
+const productsRouter = require("./routes/products.route.ts");
 
 const app = express();
 
@@ -77,5 +78,6 @@ app.use(express.json());
 app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
 app.use("/comments", commentsRouter);
+app.use("/products", productsRouter);
 
 module.exports = app;
