@@ -2,6 +2,7 @@ import { ICommentRepository } from "../IRepositories/ICommentRepository";
 import sequelize from "../../sequelize/db";
 import { Comment } from "../../models/Comment";
 import { CommentDTO } from "../DTO/CommentDTO";
+import { Response } from 'express';
 
 export class CommentRepository implements ICommentRepository {
 
@@ -13,10 +14,9 @@ export class CommentRepository implements ICommentRepository {
 
     async GetAllComments(): Promise<Comment[]> {
         const comments = await this.commentRepository.findAll();
-        const result = JSON.stringify(comments, null, 2);
         return comments;
     }
-    async GetCommentById(id: string): Promise<Comment> {
+    async GetCommentById(id: string): Promise<Comment|null> {
         const comment = await this.commentRepository.findByPk(id);
         if (comment != null) {
             return comment
@@ -59,10 +59,16 @@ export class CommentRepository implements ICommentRepository {
             }
         });
     }
-    async DeleteComment(commentId: string): Promise<void> {
+    async DeleteComment(commentId: string, res: Response): Promise<void> {
         await this.commentRepository.destroy({
             where: {
                 ID_COMMENT: commentId
+            }
+        }).then((num: number) => {
+            if(num == 1) {
+                res.send({message: `Le commentaire d'ID_COMMENT ${commentId} a bien été supprimé.`})
+            } else {
+                res.status(400).send({message: `Le commentaire d'ID_COMMENT ${commentId} n'a pas pu être supprimé. Veuillez vérifier que cet ID_COMMENT existe.`})
             }
         })
     }

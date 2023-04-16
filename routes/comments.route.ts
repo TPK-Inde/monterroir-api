@@ -21,18 +21,7 @@ const jwAuthentification = require("../middleware/jwtAuthentification");
  *             schema:
  *               $ref: '#/components/schemas/Comment'
  *       204:
- *         description: Aucun commentaire trouvé avec l'ID indiqué
- *       401:
- *         description: Token vide ou invalide
- *       403:
- *         description: Token expiré ou pas les droits nécessaires
- *         content: 
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Message'
- *             example:
- *               -  message: "Le token a expiré"
- *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
+ *         description: Aucun commentaire n'est présent dans la base de données
  *       500:
  *         description: Erreur du serveur interne
  * 
@@ -130,7 +119,7 @@ router.get('/user/:ID_USER', commentsService.GetUserComments);
  * tags:
  *   name: Commentaires
  *   description: CRUD commentaire
- * /comments/authentification:
+ * /comments:
  *   post:
  *     summary: Permet de poster un nouveau commentaire
  *     tags: [Commentaires]
@@ -160,7 +149,7 @@ router.get('/user/:ID_USER', commentsService.GetUserComments);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/authentification', commentsService.PostNewComment)
+router.post('/', commentsService.PostNewComment)
 
 
 /**
@@ -193,14 +182,14 @@ router.post('/authentification', commentsService.PostNewComment)
  *             schema:
  *               $ref: '#/components/schemas/MessageAvecBoolean'
  *       400:
- *         description: Echec lors de l'enregistrement du commentaire.
+ *         description: Echec lors de la modification du commentaire.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/MessageAvecBoolean'
  *             example:
  *               -  resultat: false
- *                  message: "Echec lors de l'enregistrement du commentaire"
+ *                  message: "Echec lors de la modification du commentaire"
  *       500:
  *         description: Erreur du serveur interne
  *
@@ -225,13 +214,13 @@ router.put('/:ID_COMMENT', commentsService.PutComment)
  *         description: ID du commentaire
  *     responses:
  *       200:
- *         description: La suppression du commentaire a réussit.
+ *         description: La suppression du commentaire a réussie.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "La suppression du commentaire a réussit." 
+ *               message: "La suppression du commentaire a réussie." 
  *       400:
  *         description: Quelque chose a empêché la suppression de l'utilisateur
  *         content:
@@ -239,18 +228,7 @@ router.put('/:ID_COMMENT', commentsService.PutComment)
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Le commentaire d'id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?"  
- *       401:
- *         description: Token vide ou invalide
- *       403:
- *         description: Token expiré ou pas les droits nécessaires
- *         content: 
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Message'
- *             example:
- *               -  message: "Le token a expiré"
- *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"              
+ *               message: "Le commentaire d'id 1 n'a pas pu être supprimé, peut-être que cette id n'exite pas ?"             
  *       500:
  *         description: Erreur du serveur interne
  *
