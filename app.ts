@@ -13,6 +13,7 @@ const utilisateursRouter = require("./routes/utilisateurs.route.ts");
 const vitrinesRouter = require("./routes/vitrines.route.ts");
 const commentsRouter = require("./routes/comments.route.ts");
 const productsRouter = require("./routes/products.route.ts");
+const orderHeaderRouter = require("./routes/orderheader.route.ts");
 
 const app = express();
 
@@ -79,5 +80,6 @@ app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
 app.use("/comments", commentsRouter);
 app.use("/products", productsRouter);
+app.use("/orderheader", orderHeaderRouter);
 
 module.exports = app;
