@@ -26,20 +26,20 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Une erreur s'est produite lors de la récupération de toutes les catégories de vitrine
  *
  */
-router.get('/', categoryVitrine.findAll);
+router.get('/', categoryVitrine.GetAll);
 
 /**
  * @swagger
  * tags:
  *   name: Catégories vitrine
  *   description: CRUD catégories vitrine
- * /categoriesVitrine/{id}:
+ * /categoriesVitrine/{ID_CATEGORY_VITRINE}:
  *   get:
  *     summary: Permet de récupérer une catégorie de vitrine en fonction de son ID
  *     tags: [Catégories vitrine]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_CATEGORY_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -57,7 +57,7 @@ router.get('/', categoryVitrine.findAll);
  *         description: Une erreur s'est produite lors de la récupération d'une catégorie de vitrine
  *
  */
-router.get('/:id', categoryVitrine.findOne);
+router.get('/:ID_CATEGORY_VITRINE', categoryVitrine.GetById);
 
 /**
  * @swagger
@@ -95,20 +95,20 @@ router.get('/:id', categoryVitrine.findOne);
  *         description: Une erreur s'est produite lors de la création de la catégorie de vitrine
  *
  */
-router.post('/', jwtAuthentification, categoryVitrine.addOne);//Route nécessitant un token
+router.post('/', jwtAuthentification, categoryVitrine.PostNewCategoryVitrine);//Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Catégories vitrine
  *   description: CRUD catégories vitrine
- * /categoriesVitrine/{id}:
+ * /categoriesVitrine/{ID_CATEGORY_VITRINE}:
  *   put:
  *     summary: Permet de modifier une catégorie de vitrine en fonction de son ID
  *     tags: [Catégories vitrine]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_CATEGORY_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -153,20 +153,20 @@ router.post('/', jwtAuthentification, categoryVitrine.addOne);//Route nécessita
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, categoryVitrine.update);//Route nécessitant un token
+router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrine.PutCategoryVitrine);//Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Catégories vitrine
  *   description: CRUD catégories vitrine
- * /categoriesVitrine/{id}:
+ * /categoriesVitrine/{ID_CATEGORY_VITRINE}:
  *   delete:
  *     summary: Permet de supprimer une catégorie de vitrine en fonction de son ID
  *     tags: [Catégories vitrine]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_CATEGORY_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -203,6 +203,6 @@ router.put('/:id', jwtAuthentification, categoryVitrine.update);//Route nécessi
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, categoryVitrine.delete); //Route nécessitant un token
+router.delete('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrine.DeleteCategoryVitrine); //Route nécessitant un token
 
 module.exports = router;

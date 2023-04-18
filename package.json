@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.ts",
   "scripts": {
-    "devStart": "dotenv -e .env.development nodemon server.ts",
+    "dev": "dotenv -e .env.development nodemon server.ts",
     "start": "nodemon server.ts",
     "test": "dotenv -e .env.development jest"
   },
