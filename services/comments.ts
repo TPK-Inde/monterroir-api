@@ -3,15 +3,20 @@ import { Comment } from "../models/Comment";
 import { CommentDTO } from "../Lib/DTO/CommentDTO";
 import { Request, Response } from 'express';
 
-class Comments {
+export default class Comments {
+
+    // Propriétés
+    _repository: CommentRepository;
+
     // Constructor 
-    constructor() {}
+    constructor() {
+        this._repository = new CommentRepository();
+    }
 
     // Get Methods
     public async GetAll(req: Request, res: Response) {
-        const commentRepository = new CommentRepository();
         try {
-            await commentRepository.GetAllComments()
+            await this._repository.GetAllComments()
                 .then((data: Comment[]) => {
                     if(data != null && data.length > 0) {
                         res.status(200).send(data);
@@ -32,10 +37,9 @@ class Comments {
     }
 
     public async GetById(req: Request, res: Response) {
-        const commentRepository = new CommentRepository();
         if(parseInt(req.params.ID) > 0){
             try {
-                await commentRepository.GetCommentById(req.params.ID)
+                await this._repository.GetCommentById(req.params.ID)
                 .then((data: Comment|null) => {
                     if(data != null) {
                         res.status(200).send(data);
@@ -59,11 +63,10 @@ class Comments {
         }
     }
 
-    public async GetUserComments(req: Request, res: Response) {        
-        const commentRepository = new CommentRepository();
+    public async GetUserComments(req: Request, res: Response) { 
         if(parseInt(req.params.ID_USER) > 0) {
             try {
-                await commentRepository.GetUserComments(req.params.ID_USER)
+                await this._repository.GetUserComments(req.params.ID_USER)
                 .then((data: Comment[]) => {
                     if(data != null && data.length > 0){
                         res.status(200).send(data);
@@ -87,7 +90,6 @@ class Comments {
 
     // Post Method
     public async PostNewComment(req: Request, res: Response) {
-        const commentRepository = new CommentRepository();
         try {
             let newComment: CommentDTO = new CommentDTO;
             if(req.body.ID_RATE != null) {
@@ -125,7 +127,7 @@ class Comments {
                     message: "La DATE est NULL"
                 })
             }
-            await commentRepository.PostNewComment(newComment)
+            await this._repository.PostNewComment(newComment)
                 .then(() => res.status(204).send())
                 .catch((err: { message: any; }) => {
                     res.status(400).send({
@@ -140,7 +142,6 @@ class Comments {
     }
 
     public async PutComment(req: Request, res: Response) {
-        const commentRepository = new CommentRepository();
         try {
             let commentToModify: CommentDTO = new CommentDTO;
             commentToModify.ID_COMMENT = parseInt(req.params.ID_COMMENT)
@@ -149,7 +150,7 @@ class Comments {
             commentToModify.ID_PARENT = req.body.ID_PARENT;
             commentToModify.COMMENT = req.body.COMMENT;
             commentToModify.DATE = req.body.DATE;
-            await commentRepository.PutComment(commentToModify)
+            await this._repository.PutComment(commentToModify)
             .then(() => res.status(204).send())
             .catch((err: { message: any; }) => {
                 res.status(400).send({
@@ -164,10 +165,9 @@ class Comments {
     }
 
     public async DeleteComment(req: Request, res: Response) {
-        const commentRepository = new CommentRepository();
         try {
             if(parseInt(req.params.ID_COMMENT) > 0) {
-                commentRepository.DeleteComment(req.params.ID_COMMENT)
+                this._repository.DeleteComment(req.params.ID_COMMENT)
                 .then(rowDeleted => {
                     if(rowDeleted == 1){
                         res.status(200).send({ 
