@@ -1,4 +1,4 @@
-//Documentation du schéma Vitrine
+//Documentation du schéma En-têtes de commandes
 /**
  * @swagger
  * components:
