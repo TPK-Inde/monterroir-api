@@ -1,21 +1,27 @@
 import { CategoryVitrine } from "../../models/CategoryVitrine";
+import sequelize from "../../sequelize/db";
 import { ICategoryVitrineRepository } from "../IRepositories/ICategoryVitrineRepository"
 
 export class CategoryVitrineRepository implements ICategoryVitrineRepository {
-  async GetAllCategoryVitrine(): Promise<CategoryVitrine[]> {
-    return CategoryVitrine.findAll();
+  //Properties
+  categoryVitrineRepository = sequelize.getRepository(CategoryVitrine);
+
+  constructor() { }
+
+  async GetAll(): Promise<CategoryVitrine[]> {
+    return await this.categoryVitrineRepository.findAll();
   }
-  async GetCategoryVitrineById(id: string): Promise<CategoryVitrine | null> {
-    return CategoryVitrine.findByPk(id);
+  async GetById(id: string): Promise<CategoryVitrine | null> {
+    return await this.categoryVitrineRepository.findByPk(id);
   }
   async PostNewCategoryVitrine(newCategoryVitrine: CategoryVitrine): Promise<void> {
-    CategoryVitrine.create(newCategoryVitrine);
+    await this.categoryVitrineRepository.create(newCategoryVitrine);
   }
   async PutCategoryVitrine(categoryVitrineToModify: CategoryVitrine): Promise<void> {
-    CategoryVitrine.update(categoryVitrineToModify, { where: { ID_CATEGORY_VITRINE: categoryVitrineToModify.ID_CATEGORY_VITRINE } });
+    await this.categoryVitrineRepository.update(categoryVitrineToModify, { where: { ID_CATEGORY_VITRINE: categoryVitrineToModify.ID_CATEGORY_VITRINE } });
   }
   async DeleteCategoryVitrine(categoryVitrineId: string): Promise<number> {
-    return CategoryVitrine.destroy({ where: { ID_CATEGORY_VITRINE: categoryVitrineId } });
+    return this.categoryVitrineRepository.destroy({ where: { ID_CATEGORY_VITRINE: categoryVitrineId } });
   }
 
 }

@@ -1,10 +1,14 @@
 import express from 'express';
+import CategoriesVitrine from '../services/categoriesVitrine';
 
 const router = express.Router();
 const categoryVitrine = require('../services/categoriesVitrine.ts');
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
+
+//Constante de service
+const categoryVitrineService = new CategoriesVitrine();
 
 /**
  * @swagger
@@ -22,11 +26,13 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/CategorieVitrine'
+ *       204:
+ *         description: Aucune catégorie de vitrine trouvé dans la base de données
  *       500:
  *         description: Une erreur s'est produite lors de la récupération de toutes les catégories de vitrine
  *
  */
-router.get('/', categoryVitrine.GetAll);
+router.get('/', categoryVitrineService.GetAll);
 
 /**
  * @swagger
@@ -57,7 +63,7 @@ router.get('/', categoryVitrine.GetAll);
  *         description: Une erreur s'est produite lors de la récupération d'une catégorie de vitrine
  *
  */
-router.get('/:ID_CATEGORY_VITRINE', categoryVitrine.GetById);
+router.get('/:ID_CATEGORY_VITRINE', categoryVitrineService.GetById);
 
 /**
  * @swagger
@@ -95,7 +101,7 @@ router.get('/:ID_CATEGORY_VITRINE', categoryVitrine.GetById);
  *         description: Une erreur s'est produite lors de la création de la catégorie de vitrine
  *
  */
-router.post('/', jwtAuthentification, categoryVitrine.PostNewCategoryVitrine);//Route nécessitant un token
+router.post('/', jwtAuthentification, categoryVitrineService.PostNewCategoryVitrine);//Route nécessitant un token
 
 /**
  * @swagger
@@ -153,7 +159,7 @@ router.post('/', jwtAuthentification, categoryVitrine.PostNewCategoryVitrine);//
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrine.PutCategoryVitrine);//Route nécessitant un token
+router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrineService.PutCategoryVitrine);//Route nécessitant un token
 
 /**
  * @swagger
@@ -203,6 +209,6 @@ router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrine.PutCate
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrine.DeleteCategoryVitrine); //Route nécessitant un token
+router.delete('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrineService.DeleteCategoryVitrine); //Route nécessitant un token
 
 module.exports = router;

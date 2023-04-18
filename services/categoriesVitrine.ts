@@ -2,7 +2,7 @@ import { CategoryVitrineRepository } from "../Lib/Repositories/CategoryVitrineRe
 import { CategoryVitrine } from "../models/CategoryVitrine";
 import { Request, Response } from "express";
 
-class CategoriesVitrine {
+export default class CategoriesVitrine {
 
   constructor() { }
 
@@ -11,7 +11,7 @@ class CategoriesVitrine {
     const categoryVitrineRepository = new CategoryVitrineRepository();
 
     try {
-      await categoryVitrineRepository.GetAllCategoryVitrine()
+      await categoryVitrineRepository.GetAll()
         .then((data: CategoryVitrine[]) => {
           if (data != null && data.length > 0) {
             res.status(200).send(data);
@@ -39,7 +39,7 @@ class CategoriesVitrine {
 
     try {
       if (parseInt(idCategorieVitrine) > 0) {
-        await categoryVitrineRepository.GetCategoryVitrineById(idCategorieVitrine)
+        await categoryVitrineRepository.GetById(idCategorieVitrine)
           .then((data: CategoryVitrine | null) => {
             if (data != null) {
               res.status(200).send(data);
@@ -140,11 +140,3 @@ class CategoriesVitrine {
     }
   }
 }
-
-const categoriesVitrineService = new CategoriesVitrine();
-
-exports.GetAll = categoriesVitrineService.GetAll;
-exports.GetById = categoriesVitrineService.GetById;
-exports.PostNewCategoryVitrine = categoriesVitrineService.PostNewCategoryVitrine;
-exports.PutCategoryVitrine = categoriesVitrineService.PutCategoryVitrine;
-exports.DeleteCategoryVitrine = categoriesVitrineService.DeleteCategoryVitrine;
