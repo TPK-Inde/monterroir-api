@@ -66,7 +66,7 @@ export class CommentRepository implements ICommentRepository {
                 rowIsDeleted = 1;
             }
         })
-        return rowIsDeleted
+        return rowIsDeleted;
     }
     
 }
