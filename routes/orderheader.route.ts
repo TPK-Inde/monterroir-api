@@ -12,7 +12,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  * /orderheader:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes, (25 retours par page)
- *     tags: [OrderHeader]
+ *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: query
  *         name: page
@@ -40,7 +40,7 @@ router.get('/', jwtAuthentification, orderHeaderService.findAll);
  * /orderheader/{id}:
  *   get:
  *     summary: Permet de récupérer un en-tête de commande en fonction de son ID
- *     tags: [OrderHeader]
+ *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
  *         name: id
@@ -67,10 +67,10 @@ router.get('/:id', jwtAuthentification, orderHeaderService.findOne )
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /vitrines/utilisateur/{id}:
+ * /orderheader/utilisateur/{id}:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur
- *     tags: [OrderHeader]
+ *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
  *         name: id
@@ -80,15 +80,15 @@ router.get('/:id', jwtAuthentification, orderHeaderService.findOne )
  *         description: ID de l'utilisateur
  *     responses:
  *       200:
- *         description: La récupération des vitrines a réussit.
+ *         description: La récupération des en-tête de commandes a réussit.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/OrderHeader'
  *       204:
- *         description: Aucune vitrine trouvé avec l'ID utilisateur indiqué
+ *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
  *       500:
- *         description: Une erreur s'est produite lors de la récupération des vitrines d'un utilisateur
+ *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
 router.get('/utilisateur/:id', jwtAuthentification, orderHeaderService.findFromUser )
@@ -97,10 +97,10 @@ router.get('/utilisateur/:id', jwtAuthentification, orderHeaderService.findFromU
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /vitrines/utilisateur/{id}:
+ * /orderheader/status/{id}:
  *   get:
- *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur
- *     tags: [OrderHeader]
+ *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur selon le status de la commande
+ *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
  *         name: id
@@ -116,15 +116,15 @@ router.get('/utilisateur/:id', jwtAuthentification, orderHeaderService.findFromU
  *            $ref: '#/components/schemas/OrderHeader'
  *     responses:
  *       200:
- *         description: La récupération des vitrines a réussit.
+ *         description: La récupération des en-têtes de commandes a réussit.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/OrderHeader'
  *       204:
- *         description: Aucune vitrine trouvé avec l'ID utilisateur indiqué
+ *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
  *       500:
- *         description: Une erreur s'est produite lors de la récupération des vitrines d'un utilisateur
+ *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
 router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserAndStatus)
@@ -133,10 +133,10 @@ router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserA
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /vitrines:
+ * /orderheader:
  *   post:
  *     summary: Permet d'ajouter un nouvel en-têtes de commandes
- *     tags: [OrderHeader]
+ *     tags: [En-têtes de commandes]
  *     requestBody:
  *      required: true
  *      content:
@@ -151,7 +151,7 @@ router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserA
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Création de la vitrine réussit"
+ *               message: "Création de l'en-tête de commande réussit"
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
@@ -159,12 +159,118 @@ router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserA
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Veuillez entrer un nom de vitrine"
+ *               message: "Veuillez entrer un ID d'utilisateur"
  *       500:
- *         description: Une erreur s'est produite lors de la création de la vitrine
+ *         description: Une erreur s'est produite lors de la création de l'en-tête de commande
  *
  */
 router.post('/', jwtAuthentification, orderHeaderService.addOne )
+/**
+ * @swagger
+ * tags:
+ *   name: En-têtes de commandes
+ *   description: CRUD En-têtes de commandes
+ * /orderheader/{id}:
+ *   put:
+ *     summary: Permet de modifier un en-tête de commande en fonction de son ID
+ *     description: Veuillez notez que le changement de propriétaire est impossible
+ *     tags: [En-têtes de commandes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'en-tête de commande'
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schemas/OrderHeader'
+ *     responses:
+ *       200:
+ *         description: La modification de l'en-tête de commande a réussit.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "En-tête de commande mise à jour"
+ *       204:
+ *         description: Aucun en-tête de commande trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un Id d'en-tête de commande"
+ *       401:
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
 router.put('/:id', jwtAuthentification, orderHeaderService.update )
+/**
+ * @swagger
+ * tags:
+ *   name: En-têtes de commandes
+ *   description: CRUD En-têtes de commandes
+ * /orderheader/{id}:
+ *   delete:
+ *     summary: Permet de supprimer un en-tête de commande en fonction de son ID
+ *     tags: [En-têtes de commandes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'en-tête de commande
+ *     responses:
+ *       200:
+ *         description: La suppression de l'en-tête de commande a réussit.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "La suppression de len-tête de commande a réussit"
+ *       400:
+ *         description: Quelque chose a empêché la suppression de l'en-tête de commande
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "L'en-tête de commande id 1 n'a pas pu être supprimée, peut-être que cette id n'exite pas ?"
+ *       401:
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
 router.delete('/:id', jwtAuthentification, orderHeaderService.delete )
 
+module.exports = router;
