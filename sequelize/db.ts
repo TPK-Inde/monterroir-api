@@ -5,6 +5,7 @@ const configuration = require("../config");
 const sequelize = new Sequelize(configuration.db.database, configuration.db.user, configuration.db.password, {
   host: configuration.db.host,
   dialect: "mysql",
+  repositoryMode: true,
 
   pool: {
     max: configuration.db.pool.max,
