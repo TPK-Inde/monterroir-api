@@ -68,12 +68,12 @@ class Rates {
                     }
                 }).catch((err: {message: any;}) => {
                     res.status(400).send({
-                        message: err.message || `Une erreur s'est produite lors de la récupération des Rates de l'utilisateur d'ID : ${req.params.ID_VITRINE}`
+                        message: err.message || `Une erreur s'est produite lors de la récupération des Rates de la vitrine d'ID : ${req.params.ID_VITRINE}`
                     })
                 })
             } catch(error: any) {
                 res.status(500).send({
-                    message: `Une erreur s'est produite lors de la récupération des Rates de l'utilisateur d'ID : ${req.params.ID_VITRINE}`
+                    message: `Une erreur s'est produite lors de la récupération des Rates de la vitrine d'ID : ${req.params.ID_VITRINE}`
                 })
             }
         }

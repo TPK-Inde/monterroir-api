@@ -10,12 +10,10 @@ export class RateRepository implements IRateRepository {
     repository = sequelize.getRepository(Rate);
 
     async GetAllRates(): Promise<Rate[]> {
-        const rates = await this.repository.findAll();
-        return rates;
+        return await this.repository.findAll();
     }
     async GetRateById(id: string): Promise<Rate|null> {
-        const rate = await this.repository.findByPk(id);
-        return rate;
+        return await this.repository.findByPk(id);
     }
     async GetVitrineRates(idVitrine: string): Promise<Rate[]> {
         const vitrineRates = await this.repository.findAll({
@@ -23,11 +21,10 @@ export class RateRepository implements IRateRepository {
                 ID_VITRINE: idVitrine
             }
         });
-        if(vitrineRates != null){
+        if(!(vitrineRates.length <= 0)){
             return vitrineRates
         } else {
-            const emptyVitrineRate: Rate[] = []
-            return emptyVitrineRate;
+            return [];
         }
 
     }
@@ -64,5 +61,4 @@ export class RateRepository implements IRateRepository {
         })
         return rowIsDeleted;
     }
-
 }
