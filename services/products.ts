@@ -18,7 +18,7 @@ export default class Products {
         try {
             const productId = parseInt(req.params.ID_PRODUCT);
 
-            if (!Number.isNaN(productId)) {
+            if (!Number.isNaN(productId) && productId > 0) {
                 this.productRepository.GetById(productId)
                     .then((data: Product | null) => {
                         if (data != null) {
@@ -74,9 +74,9 @@ export default class Products {
 
     public async PutProduct(req: Request, res: Response) {
         try {
-            const idVitrine = parseInt(req.params.ID_VITRINE);
+            const productId = parseInt(req.params.ID_PRODUCT);
 
-            if (!Number.isNaN(idVitrine) && idVitrine > 0) {
+            if (!Number.isNaN(productId) && productId > 0) {
                 const resultCheck = await this.CheckProductData(req.body);
 
                 if (resultCheck == null) {
@@ -106,10 +106,10 @@ export default class Products {
 
     public async DeleteProduct(req: Request, res: Response) {
         try {
-            const idVitrine = parseInt(req.params.ID_VITRINE);
+            const productId = parseInt(req.params.ID_PRODUCT);
 
-            if (!Number.isNaN(idVitrine) && idVitrine > 0) {
-                await this.productRepository.DeleteProduct(idVitrine)
+            if (!Number.isNaN(productId) && productId > 0) {
+                await this.productRepository.DeleteProduct(productId)
                     .then((rowDeleted: number) => {
                         if (rowDeleted == 1) {
                             res.status(200).send({
