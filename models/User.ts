@@ -6,7 +6,7 @@ import {
 //Todo : Ajouter le lien de dépendance avec la table P_STATUT_COMPTE
 @Table({
   timestamps: false,
-  tableName: 'f_users'
+  tableName: 'F_USERS'
 })
 export class User extends Model<User> {
   @PrimaryKey

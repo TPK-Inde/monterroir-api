@@ -5,7 +5,7 @@ import {
 
 @Table({
   timestamps: false,
-  tableName: 'f_vitrines'
+  tableName: 'F_VITRINES'
 })
 export class Vitrine extends Model<Vitrine> {
   @PrimaryKey
