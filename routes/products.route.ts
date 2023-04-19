@@ -1,7 +1,9 @@
 import express from 'express';
+import Products from '../services/products';
 
 const router = express.Router();
-const products = require('../services/products.ts');
+const productsService = new Products();
+
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
@@ -46,7 +48,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', products.findOne);
+router.get('/:id', productsService.GetById.bind(productsService));
 
 /**
  * @swagger
@@ -84,7 +86,7 @@ router.get('/:id', products.findOne);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', jwtAuthentification, products.addOne);
+router.post('/', jwtAuthentification, productsService.PostNewProduct.bind(productsService));
 
 /**
  * @swagger
@@ -142,7 +144,7 @@ router.post('/', jwtAuthentification, products.addOne);
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, products.update); //Route nécessitant un token
+router.put('/:id', jwtAuthentification, productsService.PutProduct.bind(productsService)); //Route nécessitant un token
 
 /**
  * @swagger
@@ -192,6 +194,6 @@ router.put('/:id', jwtAuthentification, products.update); //Route nécessitant u
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, products.delete); //Route nécessitant un token
+router.delete('/:id', jwtAuthentification, productsService.DeleteProduct.bind(productsService)); //Route nécessitant un token
 
 module.exports = router;

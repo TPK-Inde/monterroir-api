@@ -1,184 +1,185 @@
 import { Product } from "../models/Product";
-import { Vitrine } from "../models/Vitrine";
 import jwt_decode from "jwt-decode";
-import { User } from "../models/User";
+import { Request, Response } from "express";
+import { ProductRepository } from "../Lib/Repositories/ProductRepository";
 
-//Fonction permettant de récupérer un produit via son ID
-exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Product | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
-    const idProduct = req.params.id;
+//Todo : Vérifier que celui qui manipule le produit est le propriétaire du produit => MT - 0103
 
-    Product.findByPk(idProduct)
-        .then((data: Product | null) => {
-            if (data) {
-                res.status(200).send(data);
-            }
-            else {
-                res.sendStatus(204);
-            }
-        })
-        .catch((err: { message: any; }) => {
-            res.status(500).send({
-                message: err.message || "Une erreur s'est produite lors de la récupération du produit"
-            });
-        })
-}
+export default class Products {
+    //Properties
+    productRepository: ProductRepository;
 
-//Fonction d'ajout d'un produit
-exports.addOne = async (req: { body: Product, headers: { [x: string]: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
-    //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Produit
-    req.body.ID_PRODUCT = 0;
-
-    const donneesValide = checkDataIntegrity(req.body);
-
-    if (donneesValide) {
-        res.status(400).send({
-            message: donneesValide
-        })
-    }
-    else {
-        //Vérification si propriétaire vitrine 
-        const ownerCheck = await checkVitrineOwner(req.body.ID_VITRINE, req.headers['authorization'])
-
-        if (ownerCheck){
-            res.status(401).send({
-                message: ownerCheck
-            })
-        }
-        else{
-            Product.create(req.body)
-            .then(() => {
-                res.status(201).send({ message: "Création du produit réussit" });
-            })
-            .catch((err: { message: any; }) => {
-                res.status(500).send({
-                    message: err.message || "Une erreur s'est produite lors de la création du produit"
-                });
-            })
-        }
-        
-    }
-}
-
-//Fonction de modification d'un produit
-exports.update = (req: { params: { id: number; }; body: Product, headers: { [x: string]: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
-    const idProduct = req.params.id;
-
-    if (!idProduct) {
-        res.status(400).send({ message: "Veuillez entrer un id de produit à modifier" })
+    //Constructor
+    constructor() {
+        this.productRepository = new ProductRepository();
     }
 
-    Product.findByPk(idProduct)
-        .then(async (data) => {
-            //Les élements qui ne doivent pas changer
-            req.body.ID_PRODUCT = data!.ID_PRODUCT;
+    public async GetById(req: Request, res: Response) {
+        try {
+            const productId = parseInt(req.params.ID_PRODUCT);
 
-            const donneesValide = checkDataIntegrity(req.body);
-
-            if (donneesValide) {
-                res.status(400).send({
-                    message: donneesValide
-                })
-            }
-            else {
-                //Vérification si propriétaire vitrine 
-                const ownerCheck = await checkVitrineOwner(req.body.ID_VITRINE, req.headers['authorization'])
-
-                if (ownerCheck){
-                    res.status(401).send({
-                        message: ownerCheck
-                    })
-                }
-                else
-                {
-                    Product.update(req.body, { where: { ID_PRODUCT: idProduct } })
-                        .then(() => {
-                            res.status(200).send({ message: "Produit mis à jour" });
-                        })
-                        .catch((err: { message: any; }) => {
-                            res.status(500).send({
-                                message: err.message || "Une erreur s'est produite lors de la modification du produit"
-                            });
-                        })
-                }
-            }
-        })
-        .catch((err: { message: any; }) => {
-            res.status(400).send({
-                message: err.message || "La récupération des données du produit avant modification a échouée"
-            });
-        })
-}
-
-//Fonction de suppression d'un produit
-exports.delete = async (req: { params: { id: number; }, headers: { [x: string]: any; }; }, res: { send: (arg0: { message: string; }) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: string; }): void; new(): any; }; }; }) => {
-    const idProduct = req.params.id;
-
-    await Product.findByPk(idProduct)
-        .then(async data => {
-            if (data == null){ res.status(400).send({ message: `Le produit id ${idProduct} n'existe pas, il ne peut donc pas être supprimé` }) }
-
-            //Vérification si propriétaire vitrine 
-            const ownerCheck = await checkVitrineOwner(data!.ID_VITRINE, req.headers['authorization'])
-
-            if (ownerCheck){
-                res.status(401).send({
-                    message: ownerCheck
-                })
-            }
-            else
-            {
-                Product.destroy({ where: { ID_PRODUCT: idProduct } })
-                    .then((num: number) => {
-                        if (num == 1) {
-                            res.send({ message: `Le produit id ${idProduct} a bien été supprimé` })
+            if (!Number.isNaN(productId)) {
+                this.productRepository.GetById(productId)
+                    .then((data: Product | null) => {
+                        if (data != null) {
+                            res.status(200).send(data);
                         }
                         else {
-                            res.status(400).send({ message: `Le produit id ${idProduct} n'a pas pu être supprimé, peut-être que cet id n'exite pas ?` })
+                            res.status(204).send();
                         }
                     })
-                    .catch((err: { message: string; }) => {
-                        console.log("Une erreur s'est produite lors de la suppression du produit : " + err.message)
-                        res.status(500).send({ message: `Impossible de supprimer le produit id ${idProduct}` })
+                    .catch((err: { message: any; }) => {
+                        res.status(500).send({
+                            message: err.message || "Une erreur s'est produite lors de la récupération du produit"
+                        });
                     })
             }
-        })    
-}
+            else {
+                res.status(400).send({
+                    message: "Veuillez entrer un ID valide"
+                })
+            }
 
-//Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
-function checkDataIntegrity(productData: Product) {
-    if (!productData.ID_VITRINE) { return "Un produit doit être associé à une vitrine !" }
-    if (!productData.NAME) { return "Veuillez entrer un nom de produit" }
-    if (!productData.IMAGE) { return "Veuillez entrer une image" }
-    if (!productData.QUANTITY_STOCK) { return "Veuillez entrer une quantité de stock" }
-    if (!productData.UNIT_PRICE_HT) { return "Veuillez entrer un prix HT unitaire" }
-    if (!productData.DESCRIPTION) { return "Veuillez entrer une description au produit" }
-}
+        }
+        catch (error: any) {
+            res.status(500).send({
+                message: error.message || "Une erreur s'est produite lors de la récupération d'un produit'"
+            })
+        }
+    }
 
-//Fonction qui permet de vérifier que le produit modifié/ajouté appartient à l'utilisateur
-async function checkVitrineOwner(idVitrine: number, token: string) : Promise<string | undefined> {
-    //Récupération du propriétaire de la vitrine
-    let result : string | undefined = undefined;
+    public async PostNewProduct(req: Request, res: Response) {
+        try {
+            const resultCheck = await this.CheckProductData(req.body);
 
-    await Vitrine.findByPk(idVitrine)
-        .then((data: Vitrine | null) => {
-            if (data) {
-                //Récupération de l'id utilisateur dans le token
-                let stringDecode : User = jwt_decode(token);
+            if (resultCheck == null) {
+                await this.productRepository.PostNewProduct(req.body);
 
-                //Comparaison
-                if (data.ID_USER != stringDecode.ID_USER){
-                    result = "Vous ne pouvez pas ajouter un produit sur une vitrine qui ne vous appartient pas !";
-                }
-
-                result = undefined;
+                res.status(201).send({
+                    message: "La création du produit a réussit"
+                })
             }
             else {
-                result = "La vitrine indiquée n'éxiste pas !";
+                res.status(400).send({
+                    message: resultCheck
+                })
             }
-        })
-        .catch((err: { message: any; }) => {
-            result = err.message || "Une erreur s'est produite lors de la vérification du propriétaire de la vitrine";
-        })
+        }
+        catch (error: any) {
+            res.status(500).send({
+                message: error.message || "Une erreur s'est produite lors de la création d'un produit'"
+            })
+        }
+    }
 
-    return result;
+    public async PutProduct(req: Request, res: Response) {
+        try {
+            const idVitrine = parseInt(req.params.ID_VITRINE);
+
+            if (!Number.isNaN(idVitrine) && idVitrine > 0) {
+                const resultCheck = await this.CheckProductData(req.body);
+
+                if (resultCheck == null) {
+                    await this.productRepository.PutProduct(req.body);
+
+                    res.status(204).send()
+                }
+                else {
+                    res.status(400).send({
+                        message: resultCheck
+                    })
+                }
+            }
+            else {
+                res.status(400).send({
+                    message: "Veuillez entrer un ID de produit valide"
+                })
+            }
+
+        }
+        catch (error: any) {
+            res.status(500).send({
+                message: error.message || "Une erreur s'est produite lors de la création d'un produit'"
+            })
+        }
+    }
+
+    public async DeleteProduct(req: Request, res: Response) {
+        try {
+            const idVitrine = parseInt(req.params.ID_VITRINE);
+
+            if (!Number.isNaN(idVitrine) && idVitrine > 0) {
+                await this.productRepository.DeleteProduct(idVitrine)
+                    .then((rowDeleted: number) => {
+                        if (rowDeleted == 1) {
+                            res.status(200).send({
+                                message: "La suppression du produit a réussit"
+                            })
+                        }
+                        else {
+                            res.status(400).send({
+                                message: "La suppression du produit a échouée"
+                            })
+                        }
+                    })
+                    .catch((err: { message: any; }) => {
+                        res.status(500).send({
+                            message: err.message || "Une erreur s'est produite lors de la suppression du produit"
+                        });
+                    })
+            }
+            else {
+                res.status(400).send({
+                    message: "Veuillez entrer un ID de produit valide"
+                })
+            }
+        }
+        catch (error: any) {
+            res.status(500).send({
+                message: error.message || "Une erreur s'est produite lors de la création d'un produit'"
+            })
+        }
+    }
+
+    //Permet de vérifier que l'objet produit est conforme
+    private async CheckProductData(productData: Product) {
+        if (!productData.ID_VITRINE) { return "Un produit doit être associé à une vitrine !" }
+        if (!productData.NAME) { return "Veuillez entrer un nom de produit" }
+        if (!productData.IMAGE) { return "Veuillez entrer une image" }
+        if (!productData.QUANTITY_STOCK) { return "Veuillez entrer une quantité de stock" }
+        if (!productData.UNIT_PRICE_HT) { return "Veuillez entrer un prix HT unitaire" }
+        if (!productData.DESCRIPTION) { return "Veuillez entrer une description au produit" }
+
+        return null;
+    }
+
+    //Fonction qui permet de vérifier que le produit modifié/ajouté appartient à l'utilisateur
+    //EN ATTENTE DE MERGE DU USER REPOSITORY => MT - 0103
+    private async CheckVitrineOwner(idVitrine: number, token: string): Promise<string | undefined> {
+        //Récupération du propriétaire de la vitrine
+        let result: string | undefined = undefined;
+
+        // await Vitrine.findByPk(idVitrine)
+        //     .then((data: Vitrine | null) => {
+        //         if (data) {
+        //             //Récupération de l'id utilisateur dans le token
+        //             let stringDecode: User = jwt_decode(token);
+
+        //             //Comparaison
+        //             if (data.ID_USER != stringDecode.ID_USER) {
+        //                 result = "Vous ne pouvez pas ajouter un produit sur une vitrine qui ne vous appartient pas !";
+        //             }
+
+        //             result = undefined;
+        //         }
+        //         else {
+        //             result = "La vitrine indiquée n'éxiste pas !";
+        //         }
+        //     })
+        //     .catch((err: { message: any; }) => {
+        //         result = err.message || "Une erreur s'est produite lors de la vérification du propriétaire de la vitrine";
+        //     })
+
+        return result;
+    }
 }
