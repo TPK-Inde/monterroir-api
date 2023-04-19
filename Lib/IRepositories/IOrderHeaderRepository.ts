@@ -1,6 +1,5 @@
 import { OrderHeader } from "../../models/OrderHeader";
 import { OrderHeaderDTO } from "../DTO/OrderHeaderDTO";
-import { Response } from 'express';
 
 export interface IOrderHeaderRepository {
 
@@ -10,6 +9,6 @@ export interface IOrderHeaderRepository {
     GetOrderHeadersFromUserAndStatus(statusId : string, userId : string): Promise<OrderHeader[]>
     PostNewOrderHeader(newOrderHeader: OrderHeaderDTO): void;
     PutOrderHeader(orderHeaderToModify: OrderHeaderDTO): void;
-    DeleteOrderHeader(orderHeaderId: string): Promise<string>;
+    DeleteOrderHeader(orderHeaderId: string): Promise<number>;
 
 }

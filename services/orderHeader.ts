@@ -1,10 +1,9 @@
 import {OrderHeader} from "../models/OrderHeader";
 import {Request, Response} from "express";
 import {OrderHeaderRepository} from "../Lib/Repositories/OrderHeaderRepository";
-const config = require("../config")
 
 
-class OrderHeaders {
+export default class OrderHeaders {
 
     constructor() {}
 
@@ -14,7 +13,11 @@ class OrderHeaders {
         try{
             await orderHeaderRepository.GetAllOrderHeaders()
             .then((data : OrderHeader[]) => {
-                res.status(200).send(data);
+                if(data.length > 0){
+                    res.status(200).send(data);
+                }else{
+                    res.status(204).send();
+                }
             })
             .catch((err : {message: any}) => {
                 res.status(500).send({
@@ -53,7 +56,9 @@ class OrderHeaders {
                res.status(500).send({
                    message : err.message || "Une erreur s'est produite lors de la récupération de l'en-tête de commande"
                });
-           };
+           }
+        }else{
+            res.status(400).send({ message: "Format de L'id est incorrect" });
         }
     };
 
@@ -82,39 +87,49 @@ class OrderHeaders {
                     message: err.message || "Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur"
                 });
             }
+        }else{
+            res.status(400).send({ message: "Format de L'id est incorrect" });
         }
     };
 
     //Fonction permettant de récupérer les en-têtes de commandes à partir d'un utilisateur et de son statut
     public async GetOrderHeaderFromUserAndStatus(req : Request, res : Response) {
         const orderHeaderRepository = new OrderHeaderRepository()
-        console.log(req)
-        if ((parseInt(req.params.statusId) > 0)) {
-            const statusId = req.params.statusId;
-            const userId = req.params.userId;
-            try{
-                await orderHeaderRepository.GetOrderHeadersFromUserAndStatus(statusId,userId)
-                .then((data : OrderHeader[]) => {
-                    if (data) {
-                        res.status(200).send(data);
-                    }
-                    else {
-                        res.sendStatus(204);
-                    }
-                })
-                .catch((err: { message: any; }) => {
-                    res.status(500).send({
-                        message: err.message || "Une erreur s'est produite lors de la récupération des en-têtes de commandes"
-                    });
-                })
-            }
-            catch (err : any){
+
+        const statusId = req.params.statusId;
+        const userId = req.params.userId;
+
+        if (!(parseInt(statusId) < 0)) {
+            res.status(400).send({ message: "Format de L'id du statut est incorrect" });
+        }
+
+        if (!(parseInt(userId) < 0)) {
+            res.status(400).send({ message: "Format de L'id du statut est incorrect" });
+        }
+
+        try{
+            await orderHeaderRepository.GetOrderHeadersFromUserAndStatus(statusId,userId)
+            .then((data : OrderHeader[]) => {
+                if (data) {
+                    res.status(200).send(data);
+                }
+                else {
+                    res.sendStatus(204);
+                }
+            })
+            .catch((err: { message: any; }) => {
                 res.status(500).send({
                     message: err.message || "Une erreur s'est produite lors de la récupération des en-têtes de commandes"
                 });
-            }
+            })
+        }
+        catch (err : any){
+            res.status(500).send({
+                message: err.message || "Une erreur s'est produite lors de la récupération des en-têtes de commandes"
+            });
         }
     }
+
 
     //Fonction permettant de créer un en-tête de commande
     public async CreateOrderHeader(req : Request, res : Response){
@@ -143,7 +158,7 @@ class OrderHeaders {
                 res.status(500).send({
                     message : err.message || "Une erreur s'est produite lors de la création de l'en-tête de commande"
                 });
-            };
+            }
         }
     };
 
@@ -178,7 +193,7 @@ class OrderHeaders {
                 res.status(400).send({
                     message : err.message ||"La récupération des données de l'en-tête de commande avant modification a échouée"
                 });
-            };
+            }
         }
     };
 
@@ -192,8 +207,8 @@ class OrderHeaders {
         }
         try{
             await orderHeaderRepository.DeleteOrderHeader(idOrderHeader)
-            .then((num : string) => {
-                if(num == "1"){
+            .then((num : number) => {
+                if(num == 1){
                     res.send({message : `${idOrderHeader} : L'en-tête de commande a bien été supprimé.`})
                 }else{
                     res.status(400).send({message : `${idOrderHeader} : L'en-tête de commande n'a pas pu être supprimée, peut-être que cette id n'exite pas ?\``})
@@ -217,13 +232,3 @@ function checkDataIntegrity(orderHeaderData : OrderHeader){
 
     return null;
 }
-
-const orderHeaderService = new OrderHeaders()
-
-exports.GetAllOrderHeader = orderHeaderService.GetAllOrderHeader;
-exports.GetOrderHeaderById = orderHeaderService.GetOrderHeaderById;
-exports.GetOrderHeaderByUser = orderHeaderService.GetOrderHeaderByUser;
-exports.GetOrderHeaderFromUserAndStatus = orderHeaderService.GetOrderHeaderFromUserAndStatus;
-exports.CreateOrderHeader = orderHeaderService.CreateOrderHeader;
-exports.UpdateOrderHeader = orderHeaderService.UpdateOrderHeader;
-exports.DeleteOrderHeader = orderHeaderService.DeleteOrderHeader;

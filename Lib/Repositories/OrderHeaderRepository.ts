@@ -11,42 +11,30 @@ export class OrderHeaderRepository implements IOrderHeaderRepository {
 
     async GetAllOrderHeaders(): Promise<OrderHeader[]> {
 
-        const orderHeaders = await this.orderHeaderRepository.findAll();
-        return orderHeaders;
+        return await this.orderHeaderRepository.findAll();
     }
 
     async GetOrderHeaderById(id: string): Promise<OrderHeader|null> {
-        const orderHeader = await this.orderHeaderRepository.findByPk(id);
-        return orderHeader;
+        return await this.orderHeaderRepository.findByPk(id);
     }
 
     async GetOrderHeadersByUserId(userId : string) : Promise<OrderHeader[]>{
-        const orderHeaders = await this.orderHeaderRepository.findAll({
+        return await this.orderHeaderRepository.findAll({
             where: {
                 ID_USER: userId
             }
         });
-        if (orderHeaders != null) {
-            return orderHeaders;
-        } else {
-            const emptyArray: OrderHeader[] = [];
-            return emptyArray;
-        }
+
     }
 
     async GetOrderHeadersFromUserAndStatus(statusId : string, userId : string ) : Promise<OrderHeader[]>{
-        const orderHeaders = await this.orderHeaderRepository.findAll({
+        return await this.orderHeaderRepository.findAll({
             where:{
                 ID_ORDER_STATUS : statusId ,
                 ID_USER : userId
             }
         });
-        if(orderHeaders != null){
-            return orderHeaders;
-        }else{
-            const emptyArray : OrderHeader[] = [];
-            return emptyArray;
-        }
+
     }
 
     async PostNewOrderHeader(newOrderHeader : OrderHeaderDTO) : Promise<void> {
@@ -70,18 +58,12 @@ export class OrderHeaderRepository implements IOrderHeaderRepository {
             }
         });
     }
-    async DeleteOrderHeader(orderHeaderId: string): Promise<string> {
-        let rowIsDeleted: number = 0;
-        await this.orderHeaderRepository.destroy({
+    async DeleteOrderHeader(orderHeaderId: string): Promise<number> {
+        return await this.orderHeaderRepository.destroy({
             where: {
                 ID_ORDER_HEADER : orderHeaderId
             }
-        }).then(rowDeleted => {
-            if(rowDeleted === 1) {
-                rowIsDeleted = 1;
-            }
         })
-        return rowIsDeleted.toString()
     }
 
 }

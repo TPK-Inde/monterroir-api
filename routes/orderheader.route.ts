@@ -197,8 +197,6 @@ router.post('/', jwtAuthentification, orderHeaderService.CreateOrderHeader )
  *               $ref: '#/components/schemas/Message'
  *             example:
  *               message: "En-tête de commande mise à jour"
- *       204:
- *         description: Aucun en-tête de commande trouvé avec l'ID indiqué
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
