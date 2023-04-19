@@ -12,7 +12,7 @@ export class BasketRepository implements IBasketRepository {
     async GetAllBasket(): Promise<Basket[]> {
         return await this.repository.findAll();
     }
-    async GetBasketById(id: string): Promise<Basket | null> {
+    async GetBasketById(id: number): Promise<Basket | null> {
         return await this.repository.findByPk(id);
     }
 
@@ -33,7 +33,7 @@ export class BasketRepository implements IBasketRepository {
             DATE: basketToModify.DATE
         }, {
             where: {
-                ID: basketToModify.ID
+                ID_BASKET: basketToModify.ID
             }
         })
     }
@@ -43,7 +43,7 @@ export class BasketRepository implements IBasketRepository {
         let rowIsDeleted: number = 0;
         await this.repository.destroy({
             where: {
-                ID: basketToDeleteId
+                ID_BASKET: basketToDeleteId
             }
         }).then(rowDeleted => {
             if(rowDeleted === 1){

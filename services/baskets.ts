@@ -18,7 +18,7 @@ export default class Baskets {
         try {
             await this._repository.GetAllBasket()
                 .then((data: Basket[]) => {
-                    if (data != null && data.length > 0) {
+                    if (data.length > 0) {
                         res.status(200).send(data);
                     } else {
                         res.status(204).send();
@@ -38,7 +38,7 @@ export default class Baskets {
     public async GetById(req: Request, res: Response) {
         if (parseInt(req.params.ID) > 0) {
             try {
-                await this._repository.GetBasketById(req.params.ID)
+                await this._repository.GetBasketById(parseInt(req.params.ID))
                     .then((data: Basket | null) => {
                         if (data != null) {
                             res.status(200).send(data);

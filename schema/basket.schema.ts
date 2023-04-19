@@ -3,7 +3,7 @@
  * @swagger
  * components:
  *   schemas:
- *     Baskets:
+ *     Basket:
  *       type: object
  *       required:
  *         - ID_USER

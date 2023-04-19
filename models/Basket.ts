@@ -5,7 +5,7 @@ import {
   } from 'sequelize-typescript';
   import { BasketAttributes } from "../Lib/IModels/BasketAttributes";
 
-  interface BasketCreationAttributes extends Optional<BasketAttributes, 'ID'> {}
+  interface BasketCreationAttributes extends Optional<BasketAttributes, 'ID_BASKET'> {}
 
   @Table({
     timestamps: false,
@@ -14,7 +14,7 @@ import {
   export class Basket extends Model<BasketAttributes, BasketCreationAttributes> {
     @PrimaryKey
     @Column
-    ID: number
+    ID_BASKET: number
 
     @Column
     ID_USER: number

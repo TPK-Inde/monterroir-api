@@ -11,7 +11,7 @@ const jwAuthentification = require("../middleware/jwtAuthentification");
  * tags:
  *  name: Baskets
  *  description: CRUD Baskets
- * /rates:
+ * /baskets:
  *   get:
  *     summary: Permet de récupérer tous les paniers
  *     tags: [Baskets]
@@ -36,17 +36,17 @@ router.get('/', basketService.GetAll.bind(basketService));
  * tags:
  *  name: Baskets
  *  description: CRUD Baskets
- * /baskets/{ID}:
+ * /baskets/{ID_BASKET}:
  *   get:
- *     summary: Permet de récupérer le panier en fonction de son ID
+ *     summary: Permet de récupérer le panier en fonction de son ID_BASKET
  *     tags: [Baskets]
  *     parameters:
  *       - in: path
- *         name: ID
+ *         name: ID_BASKET
  *         schema:
  *           type: string
  *         required: true
- *         description: ID du panier
+ *         description: ID_BASKET du panier
  *     responses:
  *       200:
  *         description: La récupération du panier a réussie.
@@ -55,7 +55,7 @@ router.get('/', basketService.GetAll.bind(basketService));
  *             schema:
  *               $ref: '#/components/schemas/Basket'
  *       204:
- *         description: Aucun panier trouvé avec l'ID indiqué
+ *         description: Aucun panier trouvé avec l'ID_BASKET indiqué
  *       401:
  *         description: Token vide ou invalide
  *       403:
@@ -71,14 +71,14 @@ router.get('/', basketService.GetAll.bind(basketService));
  *         description: Erreur du serveur interne
  * 
  */
-router.get('/:ID', basketService.GetById.bind(basketService));
+router.get('/:ID_BASKET', basketService.GetById.bind(basketService));
 
 /**
  * @swagger
  * tags:
  *   name: Baskets
  *   description: CRUD Rate
- * /rates:
+ * /baskets:
  *   post:
  *     summary: Permet de poster un nouveau panier
  *     tags: [Baskets]
@@ -114,17 +114,17 @@ router.post('/', basketService.PostNewBasket.bind(basketService))
  * tags:
  *   name: Baskets
  *   description: CRUD panier
- * /baskets/{ID}:
+ * /baskets/{ID_BASKET}:
  *   put:
  *     summary: Permet de modifier un panier
  *     tags: [Baskets]
  *     parameters:
  *       - in: path
- *         name: ID
+ *         name: ID_BASKET
  *         schema:
  *           type: string
  *         required: true
- *         description: ID du panier à changer
+ *         description: ID_BASKET du panier à changer
  *     requestBody:
  *      required: true
  *      content:
@@ -150,24 +150,24 @@ router.post('/', basketService.PostNewBasket.bind(basketService))
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID', basketService.PutBasket.bind(basketService))
+router.put('/:ID_BASKET', basketService.PutBasket.bind(basketService))
 
 /**
  * @swagger
  * tags:
  *   name: Baskets
  *   description: CRUD Baskets
- * /baskets/{ID}:
+ * /baskets/{ID_BASKET}:
  *   delete:
- *     summary: Permet de supprimer un panier en fonction de son ID
+ *     summary: Permet de supprimer un panier en fonction de son ID_BASKET
  *     tags: [Baskets]
  *     parameters:
  *       - in: path
- *         name: ID
+ *         name: ID_BASKET
  *         schema:
  *           type: string
  *         required: true
- *         description: ID du panier
+ *         description: ID_BASKET du panier
  *     responses:
  *       200:
  *         description: La suppression du panier a réussie.
@@ -189,6 +189,6 @@ router.put('/:ID', basketService.PutBasket.bind(basketService))
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID', basketService.DeleteBasket.bind(basketService));
+router.delete('/:ID_BASKET', basketService.DeleteBasket.bind(basketService));
 
 module.exports = router;
