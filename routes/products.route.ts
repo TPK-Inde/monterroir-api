@@ -1,7 +1,9 @@
 import express from 'express';
+import Products from '../services/products';
 
 const router = express.Router();
-const products = require('../services/products.ts');
+const productsService = new Products();
+
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
@@ -11,13 +13,13 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  * tags:
  *   name: Produits
  *   description: CRUD Produits
- * /products/{id}:
+ * /products/{ID_PRODUCT}:
  *   get:
  *     summary: Permet un produit via son ID
  *     tags: [Produits]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_PRODUCT
  *         schema:
  *           type: string
  *         required: true
@@ -31,6 +33,14 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *               $ref: '#/components/schemas/Produit'
  *       204:
  *         description: Aucun produit trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID valide"
  *       401:
  *         description: Token vide ou invalide
  *       403:
@@ -46,7 +56,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', products.findOne);
+router.get('/:ID_PRODUCT', productsService.GetById.bind(productsService));
 
 /**
  * @swagger
@@ -84,20 +94,20 @@ router.get('/:id', products.findOne);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', jwtAuthentification, products.addOne);
+router.post('/', jwtAuthentification, productsService.PostNewProduct.bind(productsService));
 
 /**
  * @swagger
  * tags:
  *   name: Produits
  *   description: CRUD produit
- * /products/{id}:
+ * /products/{ID_PRODUCT}:
  *   put:
  *     summary: Permet de modifier un produit en fonction de son ID
  *     tags: [Produits]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_PRODUCT
  *         schema:
  *           type: string
  *         required: true
@@ -142,20 +152,20 @@ router.post('/', jwtAuthentification, products.addOne);
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, products.update); //Route nécessitant un token
+router.put('/:ID_PRODUCT', jwtAuthentification, productsService.PutProduct.bind(productsService)); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Produits
  *   description: CRUD Produit
- * /products/{id}:
+ * /products/{ID_PRODUCT}:
  *   delete:
  *     summary: Permet de supprimer un produit en fonction de son ID
  *     tags: [Produits]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_PRODUCT
  *         schema:
  *           type: string
  *         required: true
@@ -192,6 +202,6 @@ router.put('/:id', jwtAuthentification, products.update); //Route nécessitant u
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, products.delete); //Route nécessitant un token
+router.delete('/:ID_PRODUCT', jwtAuthentification, productsService.DeleteProduct.bind(productsService)); //Route nécessitant un token
 
 module.exports = router;
