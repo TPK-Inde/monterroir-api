@@ -2,14 +2,14 @@ import {
     Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
     ForeignKey, BelongsTo, PrimaryKey
 } from 'sequelize-typescript';
-import {Optional} from "sequelize";
-import {OrderHeaderAttributes} from "../Lib/IModels/OrderHeaderAttributes";
+import { Optional } from "sequelize";
+import { OrderHeaderAttributes } from "../Lib/IModels/OrderHeaderAttributes";
 
-interface OrderHeaderCreationAttributes extends Optional<OrderHeaderAttributes, 'ID_ORDER_HEADER'> {}
+interface OrderHeaderCreationAttributes extends Optional<OrderHeaderAttributes, 'ID_ORDER_HEADER'> { }
 
 @Table({
     timestamps: false,
-    tableName: 'f_order_header'
+    tableName: 'F_ORDER_HEADER'
 })
 export class OrderHeader extends Model<OrderHeader, OrderHeaderAttributes> {
     @PrimaryKey
@@ -20,7 +20,7 @@ export class OrderHeader extends Model<OrderHeader, OrderHeaderAttributes> {
     ID_ORDER_STATUS: number;
 
     @Column
-    ID_USER : number;
+    ID_USER: number;
 
     @Column
     DATE: Date;
