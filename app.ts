@@ -86,5 +86,6 @@ app.use("/products", productsRouter);
 app.use("/rates", ratesRouter);
 app.use("/orderheader", orderHeaderRouter);
 app.use("/baskets", basketsRouter);
+app.use("/categoriesVitrine", categoriesVitrineRouter);
 
 module.exports = app;
