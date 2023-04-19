@@ -1,6 +1,5 @@
 import { Comment } from "../../models/Comment";
 import { CommentDTO } from "../DTO/CommentDTO";
-import { Response } from 'express';
 
 export interface ICommentRepository {
 

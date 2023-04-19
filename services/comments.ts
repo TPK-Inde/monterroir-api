@@ -88,7 +88,6 @@ class Comments {
     // Post Method
     public async PostNewComment(req: Request, res: Response) {
         const commentRepository = new CommentRepository();
-        console.log(req.body.ID_USER)
         try {
             let newComment: CommentDTO = new CommentDTO;
             if(req.body.ID_RATE != null) {
@@ -145,11 +144,11 @@ class Comments {
         try {
             let commentToModify: CommentDTO = new CommentDTO;
             commentToModify.ID_COMMENT = parseInt(req.params.ID_COMMENT)
-            commentToModify.ID_RATE = req.body.ID_RATE
-            commentToModify.ID_USER = req.body.ID_USER
-            commentToModify.ID_PARENT = req.body.ID_PARENT
-            commentToModify.COMMENT = req.body.COMMENT
-            commentToModify.DATE = req.body.DATE
+            commentToModify.ID_RATE = req.body.ID_RATE;
+            commentToModify.ID_USER = req.body.ID_USER;
+            commentToModify.ID_PARENT = req.body.ID_PARENT;
+            commentToModify.COMMENT = req.body.COMMENT;
+            commentToModify.DATE = req.body.DATE;
             await commentRepository.PutComment(commentToModify)
             .then(() => res.status(204).send())
             .catch((err: { message: any; }) => {
@@ -193,19 +192,6 @@ class Comments {
                 message: error.message || "Une erreur s'est produite lors de la suppression du commentaire."
             })
         }
-    }
-
-    
-    private CheckFuckingData(req: Request): boolean {
-        console.log(req.body.bodyParser.COMMENT);
-    //     let property: keyof typeof dataToCheck;
-    //     for(property in dataToCheck) {
-    //         if(dataToCheck[property] == null) {
-    //             return false
-    //         }
-    //         console.log(`property = ${property}, dataToCheck[property] = ${dataToCheck[property]}`)
-    //     }
-        return true;
     }
 }
 
