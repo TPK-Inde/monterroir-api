@@ -15,6 +15,7 @@ const categoriesVitrineRouter = require("./routes/categorieVitrine.route.ts");
 const commentsRouter = require("./routes/comments.route.ts");
 const productsRouter = require("./routes/products.route.ts");
 const ratesRouter = require("./routes/rates.route.ts");
+const orderHeaderRouter = require("./routes/orderheader.route.ts");
 
 const app = express();
 
@@ -79,9 +80,9 @@ app.use(express.json());
 //Routes API
 app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
-app.use("/categoriesVitrine", categoriesVitrineRouter);
 app.use("/comments", commentsRouter);
 app.use("/products", productsRouter);
 app.use("/rates", ratesRouter);
+app.use("/orderheader", orderHeaderRouter);
 
 module.exports = app;
