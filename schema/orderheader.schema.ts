@@ -19,7 +19,7 @@
  *           description: ID du status de la commande
  *         ID_USER:
  *           type: int
- *           description: ID de l'utilisateur propriétaire de la vitrine
+ *           description: ID de l'utilisateur
  *         DATE:
  *           type: int
  *           description: Date de création de l'en-tête de commande

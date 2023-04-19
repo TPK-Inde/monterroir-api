@@ -170,7 +170,7 @@ router.get('/status/:userId/:statusId', jwtAuthentification, orderHeaderService.
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Veuillez entrer un ID d'utilisateur"
+ *               message: "Un élément est manquant dans la requête"
  *       500:
  *         description: Une erreur s'est produite lors de la création de l'en-tête de commande
  *
