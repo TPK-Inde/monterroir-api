@@ -80,7 +80,6 @@ app.use(express.json());
 //Routes API
 app.use("/users", utilisateursRouter);
 app.use("/vitrines", vitrinesRouter);
-app.use("/categoriesVitrine", categoriesVitrineRouter);
 app.use("/comments", commentsRouter);
 app.use("/products", productsRouter);
 app.use("/rates", ratesRouter);

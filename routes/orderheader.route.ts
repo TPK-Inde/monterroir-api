@@ -31,7 +31,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: Une erreur s'est produite lors de la récupération de tout les en-têtes de commandes.
  *
  */
-router.get('/', orderHeaderService.GetAllOrderHeader);
+router.get('/',jwtAuthentification, orderHeaderService.GetAllOrderHeader);
 /**
  * @swagger
  * tags:
@@ -61,7 +61,7 @@ router.get('/', orderHeaderService.GetAllOrderHeader);
  *         description: Une erreur s'est produite lors de la récupération d'un en-tête de commande
  *
  */
-router.get('/:id',  orderHeaderService.GetOrderHeaderById )
+router.get('/:id', jwtAuthentification, orderHeaderService.GetOrderHeaderById )
 /**
  * @swagger
  * tags:
@@ -91,7 +91,7 @@ router.get('/:id',  orderHeaderService.GetOrderHeaderById )
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/utilisateur/:id',  orderHeaderService.GetOrderHeaderByUser )
+router.get('/utilisateur/:id',jwtAuthentification,  orderHeaderService.GetOrderHeaderByUser )
 /**
  * @swagger
  * tags:
@@ -127,7 +127,7 @@ router.get('/utilisateur/:id',  orderHeaderService.GetOrderHeaderByUser )
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/status/:userId/:statusId',  orderHeaderService.GetOrderHeaderFromUserAndStatus)
+router.get('/status/:userId/:statusId', jwtAuthentification, orderHeaderService.GetOrderHeaderFromUserAndStatus)
 /**
  * @swagger
  * tags:
@@ -164,7 +164,7 @@ router.get('/status/:userId/:statusId',  orderHeaderService.GetOrderHeaderFromUs
  *         description: Une erreur s'est produite lors de la création de l'en-tête de commande
  *
  */
-router.post('/',  orderHeaderService.CreateOrderHeader )
+router.post('/', jwtAuthentification, orderHeaderService.CreateOrderHeader )
 /**
  * @swagger
  * tags:
@@ -222,7 +222,7 @@ router.post('/',  orderHeaderService.CreateOrderHeader )
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id',  orderHeaderService.UpdateOrderHeader )
+router.put('/:id', jwtAuthentification, orderHeaderService.UpdateOrderHeader )
 /**
  * @swagger
  * tags:
@@ -271,6 +271,6 @@ router.put('/:id',  orderHeaderService.UpdateOrderHeader )
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id',  orderHeaderService.DeleteOrderHeader )
+router.delete('/:id', jwtAuthentification, orderHeaderService.DeleteOrderHeader )
 
 module.exports = router;
