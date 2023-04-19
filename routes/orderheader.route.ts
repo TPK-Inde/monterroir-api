@@ -26,7 +26,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: Une erreur s'est produite lors de la récupération de tout les en-têtes de commandes.
  *
  */
-router.get('/', orderHeaderService.GetAllOrderHeader);
+router.get('/',jwtAuthentification, orderHeaderService.GetAllOrderHeader);
 /**
  * @swagger
  * tags:
