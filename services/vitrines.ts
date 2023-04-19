@@ -1,177 +1,245 @@
+import { VitrineRepository } from "../Lib/Repositories/VitrineRepository";
 import { Vitrine } from "../models/Vitrine";
-const config = require("../config");
+import { Request, Response } from "express";
 
-//Fonction permettant de récupérer la liste de toutes les vitrines
-exports.findAll = (req: { query: { page: number; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Vitrine[] | { message: string }): void; new(): any; }; }; }) => {
-  const numPage: number = req.query.page || 1;
+export default class Vitrines {
+  vitrineRepository: VitrineRepository
 
-  //On renvoi un maximum de X vitrines (X = config.listPerPage)
-  Vitrine.findAll({ limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
-    .then((data: Vitrine[]) => {
-      res.status(200).send(data);
-    })
-    .catch((err: { message: any; }) => {
-      res.status(500).send({
-        message: err.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
-      });
-    })
-}
+  constructor() {
+    this.vitrineRepository = new VitrineRepository();
+  }
 
-//Fonction permettant de récupérer la liste de toutes les vitrines Active
-exports.findAllActive = (req: { query: { page: number; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Vitrine[] | { message: string }): void; new(): any; }; }; }) => {
-  const numPage: number = req.query.page || 1;
+  //Fonction permettant de récupérer la liste de toutes les vitrines
+  public async GetAll(req: Request, res: Response) {
+    try {
+      let numPage: number;
 
-  //On renvoi un maximum de X vitrines (X = config.listPerPage)
-  Vitrine.findAll({ where: { ACTIVATE: true }, limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
-    .then((data: Vitrine[]) => {
-      res.status(200).send(data);
-    })
-    .catch((err: { message: any; }) => {
-      res.status(500).send({
-        message: err.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines actives"
-      });
-    })
-}
+      //On défini le numéro de page
+      if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
 
-//Fonction permettant de récupérer une vitrine en particulier
-exports.findOne = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Vitrine | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
-  const idVitrine = req.params.id;
-
-  Vitrine.findByPk(idVitrine)
-    .then((data: Vitrine | null) => {
-      if (data) {
-        res.status(200).send(data);
+      if (!Number.isNaN(numPage) && numPage >= 1) {
+        await this.vitrineRepository.GetAll(numPage)
+          .then((data: Vitrine[]) => {
+            if (data.length > 0) {
+              res.status(200).send(data);
+            }
+            else {
+              res.status(204).send();
+            }
+          })
       }
       else {
-        res.sendStatus(204);
-      }
-    })
-    .catch((err: { message: any; }) => {
-      res.status(500).send({
-        message: err.message || "Une erreur s'est produite lors de la récupération d'une vitrine"
-      });
-    })
-}
-
-//Fonction permettant de récupérer les vitrines d'un utilisateur
-exports.findFromUser = (req: { params: { id: any; }; }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: Vitrine[] | { message: string }): void; new(): any; }; }; sendStatus: (arg0: number) => void; }) => {
-  const idUtilisateur = req.params.id;
-
-  Vitrine.findAll({ where: { ID_USER: idUtilisateur } })
-    .then((data: Vitrine[]) => {
-      if (data) {
-        res.status(200).send(data);
-      }
-      else {
-        res.sendStatus(204);
-      }
-    })
-    .catch((err: { message: any; }) => {
-      res.status(500).send({
-        message: err.message || "Une erreur s'est produite lors de la récupération des vitrines d'un utilisateur"
-      });
-    })
-}
-
-//Fonction permettant l'ajout d'une vitrine
-//Todo : Ajouter vérification du nombre de vitrine (Une fois les règles définies)
-exports.addOne = (req: { body: Vitrine }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
-  //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Vitrine ainsi que du champ "Actif"
-  req.body.ID_VITRINE = 0;
-  req.body.ACTIVATE = false;
-
-  const donneesValide = checkDataIntegrity(req.body);
-
-  if (donneesValide) {
-    res.status(400).send({
-      message: donneesValide
-    })
-  }
-  else {
-    Vitrine.create(req.body)
-      .then(() => {
-        res.status(201).send({ message: "Création de la vitrine réussit" });
-      })
-      .catch((err: { message: any; }) => {
-        res.status(500).send({
-          message: err.message || "Une erreur s'est produite lors de la création de la vitrine"
-        });
-      })
-  }
-}
-
-//Fonction permettant de modifier une vitrine
-exports.update = (req: { params: { id: number; }; body: Vitrine }, res: { status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: any; }): void; new(): any; }; }; }) => {
-  const idVitrine = req.params.id;
-
-  if (!idVitrine) {
-    res.status(400).send({ message: "Veuillez entrer un id de vitrine à modifier" })
-  }
-
-  Vitrine.findByPk(idVitrine)
-    .then(async (data) => {
-      //Les élements qui ne doivent pas changer
-      req.body.ID_VITRINE = data!.ID_VITRINE;
-      req.body.ID_USER = data!.ID_USER;
-
-      const donneesValide = checkDataIntegrity(req.body);
-
-      if (donneesValide) {
         res.status(400).send({
-          message: donneesValide
+          message: "Veuillez entrer un numéro de page valide"
         })
       }
-      else {
-        Vitrine.update(req.body, { where: { ID_VITRINE: idVitrine } })
-          .then(() => {
-            res.status(200).send({ message: "Vitrine mise à jour" });
+
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
+
+  //Fonction permettant de récupérer la liste de toutes les vitrines Active
+  public async GetAllActive(req: Request, res: Response) {
+    try {
+      let numPage: number;
+
+      //On défini le numéro de page
+      if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
+
+      if (!Number.isNaN(numPage) && numPage >= 1) {
+        await this.vitrineRepository.GetAllActive(numPage)
+          .then((data: Vitrine[]) => {
+            if (data.length > 0) {
+              res.status(200).send(data);
+            }
+            else {
+              res.status(204).send();
+            }
           })
-          .catch((err: { message: any; }) => {
-            res.status(500).send({
-              message: err.message || "Une erreur s'est produite lors de la modification de la vitrine"
-            });
-          })
-      }
-    })
-    .catch((err: { message: any; }) => {
-      res.status(400).send({
-        message: err.message || "La récupération des données de la vitrine avant modification a échouée"
-      });
-    })
-}
-
-//Fonction permettat de suprimer une vitrine
-exports.delete = (req: { params: { id: number; }; }, res: { send: (arg0: { message: string; }) => void; status: (arg0: number) => { (): any; new(): any; send: { (arg0: { message: string; }): void; new(): any; }; }; }) => {
-  const idVitrine = req.params.id;
-
-  Vitrine.destroy({ where: { ID_VITRINE: idVitrine } })
-    .then((num: number) => {
-      if (num == 1) {
-        res.send({ message: `La vitrine id ${idVitrine} a bien été supprimée` })
       }
       else {
-        res.status(400).send({ message: `La vitrine id ${idVitrine} n'a pas pu être supprimée, peut-être que cette id n'exite pas ?` })
+        res.status(400).send({
+          message: "Veuillez entrer un numéro de page valide"
+        })
       }
-    })
-    .catch((err: { message: string; }) => {
-      console.log("Une erreur s'est produite lors de la suppression de la vitrine : " + err.message)
-      res.status(500).send({ message: `Impossible de supprimer la vitrine id ${idVitrine}` })
-    })
-}
 
-//Fonction permettant de vérifier l'intégrité des données avant ajout ou modification
-function checkDataIntegrity(donneesVitrine: Vitrine) {
-  if (!donneesVitrine.ID_USER) { return "L'ID de l'utilisateur n'est pas défini dans la requête !" }
-  if (!donneesVitrine.ID_CATEGORY_VITRINE) { return "Veuillez définir une catégorie de vitrine " }
-  if (!donneesVitrine.ID_TYPE_VITRINE) { return "Veuillez définir un type de vitrine" }
-  if (!donneesVitrine.NAME) { return "Veuillez définir un nom de vitrine" }
-  if (!donneesVitrine.IMAGE) { return "Veuillez définir une image à votre vitrine" }
-  if (!donneesVitrine.ADDRESS_STREET) { return "Veuillez entrer la rue de votre adresse" }
-  if (!donneesVitrine.ADDRESS_ZIP_CODE) { return "Veuillez entrer le code postal de votre adresse" }
-  if (!donneesVitrine.ADDRESS_CITY) { return "Veuillez entrer la ville de votre adresse" }
-  if (!donneesVitrine.DESCRIPTION) { return "Veuillez entrer une description" }
-  if (!donneesVitrine.CREATION_DATE) { return "La date de création est absent de la requête !" }
-  if (donneesVitrine.ACTIVATE == undefined) { return "Le champ 'Actif' est absent de la requête !" }
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
 
-  return null;
+  //Fonction permettant de récupérer la liste de toutes les vitrines Active
+  public async GetById(req: Request, res: Response) {
+    try {
+      const idVitrine = parseInt(req.params.ID_VITRINE);
+
+      if (!Number.isNaN(idVitrine)) {
+        await this.vitrineRepository.GetById(idVitrine)
+          .then((data: Vitrine | null) => {
+            if (data != null) {
+              res.status(200).send(data);
+            }
+            else {
+              res.status(204).send();
+            }
+          })
+      }
+      else {
+        res.status(400).send({
+          message: "Veuillez entrer un ID valide de vitrine dans la requête"
+        })
+      }
+
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
+
+  //Fonction permettant de récupérer les vitrines d'un utilisateur
+  public async GetByUserId(req: Request, res: Response) {
+    try {
+      const idUser = parseInt(req.params.ID_USER);
+
+      if (!Number.isNaN(idUser)) {
+        await this.vitrineRepository.GetByUserId(idUser)
+          .then((data: Vitrine[]) => {
+            if (data.length > 0) {
+              res.status(200).send(data);
+            }
+            else {
+              res.status(204).send();
+            }
+          })
+      }
+      else {
+        res.status(400).send({
+          message: "Veuillez entrer un ID valide d'un utilisateur dans la requête"
+        })
+      }
+
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
+
+  public async PostNewVitrine(req: Request, res: Response) {
+    //Comme il s'agit d'un ajout, on modifie les valeurs de l'ID Vitrine ainsi que du champ "Actif"
+    req.body.ID_VITRINE = 0;
+    req.body.ACTIVATE = false;
+
+    try {
+      const resultCheck = await this.CheckDataVitrine(req.body);
+
+      if (resultCheck == null) {
+        await this.vitrineRepository.PostNewVitrine(req.body);
+
+        res.status(201).send();
+      }
+      else {
+        res.status(400).send({
+          message: resultCheck
+        })
+      }
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de l'ajout d'une vitrine"
+      })
+    }
+  }
+
+  public async PutVitrine(req: Request, res: Response) {
+    try {
+      const idVitrine = parseInt(req.params.ID_VITRINE);
+
+      if (!Number.isNaN(idVitrine)) {
+        req.body.ID_VITRINE = idVitrine;
+
+        const resultCheck = await this.CheckDataVitrine(req.body);
+
+        if (resultCheck == null) {
+          await this.vitrineRepository.PutVitrine(req.body);
+
+          res.status(204).send();
+        }
+        else {
+          res.status(400).send({
+            message: resultCheck
+          });
+        }
+
+      }
+      else {
+        res.status(400).send({
+          message: "Veuillez entrer un ID valide de vitrine dans la requête"
+        })
+      }
+
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la modification de la vitrine"
+      })
+    }
+  }
+
+  //Fonction permettant de récupérer les vitrines d'un utilisateur
+  public async DeleteVitrine(req: Request, res: Response) {
+    try {
+      const idVitrine = parseInt(req.params.ID_VITRINE);
+
+      if (!Number.isNaN(idVitrine)) {
+        await this.vitrineRepository.DeleteVitrine(idVitrine)
+          .then((rowDeleted: number) => {
+            if (rowDeleted == 1) {
+              res.status(200).send({
+                message: "La suppression de la vitrine à réussit"
+              })
+            }
+            else {
+              res.status(400).send({
+                message: "La suppression de la vitrine à échouée"
+              })
+            }
+          })
+
+        res.status(204).send();
+      }
+      else {
+        res.status(400).send({
+          message: "Veuillez entrer un ID valide d'un utilisateur dans la requête"
+        })
+      }
+
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
+
+  //Permet de vérifier que les données de la vitrine sont valide
+  private async CheckDataVitrine(dataVitrine: Vitrine) {
+    if (!dataVitrine.ID_USER) { return "L'ID de l'utilisateur n'est pas défini dans la requête !" }
+    if (!dataVitrine.ID_CATEGORY_VITRINE) { return "Veuillez définir une catégorie de vitrine " }
+    if (!dataVitrine.ID_TYPE_VITRINE) { return "Veuillez définir un type de vitrine" }
+    if (!dataVitrine.NAME) { return "Veuillez définir un nom de vitrine" }
+    if (!dataVitrine.IMAGE) { return "Veuillez définir une image à votre vitrine" }
+    if (!dataVitrine.ADDRESS_STREET) { return "Veuillez entrer la rue de votre adresse" }
+    if (!dataVitrine.ADDRESS_ZIP_CODE) { return "Veuillez entrer le code postal de votre adresse" }
+    if (!dataVitrine.ADDRESS_CITY) { return "Veuillez entrer la ville de votre adresse" }
+    if (!dataVitrine.DESCRIPTION) { return "Veuillez entrer une description" }
+    if (!dataVitrine.CREATION_DATE) { return "La date de création est absent de la requête !" }
+    if (dataVitrine.ACTIVATE == undefined) { return "Le champ 'Actif' est absent de la requête !" }
+
+    return null;
+  }
+
 }
