@@ -1,7 +1,9 @@
 import express from 'express';
+import Vitrines from '../services/vitrines';
 
 const router = express.Router();
-const vitrines = require('../services/vitrines.ts');
+const vitrinesService = new Vitrines();
+
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
@@ -29,11 +31,13 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Vitrine'
+ *       204:
+ *         description: Aucune vitrines trouvées en base de données
  *       500:
  *         description: Une erreur s'est produite lors de la récupération de toutes les vitrines
  *
  */
-router.get('/', jwtAuthentification, vitrines.findAll);
+router.get('/', jwtAuthentification, vitrinesService.GetAll.bind(vitrinesService));
 
 /**
  * @swagger
@@ -58,24 +62,26 @@ router.get('/', jwtAuthentification, vitrines.findAll);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Vitrine'
+ *       204:
+ *         description: Aucune vitrines actives trouvée en base de données
  *       500:
  *         description: Une erreur s'est produite lors de la récupération de toutes les vitrines actives
  *
  */
-router.get('/active', vitrines.findAllActive);
+router.get('/active', vitrinesService.GetAllActive.bind(vitrinesService));
 
 /**
  * @swagger
  * tags:
  *   name: Vitrines
  *   description: CRUD vitrines
- * /vitrines/{id}:
+ * /vitrines/{ID_VITRINE}:
  *   get:
  *     summary: Permet de récupérer une vitrine en fonction de son ID
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -88,25 +94,25 @@ router.get('/active', vitrines.findAllActive);
  *             schema:
  *               $ref: '#/components/schemas/Vitrine'
  *       204:
- *         description: Aucune vitrine trouvé avec l'ID indiqué
+ *         description: Aucune vitrine trouvée avec l'ID indiqué
  *       500:
  *         description: Une erreur s'est produite lors de la récupération d'une vitrine
  *
  */
-router.get('/:id', vitrines.findOne);
+router.get('/:ID_VITRINE', vitrinesService.GetById.bind(vitrinesService));
 
 /**
  * @swagger
  * tags:
  *   name: Vitrines
  *   description: CRUD vitrines
- * /vitrines/utilisateur/{id}:
+ * /vitrines/utilisateur/{ID_USER}:
  *   get:
  *     summary: Permet de récupérer la liste des vitrines d'un utilisateur
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
@@ -124,7 +130,7 @@ router.get('/:id', vitrines.findOne);
  *         description: Une erreur s'est produite lors de la récupération des vitrines d'un utilisateur
  *
  */
-router.get('/utilisateur/:id', vitrines.findFromUser);
+router.get('/utilisateur/:ID_USER', vitrinesService.GetByUserId.bind(vitrinesService));
 
 /**
  * @swagger
@@ -163,21 +169,21 @@ router.get('/utilisateur/:id', vitrines.findFromUser);
  *         description: Une erreur s'est produite lors de la création de la vitrine
  *
  */
-router.post('/', jwtAuthentification, vitrines.addOne);//Route nécessitant un token
+router.post('/', jwtAuthentification, vitrinesService.PostNewVitrine.bind(vitrinesService));//Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Vitrines
  *   description: CRUD vitrines
- * /vitrines/{id}:
+ * /vitrines/{ID_VITRINE}:
  *   put:
  *     summary: Permet de modifier une vitrine en fonction de son ID
  *     description: Veuillez notez que le changement de propriétaire est impossible
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -222,20 +228,20 @@ router.post('/', jwtAuthentification, vitrines.addOne);//Route nécessitant un t
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, vitrines.update);//Route nécessitant un token
+router.put('/:ID_VITRINE', jwtAuthentification, vitrinesService.PutVitrine.bind(vitrinesService));//Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Vitrines
  *   description: CRUD vitrines
- * /vitrines/{id}:
+ * /vitrines/{ID_VITRINE}:
  *   delete:
  *     summary: Permet de supprimer une vitrine en fonction de son ID
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_VITRINE
  *         schema:
  *           type: string
  *         required: true
@@ -272,6 +278,6 @@ router.put('/:id', jwtAuthentification, vitrines.update);//Route nécessitant un
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, vitrines.delete); //Route nécessitant un token
+router.delete('/:ID_VITRINE', jwtAuthentification, vitrinesService.DeleteVitrine.bind(vitrinesService)); //Route nécessitant un token
 
 module.exports = router;
