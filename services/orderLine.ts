@@ -30,7 +30,7 @@ export default class OrderLines{
         }
         catch(err :any){
             res.status(500).send({
-                message : err.message || "Une erreur s'est produite lors de la récupération de l'en-tête de commande"
+                message : err.message || "Une erreur s'est produite lors de la récupération de la ligne de commande"
             });
         }
     }
@@ -150,7 +150,7 @@ export default class OrderLines{
                 })
         }
         catch(err : any){
-            res.status(500).send({message : `${idOrderLine} : Impossible de supprimer l'en-tête de commande.`})
+            res.status(500).send({message : `${idOrderLine} : Impossible de supprimer la ligne de commande.`})
         }
 
     }
