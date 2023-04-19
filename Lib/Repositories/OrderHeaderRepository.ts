@@ -24,7 +24,6 @@ export class OrderHeaderRepository implements IOrderHeaderRepository {
                 ID_USER: userId
             }
         });
-
     }
 
     async GetOrderHeadersFromUserAndStatus(statusId : string, userId : string ) : Promise<OrderHeader[]>{

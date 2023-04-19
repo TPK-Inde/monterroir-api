@@ -1,25 +1,18 @@
 import express from "express";
-
+import OrderHeaders from "../services/orderHeader";
 const router = express.Router();
-const orderHeaderService = require("../services/orderHeader");
+const orderHeaderService = new OrderHeaders();
 const jwtAuthentification = require("../middleware/jwtAuthentification");
 
 /**
  * @swagger
- * tags:
- *   name: En-têtes de commandes
- *   description: CRUD En-têtes de commandes
+ *  tags:
+ *      name: En-têtes de commandes
+ *      description: CRUD En-têtes de commandes
  * /orderheader:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes, (25 retours par page)
  *     tags: [En-têtes de commandes]
- *     parameters:
- *       - in: query
- *         name: page
- *         schema:
- *           type: string
- *         required: false
- *         description: Le numéro de page (1 par défaut)
  *     responses:
  *       200:
  *         description: La récupération de la liste est réussit.
@@ -27,11 +20,13 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/OrderHeader'
+ *       204:
+ *         description: Aucun en-tête de commande trouvé
  *       500:
  *         description: Une erreur s'est produite lors de la récupération de tout les en-têtes de commandes.
  *
  */
-router.get('/',jwtAuthentification, orderHeaderService.GetAllOrderHeader);
+router.get('/', orderHeaderService.GetAllOrderHeader);
 /**
  * @swagger
  * tags:
@@ -87,6 +82,14 @@ router.get('/:id', jwtAuthentification, orderHeaderService.GetOrderHeaderById )
  *               $ref: '#/components/schemas/OrderHeader'
  *       204:
  *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID d'utilisateur"
  *       500:
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
@@ -123,6 +126,14 @@ router.get('/utilisateur/:id',jwtAuthentification,  orderHeaderService.GetOrderH
  *               $ref: '#/components/schemas/OrderHeader'
  *       204:
  *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID d'utilisateur"
  *       500:
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
