@@ -101,10 +101,12 @@ export default class OrderHeaders {
 
         if (!(parseInt(statusId) < 0)) {
             res.status(400).send({ message: "Format de L'id du statut est incorrect" });
+            return;
         }
 
         if (!(parseInt(userId) < 0)) {
             res.status(400).send({ message: "Format de L'id du statut est incorrect" });
+            return;
         }
 
         try{
