@@ -31,7 +31,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: Une erreur s'est produite lors de la récupération de tout les en-têtes de commandes.
  *
  */
-router.get('/', jwtAuthentification, orderHeaderService.findAll);
+router.get('/', orderHeaderService.GetAllOrderHeader);
 /**
  * @swagger
  * tags:
@@ -61,7 +61,7 @@ router.get('/', jwtAuthentification, orderHeaderService.findAll);
  *         description: Une erreur s'est produite lors de la récupération d'un en-tête de commande
  *
  */
-router.get('/:id', jwtAuthentification, orderHeaderService.findOne )
+router.get('/:id',  orderHeaderService.GetOrderHeaderById )
 /**
  * @swagger
  * tags:
@@ -91,29 +91,29 @@ router.get('/:id', jwtAuthentification, orderHeaderService.findOne )
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/utilisateur/:id', jwtAuthentification, orderHeaderService.findFromUser )
+router.get('/utilisateur/:id',  orderHeaderService.GetOrderHeaderByUser )
 /**
  * @swagger
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/status/{id}:
+ * /orderheader/status/{userId}/{statusId}:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur selon le status de la commande
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: userId
  *         schema:
  *           type: string
  *         required: true
  *         description: ID de l'utilisateur
- *     requestBody:
- *      required: true
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schemas/OrderHeader'
+ *       - in: path
+ *         name: statusId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID du statut
  *     responses:
  *       200:
  *         description: La récupération des en-têtes de commandes a réussit.
@@ -127,7 +127,7 @@ router.get('/utilisateur/:id', jwtAuthentification, orderHeaderService.findFromU
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserAndStatus)
+router.get('/status/:userId/:statusId',  orderHeaderService.GetOrderHeaderFromUserAndStatus)
 /**
  * @swagger
  * tags:
@@ -164,7 +164,7 @@ router.get('/status/:id', jwtAuthentification , orderHeaderService.findFromUserA
  *         description: Une erreur s'est produite lors de la création de l'en-tête de commande
  *
  */
-router.post('/', jwtAuthentification, orderHeaderService.addOne )
+router.post('/',  orderHeaderService.CreateOrderHeader )
 /**
  * @swagger
  * tags:
@@ -222,7 +222,7 @@ router.post('/', jwtAuthentification, orderHeaderService.addOne )
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, orderHeaderService.update )
+router.put('/:id',  orderHeaderService.UpdateOrderHeader )
 /**
  * @swagger
  * tags:
@@ -271,6 +271,6 @@ router.put('/:id', jwtAuthentification, orderHeaderService.update )
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, orderHeaderService.delete )
+router.delete('/:id',  orderHeaderService.DeleteOrderHeader )
 
 module.exports = router;
