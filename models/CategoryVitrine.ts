@@ -5,7 +5,7 @@ import {
 
 @Table({
   timestamps: false,
-  tableName: 'p_categories_vitrine'
+  tableName: 'P_CATEGORIES_VITRINE'
 })
 export class CategoryVitrine extends Model<CategoryVitrine> {
   @PrimaryKey
