@@ -1,7 +1,8 @@
 import express from 'express';
 
 const router = express.Router();
-const users = require('../services/user.ts');
+import Users from '../services/user';
+const userService = new Users();
 
 //Constante de middleware
 const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
@@ -45,20 +46,20 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', jwtAuthentification, users.findAll); //Route nécessitant un token
+router.get('/', jwtAuthentification, userService.GetAll.bind(userService)); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /users/{id}:
+ * /users/{ID_USER}:
  *   get:
  *     summary: Permet de récupérer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
@@ -72,6 +73,8 @@ router.get('/', jwtAuthentification, users.findAll); //Route nécessitant un tok
  *               $ref: '#/components/schemas/Utilisateur'
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément de la requête n'est pas valide
  *       401:
  *         description: Token vide ou invalide
  *       403:
@@ -87,7 +90,7 @@ router.get('/', jwtAuthentification, users.findAll); //Route nécessitant un tok
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:id', jwtAuthentification, users.findOne); //Route nécessitant un token
+router.get('/:ID_USER', jwtAuthentification, userService.GetById.bind(userService)); //Route nécessitant un token
 
 /**
  * @swagger
@@ -129,7 +132,7 @@ router.get('/:id', jwtAuthentification, users.findOne); //Route nécessitant un 
  *         description: Erreur du serveur interne
  *
  */
-router.post('/authentification', users.authUser);
+router.post('/authentification', userService.AuthUser.bind(userService));
 
 /**
  * @swagger
@@ -167,20 +170,20 @@ router.post('/authentification', users.authUser);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', users.addOne);
+router.post('/', userService.PostNewUser.bind(userService));
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /users/{id}:
+ * /users/{ID_USER}:
  *   put:
  *     summary: Permet de modifier un utilisateur en fonction de son ID, si le mot de passe n'est pas renseigné le mot de passe ne change pas
  *     tags: [Utilisateurs]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
@@ -225,20 +228,20 @@ router.post('/', users.addOne);
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, users.update); //Route nécessitant un token
+router.put('/:ID_USER', jwtAuthentification, userService.PutUser.bind(userService)); //Route nécessitant un token
 
 /**
  * @swagger
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
- * /users/{id}:
+ * /users/{ID_USER}:
  *   delete:
  *     summary: Permet de supprimer un utilisateur en fonction de son ID
  *     tags: [Utilisateurs]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
@@ -275,6 +278,6 @@ router.put('/:id', jwtAuthentification, users.update); //Route nécessitant un t
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, users.delete); //Route nécessitant un token
+router.delete('/:ID_USER', jwtAuthentification, userService.DeleteUser.bind(userService)); //Route nécessitant un token
 
 module.exports = router;
