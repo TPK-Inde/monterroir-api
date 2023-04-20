@@ -23,7 +23,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: ID de la ligne de commande
  *     responses:
  *       200:
- *         description: La récupération de la ligne de commande a réussit.
+ *         description: La récupération de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
@@ -63,7 +63,7 @@ router.get('/:id',jwtAuthentification, orderLineService.GetOrderLineById);
  *         description: ID de la l'en-tête de commande
  *     responses:
  *       200:
- *         description: La récupération de la ligne de commande a réussit.
+ *         description: La récupération de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
@@ -84,6 +84,44 @@ router.get('/:id',jwtAuthentification, orderLineService.GetOrderLineById);
  */
 router.get('/header/:id',jwtAuthentification, orderLineService.GetOrderLinesByOrderHeaderId);
 
+/**
+ * @swagger
+ * tags:
+ *   name: Lignes de commande
+ *   description: CRUD Lignes de commande
+ * /orderline/totalHeader/{id}:
+ *   get:
+ *     summary: Récupère le total de la commande par la somme des produits la composant
+ *     tags: [Lignes de commande]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la l'en-tête de commande
+ *     responses:
+ *       200:
+ *         description: La récupération du total de la commande a réussi.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Orderligne'
+ *       204:
+ *         description: Aucune ligne de commande trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID de l'en-tête de commande"
+ *       500:
+ *         description: Une erreur s'est produite lors de la récupération des lignes de commande
+ *
+ */
+router.get('/totalHeader/:id', orderLineService.GetOrderTotalByOrderHeaderId.bind(orderLineService));
 
 /**
  * @swagger
@@ -102,13 +140,13 @@ router.get('/header/:id',jwtAuthentification, orderLineService.GetOrderLinesByOr
  *            $ref: '#/components/schemas/OrderLine'
  *     responses:
  *       201:
- *         description: L'ajout de la ligne de commande a réussit.
+ *         description: L'ajout de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Création de la ligne de commande réussit"
+ *               message: "Création de la ligne de commande réussi"
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
@@ -148,13 +186,13 @@ router.post('/',jwtAuthentification, orderLineService.PostNewOrderLine.bind(orde
  *            $ref: '#/components/schemas/OrderLine'
  *     responses:
  *       200:
- *         description: La mise a jour de la ligne de commande a réussit.
+ *         description: La mise a jour de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Mise a jour de la ligne de commande réussit"
+ *               message: "Mise a jour de la ligne de commande réussi"
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
@@ -188,13 +226,13 @@ router.put('/:id',jwtAuthentification, orderLineService.PutOrderLine.bind(orderL
  *         description: ID de la ligne de commande
  *     responses:
  *       200:
- *         description: La suppression de la ligne de commande a réussit.
+ *         description: La suppression de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "La suppression de la ligne de commande a réussit"
+ *               message: "La suppression de la ligne de commande a réussi"
  *       400:
  *         description: Quelque chose a empêché la suppression de la ligne de commande
  *         content:

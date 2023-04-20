@@ -1,19 +1,28 @@
 import {OrderLine} from "../models/OrderLine";
 import {Request, Response} from "express";
 import {OrderLineRepository} from "../Lib/Repositories/OrderLineRepository";
+import { ProductRepository } from "../Lib/Repositories/ProductRepository";
+import { Order } from "sequelize";
+import { Product } from "../models/Product";
 
 export default class OrderLines{
 
-    constructor() {}
+    // Properties
+    _repository: OrderLineRepository;
 
+    // Constructor
+    constructor() {
+        this._repository = new OrderLineRepository();
+    }
+
+    // GET
     public async GetOrderLineById(req : Request, res : Response){
-        const orderLineRepository = new OrderLineRepository();
         try{
             if((parseInt(req.params.id) < 0)){
                 res.status(400).send({ message: "Format de L'id est incorrect" });
                 return;
             }
-            await orderLineRepository.GetOrderLineById(req.params.id)
+            await this._repository.GetOrderLineById(req.params.id)
                 .then((data : OrderLine | null) => {
                     if(data){
                         res.status(200).send(data);
@@ -36,15 +45,12 @@ export default class OrderLines{
     }
 
     public async GetOrderLinesByOrderHeaderId(req : Request, res : Response){
-
-        const orderLineRepository = new OrderLineRepository();
-
         if((parseInt(req.params.id) < 0)){
             res.status(400).send({ message: "Format de L'id est incorrect" });
             return;
         }
         try{
-            await orderLineRepository.GetOrderLinesByOrderHeaderId(req.params.id)
+            await this._repository.GetOrderLinesByOrderHeaderId(req.params.id)
             .then((data : OrderLine[]) => {
                 if(data){
                     res.status(200).send(data);
@@ -65,11 +71,17 @@ export default class OrderLines{
         }
     }
 
+    public async GetOrderTotalByOrderHeaderId(req: Request, res: Response) {
+        await this.GetTotalSumOfProducts(req, res).then((data) => {
+            res.sendStatus(200).send(data)
+        }).catch((err: {message: any}) => {
+            console.log(err.message)
+        })
+    }
+
+    // POST
     public async PostNewOrderLine(req: Request, res : Response){
-
-        const orderLineRepository = new OrderLineRepository();
         const validatedData = await this.checkDataIntegrity(req.body)
-
         if(validatedData){
             console.log(validatedData)
             res.status(400).send({message : validatedData});
@@ -77,7 +89,7 @@ export default class OrderLines{
         }
         try{
             req.body.ID_ORDER_LINE = 0
-            await orderLineRepository.PostNewOrderLine(req.body)
+            await this._repository.PostNewOrderLine(req.body)
             .then(() => {
                 res.status(201).send({message : "Création de la ligne de commande réussit"});
             })
@@ -94,24 +106,20 @@ export default class OrderLines{
         }
     }
 
+    // PUT
     public async PutOrderLine(req : Request, res : Response){
-        const orderLineRepository = new OrderLineRepository();
-
         const idOrderLine = req.params.id;
-
         if(!idOrderLine){
             res.status(400).send({message : "Veuillez entrer un id de ligne de commande à modifier"});
             return;
         }
-
         const validatedData = await this.checkDataIntegrity(req.body)
         if(validatedData){
             res.status(400).send({message : validatedData});
             return;
         }
-
         try{
-            await orderLineRepository.PutOrderLine(req.body)
+            await this._repository.PutOrderLine(req.body)
             .then(() => {
                 res.status(200).send({ message : "Ligne de commande mise à jour"});
             })
@@ -128,16 +136,15 @@ export default class OrderLines{
         }
     };
 
+    // DELETE
     public async DeleteOrderLine(req : Request, res : Response){
-        const orderLineRepository = new OrderLineRepository();
-
         const idOrderLine = req.params.id;
         if(!idOrderLine){
             res.status(400).send({message : "Veuillez entrer l'id de la ligne de commande à suprrimer"});
             return;
         }
         try{
-            await orderLineRepository.DeleteOrderLine(idOrderLine)
+            await this._repository.DeleteOrderLine(idOrderLine)
                 .then((num : number) => {
                     if(num == 1){
                         res.send({message : `${idOrderLine} : La ligne de commande a bien été supprimé.`})
@@ -152,19 +159,41 @@ export default class OrderLines{
         catch(err : any){
             res.status(500).send({message : `${idOrderLine} : Impossible de supprimer la ligne de commande.`})
         }
-
     }
 
-
-
-
-
+    // Private Method
     private async checkDataIntegrity(orderLineData : OrderLine){
         if(!orderLineData.ID_ORDER_LINE){return "ID_ORDER_LINE"}
         if(!orderLineData.ID_PRODUCT){return "ID_PRODUCT"}
         if(!orderLineData.ID_ORDER_HEADER){return "ID_ORDER_HEADER"}
         if(!orderLineData.ORDER_QUANTITY){return "ORDER_QUANTITY"}
-
         return null;
+    }
+    
+    private async GetTotalSumOfProducts(req: Request, res: Response) {
+        const productRepository: ProductRepository = new ProductRepository();
+        const products: Product[] = [];
+        let total: number = 0;
+        try {
+            const orderLines = await this._repository.GetOrderLinesByOrderHeaderId(req.params.id)
+            for(var line of orderLines){
+                const product = await productRepository.GetById(line.ID_PRODUCT)
+                if(product != null) {
+                    products.push(product);
+                }
+            }
+            console.log("la somme finale vaut : ", this.CalculateSumOfProducts(products))
+            return this.CalculateSumOfProducts(products);
+        } catch(error: any) {
+            console.log(error.mesage)
+        }
+    }
+
+    private CalculateSumOfProducts(products: Product[]): number {
+        let total: number = 0;
+        for(var product of products) {
+            total = total + product.UNIT_PRICE_HT
+        }
+        return total;
     }
 }
