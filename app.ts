@@ -66,6 +66,12 @@ const optionsSwagger = {
 };
 
 const specs = swaggerJsdoc(optionsSwagger);
+
+//En cas d'appel sur la racine de l'URL, en renvoi vers la doc SWAGGER
+app.get("/", function (req, res) {
+  res.redirect("/api-docs");
+})
+
 app.use(
   "/api-docs",
   swaggerUi.serve,

@@ -14,6 +14,7 @@ const config = {
   },
   listPerPage: process.env.LISTE_PAR_PAGE,
   token_secret: process.env.TOKEN_SECRET, //Clé privée
-  token_life: process.env.TOKEN_LIFE //Durée de vie d'un token
+  token_life: process.env.TOKEN_LIFE, //Durée de vie d'un token
+  keyAES: process.env.KEY_AES //Clé de chiffrement
 };
 module.exports = config;
