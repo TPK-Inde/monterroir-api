@@ -33,7 +33,7 @@ export class BasketRepository implements IBasketRepository {
             DATE: basketToModify.DATE
         }, {
             where: {
-                ID_BASKET: basketToModify.ID
+                ID_BASKET: basketToModify.ID_BASKET
             }
         })
     }
@@ -46,7 +46,7 @@ export class BasketRepository implements IBasketRepository {
                 ID_BASKET: basketToDeleteId
             }
         }).then(rowDeleted => {
-            if(rowDeleted === 1){
+            if (rowDeleted === 1) {
                 rowIsDeleted = 1;
             }
         })
