@@ -1,8 +1,10 @@
 import express from "express";
 import OrderLines from "../services/orderLine";
+import JwtAuthentification from "../middleware/jwtAuthentification";
+
 const router = express.Router();
 const orderLineService = new OrderLines();
-const jwtAuthentification = require("../middleware/jwtAuthentification");
+const jwtAuthentification = new JwtAuthentification();
 
 
 /**
@@ -27,7 +29,7 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Orderligne'
+ *               $ref: '#/components/schemas/OrderLine'
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
@@ -42,7 +44,12 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: Une erreur s'est produite lors de la récupération d'une ligne de commande
  *
  */
-router.get('/:id',jwtAuthentification, orderLineService.GetOrderLineById);
+router.get(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.GetOrderLineById
+);
 
 
 /**
@@ -67,7 +74,7 @@ router.get('/:id',jwtAuthentification, orderLineService.GetOrderLineById);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Orderligne'
+ *               $ref: '#/components/schemas/OrderLine'
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
@@ -82,7 +89,12 @@ router.get('/:id',jwtAuthentification, orderLineService.GetOrderLineById);
  *         description: Une erreur s'est produite lors de la récupération des lignes de commande
  *
  */
-router.get('/header/:id',jwtAuthentification, orderLineService.GetOrderLinesByOrderHeaderId);
+router.get(
+  '/header/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.GetOrderLinesByOrderHeaderId
+);
 
 
 /**
@@ -121,7 +133,12 @@ router.get('/header/:id',jwtAuthentification, orderLineService.GetOrderLinesByOr
  *         description: Une erreur s'est produite lors de la création de la ligne de commande
  *
  */
-router.post('/',jwtAuthentification, orderLineService.PostNewOrderLine.bind(orderLineService));
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.PostNewOrderLine.bind(orderLineService)
+);
 
 
 /**
@@ -167,7 +184,12 @@ router.post('/',jwtAuthentification, orderLineService.PostNewOrderLine.bind(orde
  *         description: Une erreur s'est produite lors de la mise a jour de la ligne de commande
  *
  */
-router.put('/:id',jwtAuthentification, orderLineService.PutOrderLine.bind(orderLineService));
+router.put(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.PutOrderLine.bind(orderLineService)
+);
 
 
 /**
@@ -207,6 +229,11 @@ router.put('/:id',jwtAuthentification, orderLineService.PutOrderLine.bind(orderL
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id',jwtAuthentification, orderLineService.DeleteOrderLine);
+router.delete(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.DeleteOrderLine
+);
 
 module.exports = router;

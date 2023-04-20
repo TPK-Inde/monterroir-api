@@ -1,9 +1,10 @@
 import express from "express";
 import Baskets from "../services/baskets";
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const basketService = new Baskets();
-const jwAuthentification = require("../middleware/jwtAuthentification");
+const jwtAuthentification = new JwtAuthentification();
 
 
 /**

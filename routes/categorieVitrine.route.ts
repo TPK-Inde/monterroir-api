@@ -1,11 +1,12 @@
 import express from 'express';
 import CategoriesVitrine from '../services/categoriesVitrine';
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const categoryVitrine = require('../services/categoriesVitrine.ts');
 
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
+const jwtAuthentification = new JwtAuthentification();
 
 //Constante de service
 const categoryVitrineService = new CategoriesVitrine();
@@ -101,7 +102,12 @@ router.get('/:ID_CATEGORY_VITRINE', categoryVitrineService.GetById);
  *         description: Une erreur s'est produite lors de la création de la catégorie de vitrine
  *
  */
-router.post('/', jwtAuthentification, categoryVitrineService.PostNewCategoryVitrine);//Route nécessitant un token
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsSuperAdministrator.bind(jwtAuthentification),
+  categoryVitrineService.PostNewCategoryVitrine
+);//Route nécessitant un token
 
 /**
  * @swagger
@@ -159,7 +165,12 @@ router.post('/', jwtAuthentification, categoryVitrineService.PostNewCategoryVitr
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrineService.PutCategoryVitrine);//Route nécessitant un token
+router.put(
+  '/:ID_CATEGORY_VITRINE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsSuperAdministrator.bind(jwtAuthentification),
+  categoryVitrineService.PutCategoryVitrine
+);//Route nécessitant un token
 
 /**
  * @swagger
@@ -209,6 +220,11 @@ router.put('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrineService.
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_CATEGORY_VITRINE', jwtAuthentification, categoryVitrineService.DeleteCategoryVitrine); //Route nécessitant un token
+router.delete(
+  '/:ID_CATEGORY_VITRINE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsSuperAdministrator.bind(jwtAuthentification),
+  categoryVitrineService.DeleteCategoryVitrine
+); //Route nécessitant un token
 
 module.exports = router;

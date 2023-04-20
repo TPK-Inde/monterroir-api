@@ -1,12 +1,13 @@
 import express from 'express';
 import Vitrines from '../services/vitrines';
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const vitrinesService = new Vitrines();
 
 
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
+const jwtAuthentification = new JwtAuthentification();
 
 /**
  * @swagger
@@ -37,7 +38,12 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Une erreur s'est produite lors de la récupération de toutes les vitrines
  *
  */
-router.get('/', jwtAuthentification, vitrinesService.GetAll.bind(vitrinesService));
+router.get(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsAdministrator.bind(jwtAuthentification),
+  vitrinesService.GetAll.bind(vitrinesService)
+);
 
 /**
  * @swagger
@@ -68,7 +74,10 @@ router.get('/', jwtAuthentification, vitrinesService.GetAll.bind(vitrinesService
  *         description: Une erreur s'est produite lors de la récupération de toutes les vitrines actives
  *
  */
-router.get('/active', vitrinesService.GetAllActive.bind(vitrinesService));
+router.get(
+  '/active',
+  vitrinesService.GetAllActive.bind(vitrinesService)
+);
 
 /**
  * @swagger
@@ -99,14 +108,17 @@ router.get('/active', vitrinesService.GetAllActive.bind(vitrinesService));
  *         description: Une erreur s'est produite lors de la récupération d'une vitrine
  *
  */
-router.get('/:ID_VITRINE', vitrinesService.GetById.bind(vitrinesService));
+router.get(
+  '/:ID_VITRINE',
+  vitrinesService.GetById.bind(vitrinesService)
+);
 
 /**
  * @swagger
  * tags:
  *   name: Vitrines
  *   description: CRUD vitrines
- * /vitrines/utilisateur/{ID_USER}:
+ * /vitrines/user/{ID_USER}:
  *   get:
  *     summary: Permet de récupérer la liste des vitrines d'un utilisateur
  *     tags: [Vitrines]
@@ -130,7 +142,10 @@ router.get('/:ID_VITRINE', vitrinesService.GetById.bind(vitrinesService));
  *         description: Une erreur s'est produite lors de la récupération des vitrines d'un utilisateur
  *
  */
-router.get('/utilisateur/:ID_USER', vitrinesService.GetByUserId.bind(vitrinesService));
+router.get(
+  '/user/:ID_USER',
+  vitrinesService.GetByUserId.bind(vitrinesService)
+);
 
 /**
  * @swagger
@@ -169,7 +184,11 @@ router.get('/utilisateur/:ID_USER', vitrinesService.GetByUserId.bind(vitrinesSer
  *         description: Une erreur s'est produite lors de la création de la vitrine
  *
  */
-router.post('/', jwtAuthentification, vitrinesService.PostNewVitrine.bind(vitrinesService));//Route nécessitant un token
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  vitrinesService.PostNewVitrine.bind(vitrinesService)
+);//Route nécessitant un token
 
 /**
  * @swagger
@@ -228,7 +247,12 @@ router.post('/', jwtAuthentification, vitrinesService.PostNewVitrine.bind(vitrin
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_VITRINE', jwtAuthentification, vitrinesService.PutVitrine.bind(vitrinesService));//Route nécessitant un token
+router.put(
+  '/:ID_VITRINE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  vitrinesService.PutVitrine.bind(vitrinesService)
+);//Route nécessitant un token
 
 /**
  * @swagger
@@ -278,6 +302,11 @@ router.put('/:ID_VITRINE', jwtAuthentification, vitrinesService.PutVitrine.bind(
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_VITRINE', jwtAuthentification, vitrinesService.DeleteVitrine.bind(vitrinesService)); //Route nécessitant un token
+router.delete(
+  '/:ID_VITRINE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  vitrinesService.DeleteVitrine.bind(vitrinesService)
+); //Route nécessitant un token
 
 module.exports = router;

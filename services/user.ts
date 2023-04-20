@@ -250,7 +250,19 @@ export default class Users {
     //Fonction permettant de générer un token
     private async GenerateAccessToken(dataUser: User) {
         return new Promise((resolve, reject) => {
-            resolve(jwt.sign({ "ID_USER": dataUser.ID_USER, "PSEUDONYM": dataUser.PSEUDONYM }, config.token_secret, { expiresIn: config.token_life }))
+            resolve(
+                jwt.sign(
+                    {
+                        "ID_USER": dataUser.ID_USER,
+                        "PSEUDONYM": dataUser.PSEUDONYM,
+                        "IS_MODERATOR": dataUser.ID_ACCOUNT_STATUS == 2 ? true : false,
+                        "IS_ADMINISTRATOR": dataUser.ID_ACCOUNT_STATUS == 3 ? true : false,
+                        "IS_SUPER_ADMINISTRATOR": dataUser.ID_ACCOUNT_STATUS == 4 ? true : false
+                    },
+                    config.token_secret,
+                    { expiresIn: config.token_life }
+                )
+            )
         })
     }
 

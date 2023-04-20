@@ -1,11 +1,13 @@
 import express from 'express';
+import Users from '../services/user';
+
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
-import Users from '../services/user';
 const userService = new Users();
 
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
+const jwtAuthentification = new JwtAuthentification();
 
 /**
  * @swagger
@@ -46,7 +48,12 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/', jwtAuthentification, userService.GetAll.bind(userService)); //Route nécessitant un token
+router.get(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsSuperAdministrator.bind(jwtAuthentification),
+  userService.GetAll.bind(userService)
+); //Route nécessitant un token
 
 /**
  * @swagger
@@ -90,7 +97,12 @@ router.get('/', jwtAuthentification, userService.GetAll.bind(userService)); //Ro
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:ID_USER', jwtAuthentification, userService.GetById.bind(userService)); //Route nécessitant un token
+router.get(
+  '/:ID_USER',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  userService.GetById.bind(userService)
+); //Route nécessitant un token
 
 /**
  * @swagger
@@ -132,7 +144,10 @@ router.get('/:ID_USER', jwtAuthentification, userService.GetById.bind(userServic
  *         description: Erreur du serveur interne
  *
  */
-router.post('/authentification', userService.AuthUser.bind(userService));
+router.post(
+  '/authentification',
+  userService.AuthUser.bind(userService)
+);
 
 /**
  * @swagger
@@ -170,7 +185,10 @@ router.post('/authentification', userService.AuthUser.bind(userService));
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', userService.PostNewUser.bind(userService));
+router.post(
+  '/',
+  userService.PostNewUser.bind(userService)
+);
 
 /**
  * @swagger
@@ -228,7 +246,12 @@ router.post('/', userService.PostNewUser.bind(userService));
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_USER', jwtAuthentification, userService.PutUser.bind(userService)); //Route nécessitant un token
+router.put(
+  '/:ID_USER',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  userService.PutUser.bind(userService)
+); //Route nécessitant un token
 
 /**
  * @swagger
@@ -278,6 +301,11 @@ router.put('/:ID_USER', jwtAuthentification, userService.PutUser.bind(userServic
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_USER', jwtAuthentification, userService.DeleteUser.bind(userService)); //Route nécessitant un token
+router.delete(
+  '/:ID_USER',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  userService.DeleteUser.bind(userService)
+); //Route nécessitant un token
 
 module.exports = router;
