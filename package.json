@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "dotenv -e .env.development nodemon server.ts",
     "start": "nodemon server.ts",
-    "test": "dotenv -e .env.development jest"
+    "test": "dotenv -e .env.development jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +36,7 @@
     "@types/supertest": "^2.0.12",
     "@types/validator": "^13.7.12",
     "jest": "^29.5.0",
+    "sequelize-mock": "^0.10.2",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
