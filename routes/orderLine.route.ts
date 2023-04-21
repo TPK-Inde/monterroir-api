@@ -96,6 +96,49 @@ router.get(
   orderLineService.GetOrderLinesByOrderHeaderId
 );
 
+/**
+ * @swagger
+ * tags:
+ *   name: Lignes de commande
+ *   description: CRUD Lignes de commande
+ * /orderline/totalHeader/{id}:
+ *   get:
+ *     summary: Récupère le total de la commande par la somme des produits la composant
+ *     tags: [Lignes de commande]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la l'en-tête de commande
+ *     responses:
+ *       200:
+ *         description: La récupération du total de la commande a réussi.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Orderligne'
+ *       204:
+ *         description: Aucune ligne de commande trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID de l'en-tête de commande"
+ *       500:
+ *         description: Une erreur s'est produite lors de la récupération des lignes de commande
+ *
+ */
+router.get(
+  '/totalHeader/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderLineService.GetOrderTotalByOrderHeaderId.bind(orderLineService)
+);
 
 /**
  * @swagger
