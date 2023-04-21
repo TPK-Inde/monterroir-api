@@ -39,13 +39,13 @@ router.get(
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/{id}:
+ * /orderheader/{ID_ORDER_HEADER}:
  *   get:
  *     summary: Permet de récupérer un en-tête de commande en fonction de son ID
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_HEADER
  *         schema:
  *           type: string
  *         required: true
@@ -64,7 +64,7 @@ router.get(
  *
  */
 router.get(
-  '/:id',
+  '/:ID_ORDER_HEADER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderHeaderService.GetOrderHeaderById
@@ -74,13 +74,13 @@ router.get(
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/utilisateur/{id}:
+ * /orderheader/utilisateur/{ID_USER}:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
@@ -107,7 +107,7 @@ router.get(
  *
  */
 router.get(
-  '/utilisateur/:id',
+  '/utilisateur/:ID_USER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderHeaderService.GetOrderHeaderByUser
@@ -118,19 +118,19 @@ router.get(
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/status/{userId}/{statusId}:
+ * /orderheader/status/{ID_USER}/{ID_ORDER_STATUS}:
  *   get:
  *     summary: Permet de récupérer la liste des en-têtes de commandes d'un utilisateur selon le status de la commande
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: userId
+ *         name: ID_USER
  *         schema:
  *           type: string
  *         required: true
  *         description: ID de l'utilisateur
  *       - in: path
- *         name: statusId
+ *         name: ID_ORDER_STATUS
  *         schema:
  *           type: string
  *         required: true
@@ -157,7 +157,7 @@ router.get(
  *
  */
 router.get(
-  '/status/:userId/:statusId',
+  '/status/:ID_USER/:ID_ORDER_STATUS',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderHeaderService.GetOrderHeaderFromUserAndStatus
@@ -208,14 +208,14 @@ router.post(
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/{id}:
+ * /orderheader/{ID_ORDER_HEADER}:
  *   put:
  *     summary: Permet de modifier un en-tête de commande en fonction de son ID
  *     description: Veuillez notez que le changement de propriétaire est impossible
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_HEADER
  *         schema:
  *           type: string
  *         required: true
@@ -259,7 +259,7 @@ router.post(
  *
  */
 router.put(
-  '/:id',
+  '/:ID_ORDER_HEADER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderHeaderService.UpdateOrderHeader
@@ -270,13 +270,13 @@ router.put(
  * tags:
  *   name: En-têtes de commandes
  *   description: CRUD En-têtes de commandes
- * /orderheader/{id}:
+ * /orderheader/{ID_ORDER_HEADER}:
  *   delete:
  *     summary: Permet de supprimer un en-tête de commande en fonction de son ID
  *     tags: [En-têtes de commandes]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_HEADER
  *         schema:
  *           type: string
  *         required: true
@@ -314,7 +314,7 @@ router.put(
  *
  */
 router.delete(
-  '/:id',
+  '/:ID_ORDER_HEADER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderHeaderService.DeleteOrderHeader

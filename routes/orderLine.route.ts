@@ -12,13 +12,13 @@ const jwtAuthentification = new JwtAuthentification();
  * tags:
  *   name: Lignes de commande
  *   description: CRUD Lignes de commande
- * /orderline/{id}:
+ * /orderline/{ID_ORDER_LINE}:
  *   get:
  *     summary: Permet de récupérer une ligne de commande en fonction de son ID
  *     tags: [Lignes de commande]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_LINE
  *         schema:
  *           type: string
  *         required: true
@@ -45,10 +45,10 @@ const jwtAuthentification = new JwtAuthentification();
  *
  */
 router.get(
-  '/:id',
+  '/:ID_ORDER_LINE',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
-  orderLineService.GetOrderLineById
+  orderLineService.GetOrderLineById.bind(orderLineService)
 );
 
 
@@ -57,13 +57,13 @@ router.get(
  * tags:
  *   name: Lignes de commande
  *   description: CRUD Lignes de commande
- * /orderline/header/{id}:
+ * /orderline/header/{ID_ORDER_HEADER}:
  *   get:
  *     summary: Permet de récupérer une ligne de commande en fonction de l'ID de l'en-tête de commande
  *     tags: [Lignes de commande]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_HEADER
  *         schema:
  *           type: string
  *         required: true
@@ -90,10 +90,10 @@ router.get(
  *
  */
 router.get(
-  '/header/:id',
+  '/header/:ID_ORDER_HEADER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
-  orderLineService.GetOrderLinesByOrderHeaderId
+  orderLineService.GetOrderLinesByOrderHeaderId.bind(orderLineService)
 );
 
 /**
@@ -101,13 +101,13 @@ router.get(
  * tags:
  *   name: Lignes de commande
  *   description: CRUD Lignes de commande
- * /orderline/totalHeader/{id}:
+ * /orderline/totalHeader/{ID_ORDER_HEADER}:
  *   get:
  *     summary: Récupère le total de la commande par la somme des produits la composant
  *     tags: [Lignes de commande]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_HEADER
  *         schema:
  *           type: string
  *         required: true
@@ -138,7 +138,7 @@ router.get(
  *
  */
 router.get(
-  '/totalHeader/:id',
+  '/totalHeader/:ID_ORDER_HEADER',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderLineService.GetOrderTotalByOrderHeaderId.bind(orderLineService)
@@ -193,13 +193,13 @@ router.post(
  * tags:
  *   name: Lignes de commande
  *   description: CRUD Lignes de commande
- * /orderline/{id}:
+ * /orderline/{ID_ORDER_LINE}:
  *   put:
  *     summary: Permet de mettre à jour une nouvelle ligne de commande
  *     tags: [Lignes de commande]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_LINE
  *         schema:
  *           type: string
  *         required: true
@@ -232,7 +232,7 @@ router.post(
  *
  */
 router.put(
-  '/:id',
+  '/:ID_ORDER_LINE',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
   orderLineService.PutOrderLine.bind(orderLineService)
@@ -244,13 +244,13 @@ router.put(
  * tags:
  *   name: Lignes de commande
  *   description: CRUD Lignes de commande de commandes
- * /orderline/{id}:
+ * /orderline/{ID_ORDER_LINE}:
  *   delete:
  *     summary: Permet de supprimer une ligne de commande en fonction de son ID
  *     tags: [Lignes de commande]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: ID_ORDER_LINE
  *         schema:
  *           type: string
  *         required: true
@@ -277,10 +277,10 @@ router.put(
  *
  */
 router.delete(
-  '/:id',
+  '/:ID_ORDER_LINE',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
   jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
-  orderLineService.DeleteOrderLine
+  orderLineService.DeleteOrderLine.bind(orderLineService)
 );
 
 module.exports = router;
