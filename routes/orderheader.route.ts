@@ -1,8 +1,10 @@
 import express from "express";
 import OrderHeaders from "../services/orderHeader";
+import JwtAuthentification from "../middleware/jwtAuthentification";
+
 const router = express.Router();
 const orderHeaderService = new OrderHeaders();
-const jwtAuthentification = require("../middleware/jwtAuthentification");
+const jwtAuthentification = new JwtAuthentification();
 
 /**
  * @swagger
@@ -26,7 +28,12 @@ const jwtAuthentification = require("../middleware/jwtAuthentification");
  *         description: Une erreur s'est produite lors de la récupération de tout les en-têtes de commandes.
  *
  */
-router.get('/',jwtAuthentification, orderHeaderService.GetAllOrderHeader);
+router.get(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.GetAllOrderHeader
+);
 /**
  * @swagger
  * tags:
@@ -56,7 +63,12 @@ router.get('/',jwtAuthentification, orderHeaderService.GetAllOrderHeader);
  *         description: Une erreur s'est produite lors de la récupération d'un en-tête de commande
  *
  */
-router.get('/:id', jwtAuthentification, orderHeaderService.GetOrderHeaderById )
+router.get(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.GetOrderHeaderById
+)
 /**
  * @swagger
  * tags:
@@ -94,7 +106,13 @@ router.get('/:id', jwtAuthentification, orderHeaderService.GetOrderHeaderById )
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/utilisateur/:id',jwtAuthentification,  orderHeaderService.GetOrderHeaderByUser )
+router.get(
+  '/utilisateur/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.GetOrderHeaderByUser
+)
+
 /**
  * @swagger
  * tags:
@@ -138,7 +156,12 @@ router.get('/utilisateur/:id',jwtAuthentification,  orderHeaderService.GetOrderH
  *         description: Une erreur s'est produite lors de la récupération des en-têtes de commandes d'un utilisateur
  *
  */
-router.get('/status/:userId/:statusId', jwtAuthentification, orderHeaderService.GetOrderHeaderFromUserAndStatus)
+router.get(
+  '/status/:userId/:statusId',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.GetOrderHeaderFromUserAndStatus
+)
 /**
  * @swagger
  * tags:
@@ -175,7 +198,11 @@ router.get('/status/:userId/:statusId', jwtAuthentification, orderHeaderService.
  *         description: Une erreur s'est produite lors de la création de l'en-tête de commande
  *
  */
-router.post('/', jwtAuthentification, orderHeaderService.CreateOrderHeader )
+router.post(
+  '/', jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  orderHeaderService.CreateOrderHeader
+)
+
 /**
  * @swagger
  * tags:
@@ -231,7 +258,13 @@ router.post('/', jwtAuthentification, orderHeaderService.CreateOrderHeader )
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:id', jwtAuthentification, orderHeaderService.UpdateOrderHeader )
+router.put(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.UpdateOrderHeader
+)
+
 /**
  * @swagger
  * tags:
@@ -280,6 +313,11 @@ router.put('/:id', jwtAuthentification, orderHeaderService.UpdateOrderHeader )
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:id', jwtAuthentification, orderHeaderService.DeleteOrderHeader )
+router.delete(
+  '/:id',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  orderHeaderService.DeleteOrderHeader
+)
 
 module.exports = router;

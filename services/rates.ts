@@ -6,24 +6,24 @@ import { serialize } from 'v8';
 
 class Rates {
     // Constructor
-    constructor() {}
+    constructor() { }
 
     // Get Methods
     public async GetAll(req: Request, res: Response) {
         const repository = new RateRepository();
         try {
             await repository.GetAllRates()
-            .then((data: Rate[]) => {
-                if(data != null && data.length > 0) {
-                    res.status(200).send(data);
-                } else {
-                    res.status(204).send();
-                }
-            }) .catch((err: { message: any; }) => {
-                res.status(400).send({
-                    message: err.message || "Une erreur s'est produite lors de la récupération de tous les Rates"
+                .then((data: Rate[]) => {
+                    if (data != null && data.length > 0) {
+                        res.status(200).send(data);
+                    } else {
+                        res.status(204).send();
+                    }
+                }).catch((err: { message: any; }) => {
+                    res.status(400).send({
+                        message: err.message || "Une erreur s'est produite lors de la récupération de tous les Rates"
+                    })
                 })
-            })
         } catch (error: any) {
             res.status(500).send({
                 message: error.message || "Une erreur s'est produite lors de la récupération de tous les Rates"
@@ -33,21 +33,21 @@ class Rates {
 
     public async GetById(req: Request, res: Response) {
         const repository = new RateRepository();
-        if(parseInt(req.params.ID) > 0){
+        if (parseInt(req.params.ID) > 0) {
             try {
-                await repository.GetRateById(req.params.ID)
-                .then((data: Rate|null) => {
-                    if(data != null) {
-                        res.status(200).send(data);
-                    } else {
-                        res.status(204).send();
-                    }
-                }).catch((err: {message: any;}) => {
-                    res.status(400).send({
-                        message: err.message || `Une erreur s'est produite lors de la récupération du Rate d'id : ${req.params.ID}`
+                await repository.GetRateById(req.params.ID_RATE)
+                    .then((data: Rate | null) => {
+                        if (data != null) {
+                            res.status(200).send(data);
+                        } else {
+                            res.status(204).send();
+                        }
+                    }).catch((err: { message: any; }) => {
+                        res.status(400).send({
+                            message: err.message || `Une erreur s'est produite lors de la récupération du Rate d'id : ${req.params.ID}`
+                        })
                     })
-                })
-            } catch(error: any) {
+            } catch (error: any) {
                 res.status(500).send({
                     message: `Une erreur s'est produite lors de la récupération du Rate d'id : ${req.params.ID}`
                 })
@@ -57,21 +57,21 @@ class Rates {
 
     public async GetVitrineRate(req: Request, res: Response) {
         const repository = new RateRepository();
-        if(parseInt(req.params.ID_VITRINE) > 0){
+        if (parseInt(req.params.ID_VITRINE) > 0) {
             try {
                 await repository.GetVitrineRates(req.params.ID_VITRINE)
-                .then((data: Rate[]) => {
-                    if(data != null && data.length > 0) {
-                        res.status(200).send(data);
-                    } else {
-                        res.status(204).send();
-                    }
-                }).catch((err: {message: any;}) => {
-                    res.status(400).send({
-                        message: err.message || `Une erreur s'est produite lors de la récupération des Rates de la vitrine d'ID : ${req.params.ID_VITRINE}`
+                    .then((data: Rate[]) => {
+                        if (data != null && data.length > 0) {
+                            res.status(200).send(data);
+                        } else {
+                            res.status(204).send();
+                        }
+                    }).catch((err: { message: any; }) => {
+                        res.status(400).send({
+                            message: err.message || `Une erreur s'est produite lors de la récupération des Rates de la vitrine d'ID : ${req.params.ID_VITRINE}`
+                        })
                     })
-                })
-            } catch(error: any) {
+            } catch (error: any) {
                 res.status(500).send({
                     message: `Une erreur s'est produite lors de la récupération des Rates de la vitrine d'ID : ${req.params.ID_VITRINE}`
                 })
@@ -89,12 +89,12 @@ class Rates {
         newRate.DATE = req.body.DATE;
         try {
             await repository.PostNewRate(newRate)
-            .then(() => res.status(204).send())
-            .catch((err: {message: any;}) => {
-                res.status(400).send({
-                    message: err.message || "Une erreur s'est produite lors de l'insertion du nouveau Rate."
+                .then(() => res.status(204).send())
+                .catch((err: { message: any; }) => {
+                    res.status(400).send({
+                        message: err.message || "Une erreur s'est produite lors de l'insertion du nouveau Rate."
+                    })
                 })
-            })
         } catch (error: any) {
             res.status(500).send({
                 message: error.message || "Une erreur s'est produite lors de l'insertion du nouveau Rate."
@@ -113,12 +113,12 @@ class Rates {
             rateToModify.RATE = req.body.RATE;
             rateToModify.DATE = req.body.DATE;
             await repository.PutRate(rateToModify)
-            .then(() => res.status(204).send())
-            .catch((err: {message: any;}) => {
-                res.status(400).send({
-                    message: err.message || "Une erreur s'est produite lors de la modification du Rate."
+                .then(() => res.status(204).send())
+                .catch((err: { message: any; }) => {
+                    res.status(400).send({
+                        message: err.message || "Une erreur s'est produite lors de la modification du Rate."
+                    })
                 })
-            })
         } catch (error: any) {
             res.status(500).send({
                 message: error.message || "Une erreur s'est produite lors de la modification du Rate."
@@ -128,30 +128,31 @@ class Rates {
 
     //Delete Method
     public async DeleteRate(req: Request, res: Response) {
-        const repository = new RateRepository();        
+        const repository = new RateRepository();
         try {
-            if(parseInt(req.params.ID_RATE) > 0) {
+            if (parseInt(req.params.ID_RATE) > 0) {
                 repository.DeleteRate(req.params.ID_RATE)
-                .then(rowDeleted => {
-                    if(rowDeleted == 1){
-                        res.status(200).send({ 
-                            message: `Le Rate d'ID_RATE ${req.params.ID_RATE} a bien été supprimé.`});
-                    } else {
+                    .then(rowDeleted => {
+                        if (rowDeleted == 1) {
+                            res.status(200).send({
+                                message: `Le Rate d'ID_RATE ${req.params.ID_RATE} a bien été supprimé.`
+                            });
+                        } else {
+                            res.status(400).send({
+                                message: `Le Rate d'ID_RATE ${req.params.ID_RATE} n'a pas pu être supprimé (rowDeleted = ${rowDeleted})`
+                            });
+                        }
+                    }).catch((err: { message: any; }) => {
                         res.status(400).send({
-                            message: `Le Rate d'ID_RATE ${req.params.ID_RATE} n'a pas pu être supprimé (rowDeleted = ${rowDeleted})`
-                        });
-                    }
-                }).catch((err: {message: any;}) => {
-                    res.status(400).send({
-                        message: err.message || "Une erreur s'est produite lors de la suppression du Rate."
+                            message: err.message || "Une erreur s'est produite lors de la suppression du Rate."
+                        })
                     })
-                })
             } else {
                 res.status(400).send({
                     message: `L'ID donné : ${req.params.ID_RATE} n'est pas correct.`
                 })
             }
-        }catch (error: any) {
+        } catch (error: any) {
             res.status(500).send({
                 message: error.message || "Une erreur s'est produite lors de la suppression du Rate."
             })

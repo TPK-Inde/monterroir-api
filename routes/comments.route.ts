@@ -1,9 +1,10 @@
 import express from 'express';
 import Comments from '../services/comments';
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const commentsService = new Comments();
-const jwAuthentification = require("../middleware/jwtAuthentification");
+const jwtAuthentification = new JwtAuthentification();
 
 /**
  * @swagger
@@ -150,7 +151,11 @@ router.get('/user/:ID_USER', commentsService.GetUserComments.bind(commentsServic
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', commentsService.PostNewComment.bind(commentsService))
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  commentsService.PostNewComment.bind(commentsService)
+)
 
 
 /**
@@ -195,7 +200,12 @@ router.post('/', commentsService.PostNewComment.bind(commentsService))
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_COMMENT', commentsService.PutComment.bind(commentsService))
+router.put(
+  '/:ID_COMMENT',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  commentsService.PutComment.bind(commentsService)
+)
 
 /**
  * @swagger
@@ -234,7 +244,12 @@ router.put('/:ID_COMMENT', commentsService.PutComment.bind(commentsService))
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_COMMENT', commentsService.DeleteComment.bind(commentsService)); 
+router.delete(
+  '/:ID_COMMENT',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  commentsService.DeleteComment.bind(commentsService)
+);
 
 
 module.exports = router;

@@ -1,13 +1,12 @@
 import express from 'express';
 import Products from '../services/products';
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const productsService = new Products();
 
-
 //Constante de middleware
-const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
-
+const jwtAuthentification = new JwtAuthentification();
 /**
  * @swagger
  * tags:
@@ -56,7 +55,10 @@ const jwtAuthentification = require("../middleware/jwtAuthentification.ts");
  *         description: Erreur du serveur interne
  *
  */
-router.get('/:ID_PRODUCT', productsService.GetById.bind(productsService));
+router.get(
+  '/:ID_PRODUCT',
+  productsService.GetById.bind(productsService)
+);
 
 /**
  * @swagger
@@ -94,7 +96,12 @@ router.get('/:ID_PRODUCT', productsService.GetById.bind(productsService));
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', jwtAuthentification, productsService.PostNewProduct.bind(productsService));
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  productsService.PostNewProduct.bind(productsService)
+);
 
 /**
  * @swagger
@@ -152,7 +159,12 @@ router.post('/', jwtAuthentification, productsService.PostNewProduct.bind(produc
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_PRODUCT', jwtAuthentification, productsService.PutProduct.bind(productsService)); //Route nécessitant un token
+router.put(
+  '/:ID_PRODUCT',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  productsService.PutProduct.bind(productsService)
+); //Route nécessitant un token
 
 /**
  * @swagger
@@ -202,6 +214,11 @@ router.put('/:ID_PRODUCT', jwtAuthentification, productsService.PutProduct.bind(
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_PRODUCT', jwtAuthentification, productsService.DeleteProduct.bind(productsService)); //Route nécessitant un token
+router.delete(
+  '/:ID_PRODUCT',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  productsService.DeleteProduct.bind(productsService)
+); //Route nécessitant un token
 
 module.exports = router;

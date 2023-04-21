@@ -1,8 +1,9 @@
 import express from 'express';
+import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
 const service = require('../services/rates.ts');
-const jwAuthentification = require("../middleware/jwtAuthentification");
+const jwtAuthentification = new JwtAuthentification();
 
 
 /**
@@ -27,20 +28,25 @@ const jwAuthentification = require("../middleware/jwtAuthentification");
  *         description: Erreur du serveur interne
  * 
  */
-router.get('/', service.GetAll);
+router.get(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsModerator.bind(jwtAuthentification),
+  service.GetAll
+);
 
 /**
  * @swagger
  * tags:
  *  name: Rates
  *  description: CRUD Rates
- * /rates/{ID}:
+ * /rates/{ID_RATE}:
  *   get:
  *     summary: Permet de récupérer le Rate en fonction de son ID
  *     tags: [Rates]
  *     parameters:
  *       - in: path
- *         name: ID
+ *         name: ID_RATE
  *         schema:
  *           type: string
  *         required: true
@@ -69,7 +75,10 @@ router.get('/', service.GetAll);
  *         description: Erreur du serveur interne
  * 
  */
-router.get('/:ID', service.GetRateById);
+router.get(
+  '/:ID_RATE',
+  service.GetRateById
+);
 
 /**
  * @swagger
@@ -111,7 +120,10 @@ router.get('/:ID', service.GetRateById);
  *         description: Erreur du serveur interne
  * 
  */
-router.get('/vitrine/:ID_VITRINE', service.GetVitrineRate);
+router.get(
+  '/vitrine/:ID_VITRINE',
+  service.GetVitrineRate
+);
 
 /**
  * @swagger
@@ -148,7 +160,11 @@ router.get('/vitrine/:ID_VITRINE', service.GetVitrineRate);
  *         description: Erreur du serveur interne
  *
  */
-router.post('/', service.PostNewRate)
+router.post(
+  '/',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  service.PostNewRate
+)
 
 /**
  * @swagger
@@ -192,7 +208,12 @@ router.post('/', service.PostNewRate)
  *         description: Erreur du serveur interne
  *
  */
-router.put('/:ID_RATE', service.PutRate)
+router.put(
+  '/:ID_RATE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  service.PutRate
+)
 
 /**
  * @swagger
@@ -231,6 +252,11 @@ router.put('/:ID_RATE', service.PutRate)
  *         description: Erreur du serveur interne
  *
  */
-router.delete('/:ID_RATE', service.DeleteRate);
+router.delete(
+  '/:ID_RATE',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  jwtAuthentification.CheckIsOwner.bind(jwtAuthentification),
+  service.DeleteRate
+);
 
 module.exports = router;
