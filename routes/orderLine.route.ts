@@ -118,7 +118,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Orderligne'
+ *               $ref: '#/components/schemas/OrderLine'
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
