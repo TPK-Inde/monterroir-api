@@ -69,8 +69,8 @@ export default class OrderLines{
     }
 
     public async GetOrderTotalByOrderHeaderId(req: Request, res: Response) {
-        await this.GetTotalSumOfProducts(req, res).then((data) => {
-            res.sendStatus(200).send(data)
+        await this.GetTotalSumOfProducts(req.params.id).then((data) => {
+            res.status(200).send(data.toString())
         }).catch((err: {message: any}) => {
             console.log(err.message)
         })
@@ -167,16 +167,16 @@ export default class OrderLines{
         return null;
     }
     
-    private async GetTotalSumOfProducts(req: Request, res: Response) {
+    private async GetTotalSumOfProducts(orderHeaderId: string): Promise<number> {
         let total: number = 0;
         try {
-            const orderLines = await this._repository.GetOrderLinesByOrderHeaderId(req.params.id)
+            const orderLines = await this._repository.GetOrderLinesByOrderHeaderId(orderHeaderId)
             for(var line of orderLines){
                 total += (line.PRICE * line.ORDER_QUANTITY)
             }
-            return total;
         } catch(error: any) {
             console.log(error.mesage)
         }
+        return total;
     }
 }

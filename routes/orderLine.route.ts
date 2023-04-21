@@ -104,9 +104,13 @@ router.get('/header/:id',jwtAuthentification, orderLineService.GetOrderLinesByOr
  *       200:
  *         description: La récupération du total de la commande a réussi.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               $ref: '#/components/schemas/Orderligne'
+ *               type: object
+ *               properties:
+ *                 total:
+ *                      type: number
+ *                      description: le total de la commande
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
