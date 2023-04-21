@@ -1,17 +1,21 @@
 import { UsersRepository } from "../Lib/Repositories/UsersRepository";
 import { User } from "../models/User";
 import { Request, Response } from 'express';
+import cryptoAES from "../helper/cryptoAES";
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 const config = require("../config");
 const jwt = require('jsonwebtoken');
 
+
 export default class Users {
     userRepository: UsersRepository;
+    cryptoAESHelper: cryptoAES;
 
     constructor() {
         this.userRepository = new UsersRepository();
+        this.cryptoAESHelper = new cryptoAES();
     }
 
     public async GetAll(req: Request, res: Response) {
@@ -22,6 +26,10 @@ export default class Users {
             await this.userRepository.GetAllUsers(numPage)
                 .then((data: User[]) => {
                     if (data != null && data.length > 0) {
+                        data.forEach(async element => {
+                            element = await this.DecryptData(element)
+                        });
+
                         res.status(200).send(data);
                     }
                     else {
@@ -51,8 +59,9 @@ export default class Users {
             }
             else {
                 await this.userRepository.GetUserById(idUser)
-                    .then((data: User | null) => {
+                    .then(async (data: User | null) => {
                         if (data != null) {
+                            data = await this.DecryptData(data);
                             res.status(200).send(data);
                         }
                         else {
@@ -108,6 +117,10 @@ export default class Users {
 
     public async PostNewUser(req: Request, res: Response) {
         try {
+            //On défini la clé primaire à null
+            req.body.ID_USER = null;
+            req.body.ID_ACCOUNT_STATUS = 1; //A la création, c'est un compte de type utilisateur
+
             //Vérification que l'email n'est pas déjà utilisée
             await this.userRepository.GetUserByEmail(req.body.EMAIL)
                 .then(async (data: User | null) => {
@@ -117,6 +130,7 @@ export default class Users {
                     else {
                         //Vérification de la validité des données
                         const resultCheck = await this.CheckDataIntegrity(req.body, true);
+                        req.body = await this.EncryptData(req.body);
 
                         //Hash du mot de passe
                         req.body.PASSWORD = await this.HashPassword(req.body.PASSWORD);
@@ -125,6 +139,7 @@ export default class Users {
                             this.userRepository.PostNewUser(req.body)
                                 .then(() => res.status(201).send())
                                 .catch((err: { message: any; }) => {
+                                    console.log(err);
                                     res.status(500).send({
                                         message: err.message || "Une erreur imprévue s'est produite lors de la création d'un utilisateur"
                                     })
@@ -138,12 +153,14 @@ export default class Users {
                     }
                 })
                 .catch((err: { message: any; }) => {
+                    console.log(err);
                     res.status(500).send({
                         message: err.message || "Une erreur imprévue s'est produite lors de la vérification de l'unicuté de l'adresse email de l'utilisateur"
                     })
                 })
         }
         catch (error: any) {
+            console.log(error);
             res.status(500).send({ message: error.message || "Une erreur imprévue s'est produite lors de la création d'un utilisateur" });
         }
     }
@@ -305,5 +322,31 @@ export default class Users {
         }
 
         return null;
+    }
+
+    private async EncryptData(user: User): Promise<User> {
+        if (config.KEY_AES != undefined) {
+            user.PSEUDONYM = await this.cryptoAESHelper.Encrypt(user.PSEUDONYM);
+            user.LAST_NAME = await this.cryptoAESHelper.Encrypt(user.LAST_NAME);
+            user.FIRST_NAME = await this.cryptoAESHelper.Encrypt(user.FIRST_NAME);
+            user.ADDRESS_STREET = await this.cryptoAESHelper.Encrypt(user.ADDRESS_STREET);
+            user.ADDRESS_ZIP_CODE = await this.cryptoAESHelper.Encrypt(user.ADDRESS_ZIP_CODE);
+            user.ADDRESS_CITY = await this.cryptoAESHelper.Encrypt(user.ADDRESS_CITY);
+        }
+
+        return user;
+    }
+
+    private async DecryptData(user: User): Promise<User> {
+        if (config.KEY_AES != undefined) {
+            user.PSEUDONYM = await this.cryptoAESHelper.Decrypt(user.PSEUDONYM);
+            user.LAST_NAME = await this.cryptoAESHelper.Decrypt(user.LAST_NAME);
+            user.FIRST_NAME = await this.cryptoAESHelper.Decrypt(user.FIRST_NAME);
+            user.ADDRESS_STREET = await this.cryptoAESHelper.Decrypt(user.ADDRESS_STREET);
+            user.ADDRESS_ZIP_CODE = await this.cryptoAESHelper.Decrypt(user.ADDRESS_ZIP_CODE);
+            user.ADDRESS_CITY = await this.cryptoAESHelper.Decrypt(user.ADDRESS_CITY);
+        }
+
+        return user;
     }
 }

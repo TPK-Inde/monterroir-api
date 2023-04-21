@@ -25,7 +25,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         description: ID de la ligne de commande
  *     responses:
  *       200:
- *         description: La récupération de la ligne de commande a réussit.
+ *         description: La récupération de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
@@ -70,7 +70,7 @@ router.get(
  *         description: ID de la l'en-tête de commande
  *     responses:
  *       200:
- *         description: La récupération de la ligne de commande a réussit.
+ *         description: La récupération de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
@@ -116,9 +116,13 @@ router.get(
  *       200:
  *         description: La récupération du total de la commande a réussi.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               $ref: '#/components/schemas/OrderLine'
+ *               type: object
+ *               properties:
+ *                 total:
+ *                      type: number
+ *                      description: le total de la commande
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
@@ -157,13 +161,13 @@ router.get(
  *            $ref: '#/components/schemas/OrderLine'
  *     responses:
  *       201:
- *         description: L'ajout de la ligne de commande a réussit.
+ *         description: L'ajout de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Création de la ligne de commande réussit"
+ *               message: "Création de la ligne de commande réussi"
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
@@ -208,13 +212,13 @@ router.post(
  *            $ref: '#/components/schemas/OrderLine'
  *     responses:
  *       200:
- *         description: La mise a jour de la ligne de commande a réussit.
+ *         description: La mise a jour de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "Mise a jour de la ligne de commande réussit"
+ *               message: "Mise a jour de la ligne de commande réussi"
  *       400:
  *         description: Un élément est manquant dans la requête
  *         content:
@@ -253,13 +257,13 @@ router.put(
  *         description: ID de la ligne de commande
  *     responses:
  *       200:
- *         description: La suppression de la ligne de commande a réussit.
+ *         description: La suppression de la ligne de commande a réussi.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Message'
  *             example:
- *               message: "La suppression de la ligne de commande a réussit"
+ *               message: "La suppression de la ligne de commande a réussi"
  *       400:
  *         description: Quelque chose a empêché la suppression de la ligne de commande
  *         content:

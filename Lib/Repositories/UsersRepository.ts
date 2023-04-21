@@ -10,6 +10,9 @@ export class UsersRepository implements IUsersRepository {
   // Properties
   userRepository = sequelize.getRepository(User);
 
+  // Constructor
+  constructor() {}
+
   async GetAllUsers(numPage: number): Promise<User[]> {
     return await this.userRepository.findAll({ limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
   }
