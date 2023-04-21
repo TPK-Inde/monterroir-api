@@ -1,9 +1,6 @@
 import {OrderLine} from "../models/OrderLine";
 import {Request, Response} from "express";
 import {OrderLineRepository} from "../Lib/Repositories/OrderLineRepository";
-import { ProductRepository } from "../Lib/Repositories/ProductRepository";
-import { Order } from "sequelize";
-import { Product } from "../models/Product";
 
 export default class OrderLines{
 
@@ -171,29 +168,15 @@ export default class OrderLines{
     }
     
     private async GetTotalSumOfProducts(req: Request, res: Response) {
-        const productRepository: ProductRepository = new ProductRepository();
-        const products: Product[] = [];
         let total: number = 0;
         try {
             const orderLines = await this._repository.GetOrderLinesByOrderHeaderId(req.params.id)
             for(var line of orderLines){
-                const product = await productRepository.GetById(line.ID_PRODUCT)
-                if(product != null) {
-                    products.push(product);
-                }
+                total += (line.PRICE * line.ORDER_QUANTITY)
             }
-            console.log("la somme finale vaut : ", this.CalculateSumOfProducts(products))
-            return this.CalculateSumOfProducts(products);
+            return total;
         } catch(error: any) {
             console.log(error.mesage)
         }
-    }
-
-    private CalculateSumOfProducts(products: Product[]): number {
-        let total: number = 0;
-        for(var product of products) {
-            total = total + product.UNIT_PRICE_HT
-        }
-        return total;
     }
 }
