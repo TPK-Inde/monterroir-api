@@ -54,6 +54,12 @@
  *         ACTIVATE:
  *           type: boolean
  *           description: Champ permettant de déterminer si une vitrine est activé ou non
+ *         LATITUDE:
+ *           type: double
+ *           description: Latitude de l'emplacement de la vitrine
+ *         LONGITUDE:
+ *           type: double
+ *           description: Longitude de l'emplacement de la vitrine
  *       example:
  *         ID_VITRINE : 1
  *         ID_USER : 1
@@ -67,4 +73,6 @@
  *         DESCRIPTION : "Vendeur de choux depuis 10 ans"
  *         CREATION_DATE : 2022-01-01
  *         ACTIVATE : true
+ *         LATITUDE : 48.866667
+ *         LONGITUDE : 2.333333
  */

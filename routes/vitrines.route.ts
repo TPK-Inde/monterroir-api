@@ -155,7 +155,7 @@ router.get(
  * /vitrines:
  *   post:
  *     summary: Permet d'ajouter une nouvelle vitrine
- *     description: Veuillez notez que le champ 'Actif' est automatiquement mis à false lors de la création (même si vous envoyez true)
+ *     description: Veuillez notez que le champ 'Actif' est automatiquement mis à false lors de la création (même si vous envoyez true) et que les coordonnées sont mis à jour par l'API via l'adresse. L'envoi de paramètre est inutile
  *     tags: [Vitrines]
  *     requestBody:
  *      required: true
@@ -198,7 +198,7 @@ router.post(
  * /vitrines/{ID_VITRINE}:
  *   put:
  *     summary: Permet de modifier une vitrine en fonction de son ID
- *     description: Veuillez notez que le changement de propriétaire est impossible
+ *     description: Veuillez notez que le changement de propriétaire est impossible et que les coordonnées sont mis à jour par l'API via l'adresse. L'envoi de paramètre est inutile
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
