@@ -20,7 +20,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la ligne de commande
  *     responses:
@@ -65,7 +65,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la l'en-tête de commande
  *     responses:
@@ -109,7 +109,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la l'en-tête de commande
  *     responses:
@@ -201,7 +201,7 @@ router.post(
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la ligne de commande'
  *     requestBody:
@@ -252,7 +252,7 @@ router.put(
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la ligne de commande
  *     responses:

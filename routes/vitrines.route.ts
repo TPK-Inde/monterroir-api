@@ -22,7 +22,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: query
  *         name: page
  *         schema:
- *           type: string
+ *           type: number
  *         required: false
  *         description: Le numéro de page (1 par défaut)
  *     responses:
@@ -58,7 +58,7 @@ router.get(
  *       - in: query
  *         name: page
  *         schema:
- *           type: string
+ *           type: number
  *         required: false
  *         description: Le numéro de page (1 par défaut)
  *     responses:
@@ -92,7 +92,7 @@ router.get(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la vitrine
  *     responses:
@@ -126,7 +126,7 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -267,7 +267,7 @@ router.put(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de la vitrine
  *     responses:

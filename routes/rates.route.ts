@@ -48,7 +48,7 @@ router.get(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du Rate
  *     responses:
@@ -93,7 +93,7 @@ router.get(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: Rates affiliés à la vitrine en fonction de son ID
  *     responses:
@@ -179,7 +179,7 @@ router.post(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du rate à changer
  *     requestBody:
@@ -228,7 +228,7 @@ router.put(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du Rate
  *     responses:

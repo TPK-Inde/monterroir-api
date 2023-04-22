@@ -43,7 +43,7 @@ router.get('/', commentsService.GetAll.bind(commentsService));
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -86,7 +86,7 @@ router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: commentaires de l'utilisateur en fonction de son ID
  *     responses:
@@ -171,7 +171,7 @@ router.post(
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du commentaire à changer
  *     requestBody:
@@ -220,7 +220,7 @@ router.put(
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du commentaire
  *     responses:
