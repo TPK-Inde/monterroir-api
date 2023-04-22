@@ -1,8 +1,6 @@
 require('dotenv');
 import bodyParser from 'body-parser';
 import express from 'express';
-const db = require("./sequelize/db"); //NE PAS RETIRER, PERMET D'INITIER LA CONNEXION A LA BASE DE DONNEES
-//Todo : Trouver un autre moyen d'initier la connexion
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -16,7 +14,7 @@ const commentsRouter = require("./routes/comments.route.ts");
 const productsRouter = require("./routes/products.route.ts");
 const ratesRouter = require("./routes/rates.route.ts");
 const orderHeaderRouter = require("./routes/orderheader.route.ts");
-const orderLineRouter = require("./routes/orderLine.route");
+const orderLineRouter = require("./routes/orderLine.route.ts");
 const basketsRouter = require("./routes/baskets.route.ts");
 
 const app = express();

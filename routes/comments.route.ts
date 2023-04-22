@@ -35,13 +35,13 @@ router.get('/', commentsService.GetAll.bind(commentsService));
  * tags:
  *  name: Commentaires
  *  description: CRUD Commentaires
- * /comments/{ID}:
+ * /comments/{ID_COMMENT}:
  *   get:
  *     summary: Permet de récupérer le commentaire en fonction de son ID
  *     tags: [Commentaires]
  *     parameters:
  *       - in: path
- *         name: ID
+ *         name: ID_COMMENT
  *         schema:
  *           type: string
  *         required: true
@@ -70,7 +70,7 @@ router.get('/', commentsService.GetAll.bind(commentsService));
  *         description: Erreur du serveur interne
  * 
  */
-router.get('/:ID', commentsService.GetById.bind(commentsService));
+router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
 
 
 /**

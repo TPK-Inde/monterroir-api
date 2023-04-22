@@ -17,6 +17,7 @@ import { ProductRepository } from "../Lib/Repositories/ProductRepository";
 import { RateRepository } from "../Lib/Repositories/RateRepository";
 import { UsersRepository } from "../Lib/Repositories/UsersRepository";
 import { VitrineRepository } from "../Lib/Repositories/VitrineRepository";
+import { ParamsDictionary } from "express-serve-static-core";
 
 //Constante
 const jwt = require('jsonwebtoken');
@@ -58,13 +59,17 @@ export default class JwtAuthentification {
             next();
             break;
           case ResultCheckToken.NO_TOKEN:
-            return res.status(401).send({ message: "Vous devez vous authentifier pour réaliser cette action" });
+            res.status(401).send({ message: "Vous devez vous authentifier pour réaliser cette action" });
+            break;
           case ResultCheckToken.EXPIRED_TOKEN:
-            return res.status(403).send({ message: "Votre token à expiré" });
+            res.status(403).send({ message: "Votre token à expiré" });
+            break;
           case ResultCheckToken.AUTHORIZATION_DENIED:
-            return res.status(403).send({ message: "Vous ne disposez pas des authorisations nécessaires" })
+            res.status(403).send({ message: "Vous ne disposez pas des authorisations nécessaires" })
+            break;
           default:
-            return res.status(500).send({ message: "Votre token n'a pas pu être authentifié. Tenter de vous authentifier à nouveau" })
+            res.status(500).send({ message: "Votre token n'a pas pu être authentifié. Tenter de vous authentifier à nouveau" })
+            break;
         }
       })
       .catch(() => {
@@ -77,7 +82,6 @@ export default class JwtAuthentification {
   //Permet de vérifier si l'utilisateur est propriétaire de la ressources qu'il souhaites modifier
   public async CheckIsOwner(req: Request, res: Response, next: () => void) {
     try {
-      //Todo : En fonction de la route, il fait les appels SEQUELIZE nécessaires
       const routeUse = await this.ExtractRouteOrigin(req.originalUrl);
       const userDataToken = await this.ExtractUserDataFromAuthorisationHeader(String(req.headers['authorization']))
 
@@ -85,132 +89,128 @@ export default class JwtAuthentification {
         case "comments":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsModerator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._commentRepository.GetCommentById(req.params.ID)
-            .then((data: Comment | null) => {
-              if (data != null) {
-                data.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "orderheader":
           //Les administrateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._orderHeaderRepository.GetOrderHeaderById(req.params.id)
-            .then((data: OrderHeader | null) => {
-              if (data != null) {
-                data.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "orderline":
           //Les administrateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._orderLineRepository.GetOrderLineById(req.params.id)
-            .then(async (data: OrderLine | null) => {
-              if (data != null) {
-                await this._orderHeaderRepository.GetOrderHeaderById(data.ID_ORDER_HEADER.toString())
-                  .then((dateHeader: OrderHeader | null) => {
-                    if (dateHeader != null) {
-                      dateHeader.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-                    }
-                    else {
-                      res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-                    }
-                  })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "products":
           //Les administrateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._productRepository.GetById(Number.parseInt(req.params.id))
-            .then(async (data: Product | null) => {
-              if (data != null) {
-                await this._vitrineRepository.GetById(data.ID_VITRINE)
-                  .then((dateHeader: Vitrine | null) => {
-                    if (dateHeader != null) {
-                      dateHeader.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-                    }
-                    else {
-                      res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-                    }
-                  })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "rates":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsModerator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._rateRepository.GetRateById(req.params.ID)
-            .then((data: Rate | null) => {
-              if (data != null) {
-                data.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "users":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsSuperAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._usersRepository.GetUserById(Number.parseInt(req.params.ID_USER))
-            .then((data: User | null) => {
-              if (data != null) {
-                data.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         case "vitrines":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
           if (await this.CheckTokenIsAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
-
-          await this._vitrineRepository.GetById(Number.parseInt(req.params.ID_USER))
-            .then((data: Vitrine | null) => {
-              if (data != null) {
-                data.ID_USER == userDataToken.ID_USER ? next() : res.status(403).send({ message: "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource" })
-              }
-              else {
-                res.status(400).send({ message: "Impossible de récupérer/modifier/supprimer une ressource inexistante" })
-              }
-            })
+          else {
+            //Vérification du propriétaire en fonction des paramètres
+            await this.CheckParamsOwner(req.params, userDataToken)
+              .then((result: string) => {
+                if (result != "") {
+                  return res.status(403).send({ message: result })
+                }
+                else {
+                  next();
+                }
+              })
+          }
 
           break;
         default:
-          res.status(500).send({ message: "Impossible de vérifier que vous êtes vien autorisé à utiliser cette appel" });
-
+          return res.status(500).send({ message: "Impossible de vérifier que vous êtes vien autorisé à utiliser cette appel" });
       }
-
     }
     catch (error: any) {
-      res.status(500).send({ message: "Une erreur s'est produite lors de la vérification propriétaire du middleware" })
+      return res.status(500).send({ message: "Une erreur s'est produite lors de la vérification propriétaire du middleware" })
     }
   }
 
@@ -233,8 +233,6 @@ export default class JwtAuthentification {
           message: "Une erreur s'est produite lors de la vérification de votre token"
         })
       })
-
-    next();
   }
 
   //Permet de vérifier que l'utilisateur à un token valide ET qu'il est administrateur
@@ -256,8 +254,6 @@ export default class JwtAuthentification {
           message: "Une erreur s'est produite lors de la vérification de votre token"
         })
       })
-
-    next();
   }
 
   //Permet de vérifier que l'utilisateur à un token valide ET qu'il est super administrateur
@@ -279,8 +275,6 @@ export default class JwtAuthentification {
           message: "Une erreur s'est produite lors de la vérification de votre token"
         })
       })
-
-    next();
   }
 
   //#region Méthodes privées
@@ -304,6 +298,119 @@ export default class JwtAuthentification {
     })
 
     return ResultCheckToken.OK;
+  }
+
+  private async CheckParamsOwner(params: ParamsDictionary, userDataToken: any): Promise<string> {
+    let result: string = "";
+
+    //Vérification du propriétaire du commentaire
+    if (params.ID_COMMENT != undefined) {
+      await this._commentRepository.GetCommentById(params.ID_COMMENT)
+        .then((data: Comment | null) => {
+          if (data != null) {
+            data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource";
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante";
+          }
+        })
+    }
+
+    //Vérification du propriétaire de la commande
+    if (result == "" && params.ID_ORDER_HEADER != undefined) {
+      await this._orderHeaderRepository.GetOrderHeaderById(params.ID_ORDER_HEADER)
+        .then((data: OrderHeader | null) => {
+          if (data != null) {
+            data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    //Vérification du propriétaire de la ligne de commande
+    if (result == "" && params.ID_ORDER_LINE != undefined) {
+      await this._orderLineRepository.GetOrderLineById(params.ID_ORDER_LINE)
+        .then(async (data: OrderLine | null) => {
+          if (data != null) {
+            await this._orderHeaderRepository.GetOrderHeaderById(data.ID_ORDER_HEADER.toString())
+              .then((dateHeader: OrderHeader | null) => {
+                if (dateHeader != null) {
+                  dateHeader.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+                }
+                else {
+                  result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+                }
+              })
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    //Vérification du propriétaire du produit
+    if (result == "" && params.ID_PRODUCT != undefined) {
+      await this._productRepository.GetById(Number.parseInt(params.ID_PRODUCT))
+        .then(async (data: Product | null) => {
+          if (data != null) {
+            await this._vitrineRepository.GetById(data.ID_VITRINE)
+              .then((dateHeader: Vitrine | null) => {
+                if (dateHeader != null) {
+                  dateHeader.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+                }
+                else {
+                  result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+                }
+              })
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    //Vérification du propriétaire de la note
+    if (result == "" && params.ID_RATE != undefined) {
+      await this._rateRepository.GetRateById(params.ID_RATE)
+        .then((data: Rate | null) => {
+          if (data != null) {
+            data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    //Vérification de si c'est bien l'utilisateur
+    if (result == "" && params.ID_USER != undefined) {
+      await this._usersRepository.GetUserById(Number.parseInt(params.ID_USER))
+        .then((data: User | null) => {
+          if (data != null) {
+            data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    //Vérification du propriétaire de la vitrine
+    if (result == "" && params.ID_VITRINE != undefined) {
+      await this._vitrineRepository.GetById(Number.parseInt(params.ID_VITRINE))
+        .then((data: Vitrine | null) => {
+          if (data != null) {
+            data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
+          }
+          else {
+            result = "Impossible de récupérer/modifier/supprimer une ressource inexistante"
+          }
+        })
+    }
+
+    return result;
   }
 
   //Permet de vérifier si dans le token, l'utilisateur est modérateur
