@@ -121,11 +121,11 @@ export default class Users {
             req.body.ID_USER = null;
             req.body.ID_ACCOUNT_STATUS = 1; //A la création, c'est un compte de type utilisateur
 
-            //Vérification que l'email n'est pas déjà utilisée
-            await this.userRepository.GetUserByEmail(req.body.EMAIL)
-                .then(async (data: User | null) => {
-                    if (data != null) {
-                        res.status(400).send({ message: "Cette adresse email est déjà utilisé sur un autre compte" })
+            //Vérification que l'email ou le pseudonym n'est pas déjà utilisée
+            await this.CheckUnitEmailAndPseudonym(req.body)
+                .then(async (result: string | null) => {
+                    if (result != null) {
+                        res.status(400).send({ message: result })
                     }
                     else {
                         //Vérification de la validité des données
@@ -182,24 +182,34 @@ export default class Users {
                             res.status(400).send({ message: "Aucun utilisateur touvé avec cette ID" })
                         }
                         else {
-                            //Si le mot de passe est vide, alors on récupère celui dans la base de données
-                            if (!req.body.PASSWORD) { req.body.PASSWORD = data!.PASSWORD }
+                            //Vérification que l'email ou le pseudonym n'est pas déjà utilisée
+                            await this.CheckUnitEmailAndPseudonym(req.body)
+                            .then(async (result: string | null) => {
+                                if (result != null) {
+                                    res.status(400).send({ message: result })
+                                }
+                                else {
+                                    //Si le mot de passe est vide, alors on récupère celui dans la base de données
+                                    if (!req.body.PASSWORD) { req.body.PASSWORD = data!.PASSWORD }
 
-                            const resultCheck = await this.CheckDataIntegrity(req.body, false);
-                            if (resultCheck == null) {
-                                this.userRepository.PutUser(req.body)
-                                    .then(() => res.status(204).send())
-                                    .catch((err: { message: any; }) => {
-                                        res.status(500).send({
-                                            message: err.message || "Une erreur imprévue s'est produite lors de la modification d'un utilisateur"
+                                    const resultCheck = await this.CheckDataIntegrity(req.body, false);
+                                    if (resultCheck == null) {
+                                        this.userRepository.PutUser(req.body)
+                                            .then(() => res.status(204).send())
+                                            .catch((err: { message: any; }) => {
+                                                res.status(500).send({
+                                                    message: err.message || "Une erreur imprévue s'est produite lors de la modification d'un utilisateur"
+                                                })
+                                            })
+                                    }
+                                    else {
+                                        res.status(400).send({
+                                            message: resultCheck
                                         })
-                                    })
-                            }
-                            else {
-                                res.status(400).send({
-                                    message: resultCheck
-                                })
-                            }
+                                    }
+                                }
+                            })
+                            
                         }
                     })
                     .catch((err: { message: any; }) => {
@@ -324,6 +334,32 @@ export default class Users {
         return null;
     }
 
+    //Permet de vérifier l'unicité de l'email et pseudo de l'utilisateur
+    private async CheckUnitEmailAndPseudonym(user: User){
+        await this.userRepository.GetUserByEmail(user.EMAIL)
+            .then(async (data: User | null) => {
+                if (data != null) {
+                    //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
+                    if (data.ID_USER != user.ID_USER){
+                        return "Cette adresse email est déjà utilisé sur un autre compte"
+                    }                    
+                }
+            })
+        
+        await this.userRepository.GetUserByPseudonym(user.PSEUDONYM)
+            .then(async (data: User | null) => {
+                if (data != null){
+                    //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
+                    if (data.ID_USER != user.ID_USER){
+                        return "Ce pseudonyme est déjà utilisé par un autre utilisateur"
+                    }
+                }
+            })
+        
+        return null;
+    }
+
+    //Permet de chiffrer les données avant l'envoi dans la base de données
     private async EncryptData(user: User): Promise<User> {
         if (config.KEY_AES != undefined) {
             user.PSEUDONYM = await this.cryptoAESHelper.Encrypt(user.PSEUDONYM);
@@ -337,6 +373,7 @@ export default class Users {
         return user;
     }
 
+    //Permet de déchiffre les données venant de la base de données
     private async DecryptData(user: User): Promise<User> {
         if (config.KEY_AES != undefined) {
             user.PSEUDONYM = await this.cryptoAESHelper.Decrypt(user.PSEUDONYM);
