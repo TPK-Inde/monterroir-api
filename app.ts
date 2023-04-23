@@ -14,8 +14,7 @@ const commentsRouter = require("./routes/comments.route.ts");
 const productsRouter = require("./routes/products.route.ts");
 const ratesRouter = require("./routes/rates.route.ts");
 const orderHeaderRouter = require("./routes/orderheader.route.ts");
-const orderLineRouter = require("./routes/orderLine.route.ts");
-const basketsRouter = require("./routes/baskets.route.ts");
+const orderLineRouter = require("./routes/orderLine.route");
 
 const app = express();
 
@@ -91,7 +90,6 @@ app.use("/products", productsRouter);
 app.use("/rates", ratesRouter);
 app.use("/orderheader", orderHeaderRouter);
 app.use("/orderline", orderLineRouter);
-app.use("/baskets", basketsRouter);
 app.use("/categoriesVitrine", categoriesVitrineRouter);
 
 module.exports = app;
