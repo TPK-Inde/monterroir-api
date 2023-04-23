@@ -36,8 +36,7 @@
  *           description: Date de naissance de l'utilisateur
  *         EMAIL:
  *           type: string
- *           format: Adresse email de l'utilisateur
- *           description: The date the book was added
+ *           description: Adresse email de l'utilisateur
  *         ADDRESS_STREET:
  *           type: string
  *           description: Rue de l'adresse de l'utilisateur
