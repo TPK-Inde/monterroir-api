@@ -47,4 +47,10 @@ export class Vitrine extends Model<Vitrine> {
 
   @Column
   ACTIVATE: Boolean;
+
+  @Column
+  LATITUDE: Number;
+
+  @Column
+  LONGITUDE: Number;
 }
