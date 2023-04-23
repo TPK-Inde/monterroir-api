@@ -47,7 +47,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'en-tête de commande
  *     responses:
@@ -82,7 +82,7 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -126,13 +126,13 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'utilisateur
  *       - in: path
  *         name: ID_ORDER_STATUS
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID du statut
  *     responses:
@@ -217,7 +217,7 @@ router.post(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'en-tête de commande'
  *     requestBody:
@@ -278,7 +278,7 @@ router.put(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: string
+ *           type: number
  *         required: true
  *         description: ID de l'en-tête de commande
  *     responses:
