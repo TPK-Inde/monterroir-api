@@ -22,7 +22,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: query
  *         name: page
  *         schema:
- *           type: number
+ *           type: integer
  *         required: false
  *         description: Le numéro de page (1 par défaut)
  *     responses:
@@ -31,7 +31,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/UserGet'
  *       401:
  *         description: Token vide ou invalide
  *       403:
@@ -68,7 +68,7 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -77,7 +77,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Utilisateur'
+ *               $ref: '#/components/schemas/UserGet'
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
  *       400:
@@ -118,7 +118,7 @@ router.get(
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/UtilisateurAuthentification'
+ *            $ref: '#/components/schemas/UserAuth'
  *     responses:
  *       200:
  *         description: Résultat de l'authentification.
@@ -163,7 +163,7 @@ router.post(
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Utilisateur'
+ *            $ref: '#/components/schemas/User'
  *     responses:
  *       201:
  *         description: L'ajout de l'utilisateur a réussit.
@@ -211,7 +211,7 @@ router.post(
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/Utilisateur'
+ *            $ref: '#/components/schemas/User'
  *     responses:
  *       200:
  *         description: La modification de l'utilisateur a réussit.
@@ -266,7 +266,7 @@ router.put(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:

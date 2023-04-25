@@ -3,6 +3,7 @@ import sequelize from "../../sequelize/db";
 import { RateDTO } from "../DTO/RateDTO";
 import { IRateRepository } from "../IRepositories/IRateRepository";
 
+const userAttribute = ["ID_USER", "PSEUDONYM"];
 
 export class RateRepository implements IRateRepository {
 
@@ -10,16 +11,17 @@ export class RateRepository implements IRateRepository {
     repository = sequelize.getRepository(Rate);
 
     async GetAllRates(): Promise<Rate[]> {
-        return await this.repository.findAll();
+        return await this.repository.findAll({include: {model: sequelize.models.User, attributes: userAttribute}});
     }
     async GetRateById(id: string): Promise<Rate|null> {
-        return await this.repository.findByPk(id);
+        return await this.repository.findByPk(id, {include: {model: sequelize.models.User, attributes: userAttribute}});
     }
     async GetVitrineRates(idVitrine: string): Promise<Rate[]> {
         const vitrineRates = await this.repository.findAll({
             where: {
                 ID_VITRINE: idVitrine
-            }
+            },
+            include: {model: sequelize.models.User, attributes: userAttribute}
         });
         if(!(vitrineRates.length <= 0)){
             return vitrineRates

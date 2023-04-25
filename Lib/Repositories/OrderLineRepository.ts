@@ -2,8 +2,8 @@ import { IOrderLineRepository } from "../IRepositories/IOrderLineRepository";
 import sequelize from "../../sequelize/db";
 import { OrderLine } from "../../models/OrderLine";
 import { OrderLineDTO } from "../DTO/OrderLineDTO";
-import { Product } from "../../models/Product";
-import { ProductRepository } from "./ProductRepository";
+
+const productAttibute = ["ID_PRODUCT", "NAME"]
 
 export class OrderLineRepository implements IOrderLineRepository{
 
@@ -15,14 +15,15 @@ export class OrderLineRepository implements IOrderLineRepository{
 
     //  GET
     async GetOrderLineById(orderLineId : string) : Promise<OrderLine | null>{
-        return await this.orderLineRepository.findByPk(orderLineId)
+        return await this.orderLineRepository.findByPk(orderLineId, {include: {model: sequelize.models.Product, attributes: productAttibute}})
     }
 
     async GetOrderLinesByOrderHeaderId (orderHeaderId : string) : Promise<OrderLine[]>{
         return await this.orderLineRepository.findAll({
             where : {
                 ID_ORDER_HEADER : orderHeaderId
-            }
+            },
+            include: {model: sequelize.models.Product, attributes: productAttibute}
         })
     }
 

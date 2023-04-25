@@ -21,7 +21,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Rate'
+ *               $ref: '#/components/schemas/RatesGet'
  *       204:
  *         description: Aucun Rate n'est présent dans la base de données
  *       500:
@@ -48,7 +48,7 @@ router.get(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du Rate
  *     responses:
@@ -57,7 +57,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Rate'
+ *               $ref: '#/components/schemas/RatesGet'
  *       204:
  *         description: Aucun Rate trouvé avec l'ID indiqué
  *       401:
@@ -93,7 +93,7 @@ router.get(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: Rates affiliés à la vitrine en fonction de son ID
  *     responses:
@@ -102,7 +102,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Rate'
+ *               $ref: '#/components/schemas/RatesGet'
  *       204:
  *         description: Aucun commentaire trouvé avec l'ID indiqué
  *       401:
@@ -139,7 +139,7 @@ router.get(
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/RatesAuthentification'
+ *            $ref: '#/components/schemas/Rates'
  *     responses:
  *       204:
  *         description: Envoi réussit d'un nouveau Rate.
@@ -179,7 +179,7 @@ router.post(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du rate à changer
  *     requestBody:
@@ -187,7 +187,7 @@ router.post(
  *      content:
  *        application/json:
  *          schema:
- *            $ref: '#/components/schemas/RatesAuthentification'
+ *            $ref: '#/components/schemas/Rates'
  *     responses:
  *       204:
  *         description: Envoi réussit d'un nouveau Rate.
@@ -228,7 +228,7 @@ router.put(
  *       - in: path
  *         name: ID_RATE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du Rate
  *     responses:

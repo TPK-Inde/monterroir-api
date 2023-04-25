@@ -21,7 +21,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *               $ref: '#/components/schemas/CommentGet'
  *       204:
  *         description: Aucun commentaire n'est présent dans la base de données
  *       500:
@@ -43,16 +43,16 @@ router.get('/', commentsService.GetAll.bind(commentsService));
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: number
+ *           type: int
  *         required: true
- *         description: ID de l'utilisateur
+ *         description: ID du commentaire
  *     responses:
  *       200:
  *         description: La récupération des commentaires a réussie.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *               $ref: '#/components/schemas/CommentGet'
  *       204:
  *         description: Aucun commentaire trouvé avec l'ID indiqué
  *       401:
@@ -86,7 +86,7 @@ router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: int
  *         required: true
  *         description: commentaires de l'utilisateur en fonction de son ID
  *     responses:
@@ -95,7 +95,7 @@ router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Comment'
+ *               $ref: '#/components/schemas/CommentGet'
  *       204:
  *         description: Aucun commentaire trouvé avec l'ID indiqué
  *       401:
@@ -171,7 +171,7 @@ router.post(
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du commentaire à changer
  *     requestBody:
@@ -220,7 +220,7 @@ router.put(
  *       - in: path
  *         name: ID_COMMENT
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du commentaire
  *     responses:

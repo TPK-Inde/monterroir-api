@@ -3,6 +3,9 @@ import sequelize from "../../sequelize/db";
 import { OrderHeader } from "../../models/OrderHeader";
 import { OrderHeaderDTO } from "../DTO/OrderHeaderDTO";
 
+const userAttribute = ["ID_USER", "PSEUDONYM"];
+const orderStatusAttribute = ["ID_ORDER_STATUS", "WORDING"];
+
 export class OrderHeaderRepository implements IOrderHeaderRepository {
 
     orderHeaderRepository = sequelize.getRepository(OrderHeader);
@@ -11,7 +14,12 @@ export class OrderHeaderRepository implements IOrderHeaderRepository {
 
     async GetAllOrderHeaders(): Promise<OrderHeader[]> {
 
-        return await this.orderHeaderRepository.findAll();
+        return await this.orderHeaderRepository.findAll({
+            include: [
+                {model: sequelize.models.User, attributes: userAttribute},
+                {model: sequelize.models.OrderStatus, attributes: orderStatusAttribute}
+            ]
+            });
     }
 
     async GetOrderHeaderById(id: string): Promise<OrderHeader|null> {

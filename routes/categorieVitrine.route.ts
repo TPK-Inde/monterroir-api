@@ -48,7 +48,7 @@ router.get('/', categoryVitrineService.GetAll);
  *       - in: path
  *         name: ID_CATEGORY_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la catégorie de vitrine
  *     responses:
@@ -122,7 +122,7 @@ router.post(
  *       - in: path
  *         name: ID_CATEGORY_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la catégorie de vitrine
  *     requestBody:
@@ -185,7 +185,7 @@ router.put(
  *       - in: path
  *         name: ID_CATEGORY_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la catégorie de vitrine
  *     responses:

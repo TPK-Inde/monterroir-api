@@ -3,18 +3,8 @@
  * @swagger
  * components:
  *   schemas:
- *     Utilisateur:
+ *     UserGet:
  *       type: object
- *       required:
- *         - PSEUDONYM
- *         - LAST_NAME
- *         - FIRST_NAME
- *         - DATE_OF_BIRTH
- *         - EMAIL
- *         - ADDRESS_STREET
- *         - ADDRESS_ZIP_CODE
- *         - ADDRESS_CITY
- *         - PASSWORD
  *       properties:
  *         ID_USER:
  *           type: int
@@ -45,13 +35,19 @@
  *           description: Code postal de l'adresse de l'utilisateur
  *         ADDRESS_CITY:
  *           type: string
- *           description: Ville de l'adresse de l'utilisateur=
- *         PASSWORD:
- *           type: string
- *           description: Mot de passe de l'utilisateur (BCRYPT)
+ *           description: Ville de l'adresse de l'utilisateur
  *         PROFIL_PICTURE:
  *           type: text
  *           description: Photo de profil de l'utilisateur BASE 64
+ *         ACCOUNT_STATUS:
+ *           type: object
+ *           properties:
+ *             ID_ACCOUNT_STATUS:
+ *               type: int
+ *               description: ID du statut du compte
+ *             WORDING:
+ *               type: string
+ *               description: Libellé du statut du compte
  *       example:
  *         ID_USER : 1
  *         ID_ACCOUNT_STATUS : 1
@@ -63,6 +59,9 @@
  *         ADDRESS_STREET : "14 Rue du Général"
  *         ADDRESS_ZIP_CODE : "76600"
  *         ADDRESS_CITY : "Le Havre"
- *         PASSWORD : $2y$10$Q.p48L9fqccoLUXAoUBUKuneke1h8AnXECEBL9/ahfne2xb9hDzxi
  *         PROFIL_PICTURE : "image/2023/12/example.png"
+ *         ACCOUNT_STATUS: {
+ *           ID_ACCOUNT_STATUS: 1,
+ *           WORDING: "Utilisateur"
+ *         }
  */

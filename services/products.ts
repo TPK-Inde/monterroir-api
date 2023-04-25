@@ -1,5 +1,4 @@
 import { Product } from "../models/Product";
-import jwt_decode from "jwt-decode";
 import { Request, Response } from "express";
 import { ProductRepository } from "../Lib/Repositories/ProductRepository";
 
