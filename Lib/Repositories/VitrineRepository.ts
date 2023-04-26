@@ -34,12 +34,18 @@ export class VitrineRepository implements IVitrineRepository {
         include: [
           sequelize.models.CategoryVitrine, 
           sequelize.models.TypeVitrine, 
-          sequelize.models.User
+          {model: sequelize.models.User, attributes: userAttribute}
         ] 
       });
   }
   async GetById(vitrineId: number): Promise<Vitrine | null> {
-    return await this.vitrineRepository.findByPk(vitrineId, { include: [sequelize.models.CategoryVitrine, sequelize.models.TypeVitrine, sequelize.models.User]});
+    return await this.vitrineRepository.findByPk(vitrineId, { 
+      include: [
+        sequelize.models.CategoryVitrine, 
+        sequelize.models.TypeVitrine, 
+        {model: sequelize.models.User, attributes: userAttribute}
+      ]
+    });
   }
   async GetByUserId(userId: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll({ where: { ID_USER: userId }, include: [sequelize.models.CategoryVitrine, sequelize.models.TypeVitrine, sequelize.models.User] });
