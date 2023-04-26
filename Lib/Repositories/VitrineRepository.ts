@@ -48,7 +48,16 @@ export class VitrineRepository implements IVitrineRepository {
     });
   }
   async GetByUserId(userId: number): Promise<Vitrine[]> {
-    return await this.vitrineRepository.findAll({ where: { ID_USER: userId }, include: [sequelize.models.CategoryVitrine, sequelize.models.TypeVitrine, sequelize.models.User] });
+    return await this.vitrineRepository.findAll({ 
+      where: { 
+        ID_USER: userId 
+      }, 
+      include: [
+        sequelize.models.CategoryVitrine, 
+        sequelize.models.TypeVitrine, 
+        {model: sequelize.models.User, attributes: userAttribute}
+      ] 
+    });
   }
   async PostNewVitrine(vitrineToPost: Vitrine): Promise<void> {
     await this.vitrineRepository.create(vitrineToPost)
