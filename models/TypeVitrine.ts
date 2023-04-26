@@ -4,12 +4,12 @@ import {
 
 @Table({
   timestamps: false,
-  tableName: 'P_CATEGORIES_VITRINE'
+  tableName: 'P_TYPE_VITRINE'
 })
-export class CategoryVitrine extends Model<CategoryVitrine> {
+export class TypeVitrine extends Model<TypeVitrine> {
   @PrimaryKey
   @Column
-  ID_CATEGORY_VITRINE: number;
+  ID_TYPE_VITRINE: number;
 
   @Column
   WORDING: string;

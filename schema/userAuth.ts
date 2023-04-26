@@ -3,7 +3,7 @@
  * @swagger
  * components:
  *   schemas:
- *     UtilisateurAuthentification:
+ *     UserAuth:
  *       type: object
  *       required:
  *         - EMAIL

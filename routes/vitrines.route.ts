@@ -22,7 +22,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: query
  *         name: page
  *         schema:
- *           type: number
+ *           type: integer
  *         required: false
  *         description: Le numéro de page (1 par défaut)
  *     responses:
@@ -31,7 +31,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Vitrine'
+ *               $ref: '#/components/schemas/VitrineGet'
  *       204:
  *         description: Aucune vitrines trouvées en base de données
  *       500:
@@ -58,7 +58,7 @@ router.get(
  *       - in: query
  *         name: page
  *         schema:
- *           type: number
+ *           type: integer
  *         required: false
  *         description: Le numéro de page (1 par défaut)
  *     responses:
@@ -67,7 +67,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Vitrine'
+ *               $ref: '#/components/schemas/VitrineGet'
  *       204:
  *         description: Aucune vitrines actives trouvée en base de données
  *       500:
@@ -92,7 +92,7 @@ router.get(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la vitrine
  *     responses:
@@ -101,7 +101,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Vitrine'
+ *               $ref: '#/components/schemas/VitrineGet'
  *       204:
  *         description: Aucune vitrine trouvée avec l'ID indiqué
  *       500:
@@ -126,7 +126,7 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -135,7 +135,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Vitrine'
+ *               $ref: '#/components/schemas/VitrineGet'
  *       204:
  *         description: Aucune vitrine trouvé avec l'ID utilisateur indiqué
  *       500:
@@ -267,7 +267,7 @@ router.put(
  *       - in: path
  *         name: ID_VITRINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la vitrine
  *     responses:

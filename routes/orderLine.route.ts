@@ -20,7 +20,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la ligne de commande
  *     responses:
@@ -29,7 +29,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderLine'
+ *               $ref: '#/components/schemas/OrderLineGet'
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
@@ -65,7 +65,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la l'en-tête de commande
  *     responses:
@@ -74,7 +74,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderLine'
+ *               $ref: '#/components/schemas/OrderLineGet'
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
  *       400:
@@ -109,7 +109,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la l'en-tête de commande
  *     responses:
@@ -121,7 +121,7 @@ router.get(
  *               type: object
  *               properties:
  *                 total:
- *                      type: number
+ *                      type: integer
  *                      description: le total de la commande
  *       204:
  *         description: Aucune ligne de commande trouvé avec l'ID indiqué
@@ -201,7 +201,7 @@ router.post(
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la ligne de commande'
  *     requestBody:
@@ -252,7 +252,7 @@ router.put(
  *       - in: path
  *         name: ID_ORDER_LINE
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de la ligne de commande
  *     responses:

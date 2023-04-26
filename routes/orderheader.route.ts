@@ -21,7 +21,7 @@ const jwtAuthentification = new JwtAuthentification();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderHeader'
+ *               $ref: '#/components/schemas/OrderHeaderGet'
  *       204:
  *         description: Aucun en-tête de commande trouvé
  *       500:
@@ -47,7 +47,7 @@ router.get(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'en-tête de commande
  *     responses:
@@ -56,7 +56,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderHeader'
+ *               $ref: '#/components/schemas/OrderHeaderGet'
  *       204:
  *         description: Aucun en-tête de commande trouvé avec l'ID indiqué
  *       500:
@@ -82,7 +82,7 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'utilisateur
  *     responses:
@@ -91,7 +91,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderHeader'
+ *               $ref: '#/components/schemas/OrderHeaderGet'
  *       204:
  *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
  *       400:
@@ -126,13 +126,13 @@ router.get(
  *       - in: path
  *         name: ID_USER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'utilisateur
  *       - in: path
  *         name: ID_ORDER_STATUS
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du statut
  *     responses:
@@ -141,7 +141,7 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/OrderHeader'
+ *               $ref: '#/components/schemas/OrderHeaderGet'
  *       204:
  *         description: Aucun en-tête de commande trouvé avec l'ID utilisateur indiqué
  *       400:
@@ -217,7 +217,7 @@ router.post(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'en-tête de commande'
  *     requestBody:
@@ -278,7 +278,7 @@ router.put(
  *       - in: path
  *         name: ID_ORDER_HEADER
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID de l'en-tête de commande
  *     responses:

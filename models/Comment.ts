@@ -1,9 +1,9 @@
 import { Optional } from 'sequelize';
 import {
-  Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
-  ForeignKey, BelongsTo, PrimaryKey
+  Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey
 } from 'sequelize-typescript';
 import { CommentAttributes } from '../Lib/IModels/CommentAttributes';
+import { User } from './User';
 
 interface CommentCreationAttributes extends Optional<CommentAttributes, 'ID_COMMENT'> { }
 
@@ -19,8 +19,12 @@ export class Comment extends Model<CommentAttributes, CommentCreationAttributes>
   @Column
   ID_RATE: number;
 
+  @ForeignKey(() => User)
   @Column
   ID_USER: number;
+
+  @BelongsTo(() => User)
+  OWNER: User;
 
   @Column
   ID_PARENT: number;

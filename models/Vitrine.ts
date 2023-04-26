@@ -1,7 +1,9 @@
 import {
-  Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
-  ForeignKey, BelongsTo, PrimaryKey
+  Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey
 } from 'sequelize-typescript';
+import { CategoryVitrine } from './CategoryVitrine';
+import { User } from './User';
+import { TypeVitrine } from './TypeVitrine';
 
 @Table({
   timestamps: false,
@@ -12,17 +14,26 @@ export class Vitrine extends Model<Vitrine> {
   @Column
   ID_VITRINE: number;
 
-  //Todo : Ajouter le lien avec la table F_Utilisateur
+  @ForeignKey(() => User)
   @Column
   ID_USER: number;
 
-  //Todo ; Ajouter le lien avec la table P_Categorie_vitrine 
+  @BelongsTo(() => User)
+  OWNER: User;
+
+  @ForeignKey(() => CategoryVitrine)
   @Column
   ID_CATEGORY_VITRINE: number;
 
-  //Todo : Ajouter le lien avec la table P_Type_Vitrine
+  @BelongsTo(() => CategoryVitrine)
+  CATEGORY_VITRINE: CategoryVitrine;
+
+  @ForeignKey(() => TypeVitrine)
   @Column
   ID_TYPE_VITRINE: number;
+
+  @BelongsTo(() => TypeVitrine)
+  TYPE_VITRINE: TypeVitrine;
 
   @Column
   NAME: string;

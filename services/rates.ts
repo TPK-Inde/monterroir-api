@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { RateRepository } from '../Lib/Repositories/RateRepository';
 import { Rate } from '../models/Rate';
 import { RateDTO } from '../Lib/DTO/RateDTO';
-import { serialize } from 'v8';
 
 class Rates {
     // Constructor
@@ -33,7 +32,7 @@ class Rates {
 
     public async GetById(req: Request, res: Response) {
         const repository = new RateRepository();
-        if (parseInt(req.params.ID) > 0) {
+        if (parseInt(req.params.ID_RATE) > 0) {
             try {
                 await repository.GetRateById(req.params.ID_RATE)
                     .then((data: Rate | null) => {
@@ -52,6 +51,11 @@ class Rates {
                     message: `Une erreur s'est produite lors de la récupération du Rate d'id : ${req.params.ID}`
                 })
             }
+        }
+        else{
+            res.status(400).send({
+                message: `Une erreur s'est produite lors de la récupération du Rate d'id : ${req.params.ID}`
+            })
         }
     }
 

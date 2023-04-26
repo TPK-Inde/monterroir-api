@@ -20,7 +20,7 @@ const jwtAuthentification = new JwtAuthentification();
  *       - in: path
  *         name: ID_PRODUCT
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du produit
  *     responses:
@@ -116,7 +116,7 @@ router.post(
  *       - in: path
  *         name: ID_PRODUCT
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du produit
  *     requestBody:
@@ -179,7 +179,7 @@ router.put(
  *       - in: path
  *         name: ID_PRODUCT
  *         schema:
- *           type: number
+ *           type: integer
  *         required: true
  *         description: ID du produit
  *     responses:

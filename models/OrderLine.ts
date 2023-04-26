@@ -1,9 +1,9 @@
 import {
-    Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
-    ForeignKey, BelongsTo, PrimaryKey
+    Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey
 } from 'sequelize-typescript';
 import {Optional} from "sequelize";
 import {OrderLineAttributes} from "../Lib/IModels/OrderLineAttributes";
+import { Product } from './Product';
 
 interface OrderLineCreationAttributes extends Optional<OrderLineAttributes, 'ID_ORDER_LINE'> {}
 
@@ -16,8 +16,12 @@ export class OrderLine extends Model<OrderLine, OrderLineAttributes> {
     @Column
     ID_ORDER_LINE: number;
 
+    @ForeignKey(() => Product)
     @Column
     ID_PRODUCT: number;
+
+    @BelongsTo(() => Product)
+    PRODUCT: Product;
 
     @Column
     ID_ORDER_HEADER : number;

@@ -1,6 +1,5 @@
 import {
-  Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
-  ForeignKey, BelongsTo, PrimaryKey
+  Model, Column, Table, PrimaryKey
 } from 'sequelize-typescript';
 
 @Table({

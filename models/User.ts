@@ -1,9 +1,8 @@
 import {
-  Model, AllowNull, DataType, Column, Table, Scopes, CreatedAt, UpdatedAt, HasMany, BelongsToMany,
-  ForeignKey, BelongsTo, PrimaryKey
+  Model, Column, Table, ForeignKey, PrimaryKey, BelongsTo
 } from 'sequelize-typescript';
+import { AccountStatus } from './AccountStatus';
 
-//Todo : Ajouter le lien de dépendance avec la table P_STATUT_COMPTE
 @Table({
   timestamps: false,
   tableName: 'F_USERS'
@@ -13,8 +12,12 @@ export class User extends Model<User> {
   @Column
   ID_USER: number;
 
+  @ForeignKey(() => AccountStatus)
   @Column
   ID_ACCOUNT_STATUS: number;
+
+  @BelongsTo(() => AccountStatus)
+  ACCOUNT_STATUS: AccountStatus;
 
   @Column
   PSEUDONYM: string;

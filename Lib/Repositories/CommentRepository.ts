@@ -2,7 +2,8 @@ import { ICommentRepository } from "../IRepositories/ICommentRepository";
 import sequelize from "../../sequelize/db";
 import { Comment } from "../../models/Comment";
 import { CommentDTO } from "../DTO/CommentDTO";
-import { Response } from 'express';
+
+const userAttribute = ["ID_USER", "PSEUDONYM"];
 
 export class CommentRepository implements ICommentRepository {
 
@@ -13,18 +14,19 @@ export class CommentRepository implements ICommentRepository {
     constructor() {}
 
     async GetAllComments(): Promise<Comment[]> {
-        const comments = await this.commentRepository.findAll();
+        const comments = await this.commentRepository.findAll({include: {model: sequelize.models.User, attributes: userAttribute}});
         return comments;
     }
     async GetCommentById(id: string): Promise<Comment|null> {
-        const comment = await this.commentRepository.findByPk(id);
+        const comment = await this.commentRepository.findByPk(id, {include: {model: sequelize.models.User, attributes: userAttribute}});
         return comment;
     }
     async GetUserComments(userId: string): Promise<Comment[]> {        
         const commentsOfuser = await this.commentRepository.findAll({
             where: {
                 ID_USER: userId
-            }
+            },
+            include: {model: sequelize.models.User, attributes: userAttribute}
         });
         if (commentsOfuser != null) {
             return commentsOfuser;

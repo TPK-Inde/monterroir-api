@@ -14,16 +14,24 @@ export class UsersRepository implements IUsersRepository {
   constructor() {}
 
   async GetAllUsers(numPage: number): Promise<User[]> {
-    return await this.userRepository.findAll({ limit: parseInt(config.listPerPage!), offset: ((numPage - 1) * parseInt(config.listPerPage!)) })
+    return await this.userRepository.findAll({ 
+      limit: parseInt(config.listPerPage!), 
+      offset: ((numPage - 1) * parseInt(config.listPerPage!)), 
+      include: [sequelize.models.AccountStatus],
+      attributes: {exclude: ["PASSWORD"]}
+    })      
   }
   async GetUserById(userId: number): Promise<User | null> {
-    return await this.userRepository.findByPk(userId);
+    return await this.userRepository.findByPk(userId, {
+      include: [sequelize.models.AccountStatus],
+      attributes: {exclude: ["PASSWORD"]}
+    });
   }
   async GetUserByEmail(userEmail: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { EMAIL: userEmail } });
+    return await this.userRepository.findOne({ where: { EMAIL: userEmail }, include: [sequelize.models.AccountStatus] });
   }
   async GetUserByPseudonym(userPseudonym: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { PSEUDONYM: userPseudonym } });
+    return await this.userRepository.findOne({ where: { PSEUDONYM: userPseudonym }, include: [sequelize.models.AccountStatus] });
   }
   async PostNewUser(newUser: User): Promise<void> {
     await this.userRepository.create(newUser);
