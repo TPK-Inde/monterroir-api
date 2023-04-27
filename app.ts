@@ -55,7 +55,7 @@ const optionsSwagger = {
     ],
     servers: [
       {
-        url: "http://localhost:" + process.env.PORT,
+        url: process.env.URL_API + ":" + process.env.PORT,
       },
     ],
   },
