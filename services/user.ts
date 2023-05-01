@@ -300,10 +300,6 @@ export default class Users {
         if (!dataUser.FIRST_NAME) { return "Veuillez entrer un prénom" }
         if (!dataUser.DATE_OF_BIRTH) { return "Veuillez entrer une date de naissance" }
         if (!dataUser.EMAIL) { return "Veuillez entrer une adresse email" }
-        if (!dataUser.ADDRESS_STREET) { return "Veuillez entrer la rue de votre adresse" }
-        if (!dataUser.ADDRESS_ZIP_CODE) { return "Veuillez entrer le code postal de votre adresse" }
-        if (!dataUser.ADDRESS_CITY) { return "Veuillez entrer la ville de votre adresse" }
-        if (!dataUser.PROFIL_PICTURE) { return "Veuillez entrer une photo de profil" }
 
         if (isUserCreation) {
             var caractereMinusculeRegex = new RegExp("^(?=.*[a-z])");
@@ -336,27 +332,31 @@ export default class Users {
 
     //Permet de vérifier l'unicité de l'email et pseudo de l'utilisateur
     private async CheckUnitEmailAndPseudonym(user: User){
+        let result = null;
+
         await this.userRepository.GetUserByEmail(user.EMAIL)
             .then(async (data: User | null) => {
                 if (data != null) {
                     //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
                     if (data.ID_USER != user.ID_USER){
-                        return "Cette adresse email est déjà utilisé sur un autre compte"
+                        result = "Cette adresse email est déjà utilisé sur un autre compte"
                     }                    
                 }
             })
-        
-        await this.userRepository.GetUserByPseudonym(user.PSEUDONYM)
+
+        if (result == null){
+            await this.userRepository.GetUserByPseudonym(user.PSEUDONYM)
             .then(async (data: User | null) => {
                 if (data != null){
                     //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
                     if (data.ID_USER != user.ID_USER){
-                        return "Ce pseudonyme est déjà utilisé par un autre utilisateur"
+                        result = "Ce pseudonyme est déjà utilisé par un autre utilisateur"
                     }
                 }
             })
+        }       
         
-        return null;
+        return result;
     }
 
     //Permet de chiffrer les données avant l'envoi dans la base de données

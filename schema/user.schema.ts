@@ -9,11 +9,7 @@
  *         - PSEUDONYM
  *         - LAST_NAME
  *         - FIRST_NAME
- *         - DATE_OF_BIRTH
  *         - EMAIL
- *         - ADDRESS_STREET
- *         - ADDRESS_ZIP_CODE
- *         - ADDRESS_CITY
  *         - PASSWORD
  *       properties:
  *         ID_USER:
