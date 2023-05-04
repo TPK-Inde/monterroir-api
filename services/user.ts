@@ -1,7 +1,10 @@
 import { UsersRepository } from "../Lib/Repositories/UsersRepository";
+import { TokenRepository } from "../Lib/Repositories/TokenRepository";
 import { User } from "../models/User";
 import { Request, Response } from 'express';
 import cryptoAES from "../helper/cryptoAES";
+import { Token } from "../models/Token";
+import { TokenAttributes } from "../Lib/IModels/TokenAttributes";
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -11,10 +14,12 @@ const jwt = require('jsonwebtoken');
 
 export default class Users {
     userRepository: UsersRepository;
+    tokenRepository: TokenRepository;
     cryptoAESHelper: cryptoAES;
 
     constructor() {
         this.userRepository = new UsersRepository();
+        this.tokenRepository = new TokenRepository();
         this.cryptoAESHelper = new cryptoAES();
     }
 
@@ -88,11 +93,13 @@ export default class Users {
             await this.userRepository.GetUserByEmail(userEmail)
                 .then(async (data: User | null) => {
                     if (data != null) {
-                        console.log(this);
-
                         const resultCheck = await this.ValidateUser(req.body.PASSWORD, data.PASSWORD);
                         if (resultCheck) {
-                            const token = await this.GenerateAccessToken(data);
+                            const token: string = await this.GenerateAccessToken(data);
+
+                            //Enregistrement du token en BDD
+                            const tokenForDatabase : TokenAttributes = { ID_USER : data.ID_USER, TOKEN : token, DATE_TOKEN: new Date(Date.now())};
+                            await this.tokenRepository.PostNewToken(tokenForDatabase)
 
                             res.status(200).send({ resultat: true, message: "Authentification réussit", token: token });
                         }
@@ -176,7 +183,7 @@ export default class Users {
                 })
             }
             else {
-                await this.userRepository.GetUserById(req.body.ID_USER)
+                await this.userRepository.GetUserFullById(req.body.ID_USER)
                     .then(async (data: User | null) => {
                         if (data == null) {
                             res.status(400).send({ message: "Aucun utilisateur touvé avec cette ID" })
@@ -189,10 +196,17 @@ export default class Users {
                                     res.status(400).send({ message: result })
                                 }
                                 else {
+                                    let resultCheck: string | null = null;
                                     //Si le mot de passe est vide, alors on récupère celui dans la base de données
-                                    if (!req.body.PASSWORD) { req.body.PASSWORD = data!.PASSWORD }
-
-                                    const resultCheck = await this.CheckDataIntegrity(req.body, false);
+                                    if (!req.body.PASSWORD) { 
+                                        req.body.PASSWORD = data!.PASSWORD 
+                                        resultCheck = await this.CheckDataIntegrity(req.body, false);
+                                    }
+                                    else{                                        
+                                        resultCheck = await this.CheckDataIntegrity(req.body, true);
+                                        req.body.PASSWORD = await this.HashPassword(req.body.PASSWORD);
+                                    }
+                                    
                                     if (resultCheck == null) {
                                         this.userRepository.PutUser(req.body)
                                             .then(() => res.status(204).send())
@@ -208,8 +222,7 @@ export default class Users {
                                         })
                                     }
                                 }
-                            })
-                            
+                            })                            
                         }
                     })
                     .catch((err: { message: any; }) => {
@@ -275,7 +288,7 @@ export default class Users {
     }
 
     //Fonction permettant de générer un token
-    private async GenerateAccessToken(dataUser: User) {
+    private async GenerateAccessToken(dataUser: User) : Promise<string> {
         return new Promise((resolve, reject) => {
             resolve(
                 jwt.sign(
@@ -294,14 +307,14 @@ export default class Users {
     }
 
     // //Fonction permettant la vérification de l'intégrité des données avant ajout ou modification en BDD
-    private async CheckDataIntegrity(dataUser: User, isUserCreation = false) {
+    private async CheckDataIntegrity(dataUser: User, checkNewPassord = false) {
         if (!dataUser.PSEUDONYM) { return "Veuillez entrer un pseudonyme" }
         if (!dataUser.LAST_NAME) { return "Veuillez entrer un nom de famille" }
         if (!dataUser.FIRST_NAME) { return "Veuillez entrer un prénom" }
         if (!dataUser.DATE_OF_BIRTH) { return "Veuillez entrer une date de naissance" }
         if (!dataUser.EMAIL) { return "Veuillez entrer une adresse email" }
 
-        if (isUserCreation) {
+        if (checkNewPassord) {
             var caractereMinusculeRegex = new RegExp("^(?=.*[a-z])");
             var caractereMajusculeRegex = new RegExp("^(?=.*[A-Z])");
             var chiffreRegex = new RegExp("^(?=.*[0-9])");
@@ -322,9 +335,6 @@ export default class Users {
             else if (!longueurRegex.test(dataUser.PASSWORD)) {
                 return "Votre mot de passe doit faire au moins 8 caractères";
             }
-        }
-        else {
-            if (!dataUser.PASSWORD) { return "Veuillez entrer un mot de passe" }
         }
 
         return null;

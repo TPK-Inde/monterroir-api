@@ -57,6 +57,24 @@
  *             PSEUDONYM:
  *               type: string
  *               description: Pseudonyme de l'utilisateur ayant rédigé la note
+ *         TYPE_VITRINE:
+ *           type: object
+ *           properties:
+ *             ID_TYPE_VITRINE:
+ *               type: int
+ *               description: ID du type de la vitrine
+ *             WORDING:
+ *               type: string
+ *               description: Libellé
+ *         CATEGORY_VITRINE:
+ *           type: object
+ *           properties:
+ *             ID_CATEGORY_VITRINE:
+ *               type: int
+ *               description: ID de la catégorie de vitrine
+ *             WORDING:
+ *               type: string
+ *               description: Libellé
  *       example:
  *         ID_VITRINE : 1
  *         ID_USER : 1
@@ -74,6 +92,14 @@
  *         LONGITUDE : 2.333333
  *         OWNER: {
  *           ID_USER: 1,
- *           PSEUDONYM: Marc_Dupont
+ *           PSEUDONYM: "Marc_Dupont"
+ *         }
+ *         TYPE_VITRINE: {
+ *           ID_TYPE_VITRINE: 1,
+ *           WORDING: "Classique"
+ *         }
+ *         CATEGORY_VITRINE: {
+ *           ID_CATEGORY_VITRINE: 1,
+ *           WORDING: "Poterie"
  *         }
  */
