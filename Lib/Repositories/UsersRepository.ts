@@ -27,6 +27,9 @@ export class UsersRepository implements IUsersRepository {
       attributes: {exclude: ["PASSWORD"]}
     });
   }
+  async GetUserFullById(userId: number): Promise<User | null> {
+    return await this.userRepository.findByPk(userId);
+  }
   async GetUserByEmail(userEmail: string): Promise<User | null> {
     return await this.userRepository.findOne({ where: { EMAIL: userEmail }, include: [sequelize.models.AccountStatus] });
   }

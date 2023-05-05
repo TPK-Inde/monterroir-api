@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import { ParamsDictionary } from "express-serve-static-core";
+
 
 //Import des models
 import { Comment } from "../models/Comment";
@@ -8,6 +10,7 @@ import { Product } from "../models/Product";
 import { Vitrine } from "../models/Vitrine";
 import { Rate } from "../models/Rate";
 import { User } from "../models/User";
+import { Token } from "../models/Token";
 
 //Import des repository
 import { CommentRepository } from "../Lib/Repositories/CommentRepository";
@@ -17,7 +20,7 @@ import { ProductRepository } from "../Lib/Repositories/ProductRepository";
 import { RateRepository } from "../Lib/Repositories/RateRepository";
 import { UsersRepository } from "../Lib/Repositories/UsersRepository";
 import { VitrineRepository } from "../Lib/Repositories/VitrineRepository";
-import { ParamsDictionary } from "express-serve-static-core";
+import { TokenRepository } from "../Lib/Repositories/TokenRepository";
 
 //Constante
 const jwt = require('jsonwebtoken');
@@ -30,6 +33,11 @@ enum ResultCheckToken {
   AUTHORIZATION_DENIED
 }
 
+enum ResultCheckDataBaseToken {
+  OK,
+  AUTHORIZATION_DENIED
+}
+
 export default class JwtAuthentification {
   // Propriétés
   _commentRepository: CommentRepository;
@@ -39,6 +47,7 @@ export default class JwtAuthentification {
   _rateRepository: RateRepository;
   _usersRepository: UsersRepository;
   _vitrineRepository: VitrineRepository;
+  _tokenRepository: TokenRepository;
 
   constructor() {
     this._commentRepository = new CommentRepository();
@@ -48,15 +57,25 @@ export default class JwtAuthentification {
     this._rateRepository = new RateRepository();
     this._usersRepository = new UsersRepository();
     this._vitrineRepository = new VitrineRepository();
+    this._tokenRepository = new TokenRepository();
   }
 
   //Permet de vérifier que l'utilisateur à un token valide
   public async CheckTokenValidity(req: Request, res: Response, next: () => void) {
     await this.CheckToken(String(req.headers['authorization']))
-      .then((result: ResultCheckToken) => {
+      .then(async (result: ResultCheckToken) => {
         switch (result) {
           case ResultCheckToken.OK:
-            next();
+            //Vérification de si le token est celui dans la base de données
+            await this.CheckTokenInDataBase(String(req.headers['authorization']))
+              .then((resultDataBase: ResultCheckDataBaseToken) => {
+                if (resultDataBase == ResultCheckDataBaseToken.OK){
+                  return next();
+                }
+                else{
+                  res.status(403).send({ message: "Votre token n'est pas valide, veuillez vous authentifier à nouveau" })
+                }
+              })
             break;
           case ResultCheckToken.NO_TOKEN:
             res.status(401).send({ message: "Vous devez vous authentifier pour réaliser cette action" });
@@ -298,6 +317,27 @@ export default class JwtAuthentification {
     })
 
     return ResultCheckToken.OK;
+  }
+
+  private async CheckTokenInDataBase(authorizationHeader: string) : Promise<ResultCheckDataBaseToken> {
+    const userDataToken = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
+
+    const authHeader = authorizationHeader;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    let result = ResultCheckDataBaseToken.AUTHORIZATION_DENIED;
+
+    await this._tokenRepository.GetByUserIdAndToken(userDataToken.ID_USER, token)
+    .then((data: Token | null) => {
+      if (data == null){
+        result =  ResultCheckDataBaseToken.AUTHORIZATION_DENIED;
+      }
+      else{
+        result = ResultCheckDataBaseToken.OK;        
+      }
+    })
+
+    return result;
   }
 
   private async CheckParamsOwner(params: ParamsDictionary, userDataToken: any): Promise<string> {
