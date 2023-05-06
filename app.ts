@@ -1,5 +1,5 @@
 require('dotenv');
-import bodyParser from 'body-parser';
+import bodyParser = require("body-parser");
 import express from 'express';
 
 //Constantes pour SWAGGER
@@ -79,7 +79,7 @@ app.get("/api-docs.json", function (req, res) {
   res.status(200).send(specs);
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "20mb" }));
 app.use(express.json());
 
 //Routes API
