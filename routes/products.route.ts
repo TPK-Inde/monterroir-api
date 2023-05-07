@@ -65,6 +65,46 @@ router.get(
  * tags:
  *   name: Produits
  *   description: CRUD Produits
+ * /products/{ID_VITRINE}:
+ *   get:
+ *     summary: Permet de récupérer tous les produits d'une vitrine en fonction de son ID
+ *     tags: [Produits]
+ *     parameters:
+ *       - in: path
+ *         name: ID_VITRINE
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la vitrine
+ *     responses:
+ *       200:
+ *         description: La récupération des produits a réussie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Produit'
+ *       204:
+ *         description: Aucun produit trouvé dans la vitrine à l'ID indiqué
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID valide"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
+router.get(
+  '/:ID_VITRINE',
+  productsService.GetByVitrineId.bind(productsService))
+/**
+ * @swagger
+ * tags:
+ *   name: Produits
+ *   description: CRUD Produits
  * /products:
  *   post:
  *     summary: Permet d'ajouter un nouveau produit

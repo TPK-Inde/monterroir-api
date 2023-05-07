@@ -9,6 +9,13 @@ export class ProductRepository implements IProductRepository {
 
   //Constructeur
   constructor() { }
+  async GetByVitrineId(vitrineId: number): Promise<Product[]> {
+    return await this.productRepository.findAll({
+      where: {
+        ID_VITRINE: vitrineId
+      }
+    });
+  }
 
   async GetById(productId: number): Promise<Product | null> {
     return await this.productRepository.findByPk(productId);

@@ -47,6 +47,30 @@ export default class Products {
         }
     }
 
+    public async GetByVitrineId(req: Request, res: Response){
+        try{
+            const idVitrine: number = parseInt(req.params.ID_VITRINE);
+            if(!Number.isNaN(idVitrine)){
+                await this.productRepository.GetByVitrineId(parseInt(req.params.ID_VITRINE))
+                .then((data: Product[] | null) => {
+                    if(data != null){
+                        res.status(200).send(data);
+                    } else {
+                        res.send(204).send();
+                    }
+                })
+            } else {
+                res.status(400).send({
+                    message: "Veuillez entrer un ID valide de vitrine dans la requête"
+                })
+            }
+        }catch (error: any){
+            res.status(500).send({
+                message: error.message || "Une erreur s'est produite lors de la récupération des produits de la vitrine."
+            })
+        }
+    }
+
     public async PostNewProduct(req: Request, res: Response) {
         try {
             const resultCheck = await this.CheckProductData(req.body);
