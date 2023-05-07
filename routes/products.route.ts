@@ -65,7 +65,7 @@ router.get(
  * tags:
  *   name: Produits
  *   description: CRUD Produits
- * /products/{ID_VITRINE}:
+ * /products/vitrine/{ID_VITRINE}:
  *   get:
  *     summary: Permet de récupérer tous les produits d'une vitrine en fonction de son ID
  *     tags: [Produits]
@@ -98,7 +98,7 @@ router.get(
  *
  */
 router.get(
-  '/:ID_VITRINE',
+  '/vitrine/:ID_VITRINE',
   productsService.GetByVitrineId.bind(productsService))
 /**
  * @swagger
