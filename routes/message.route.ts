@@ -29,7 +29,7 @@ const messageService = new Messages();
  *         description: Une erreur s'est produite lors de la récupération des messages
  *
  */
-router.get("/", messageService.GetAll)
+router.get("/", messageService.GetAll.bind(messageService))
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ router.get("/", messageService.GetAll)
  *         description: Une erreur s'est produite lors de la création du message
  *
  */
-router.post("/", messageService.Post)
+router.post("/", messageService.Post.bind(messageService))
 
 /**
  * @swagger
@@ -98,6 +98,6 @@ router.post("/", messageService.Post)
  *         description: Une erreur s'est produite lors de la récupération des messages
  *
  */
-router.get("/:conversationId", messageService.GetByConversation)
+router.get("/:conversationId", messageService.GetByConversation.bind(messageService))
 
 module.exports = router;
