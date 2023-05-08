@@ -7,7 +7,7 @@ export class ConversationRepository implements IConversationRepository{
 
     constructor(){}
 
-    async GetAll(): Promise<ConversationDocument[]> {
+    GetAll(): Promise<ConversationDocument[]> {
         return Conversation.find();
     }
 
@@ -15,7 +15,7 @@ export class ConversationRepository implements IConversationRepository{
         return await Conversation.create(item);
     }
 
-    async GetByUser(id : string): Promise<ConversationDocument[]>{
+    GetByUser(id : string): Promise<ConversationDocument[]>{
         return Conversation.find({
             members : {
                 $in : [id]
