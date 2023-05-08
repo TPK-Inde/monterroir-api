@@ -1,6 +1,7 @@
 require('dotenv');
 import bodyParser = require("body-parser");
 import express from 'express';
+import {connectToMongo} from './mongo/db'
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -15,6 +16,8 @@ const productsRouter = require("./routes/products.route.ts");
 const ratesRouter = require("./routes/rates.route.ts");
 const orderHeaderRouter = require("./routes/orderheader.route.ts");
 const orderLineRouter = require("./routes/orderLine.route");
+const conversationRouter = require("./routes/conversation.route");
+const messageRouter = require("./routes/message.route");
 
 const app = express();
 
@@ -79,6 +82,10 @@ app.get("/api-docs.json", function (req, res) {
   res.status(200).send(specs);
 });
 
+connectToMongo();
+
+
+app.use(bodyParser.json());
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(express.json());
 
@@ -91,5 +98,7 @@ app.use("/rates", ratesRouter);
 app.use("/orderheader", orderHeaderRouter);
 app.use("/orderline", orderLineRouter);
 app.use("/categoriesVitrine", categoriesVitrineRouter);
+app.use("/conversation", conversationRouter);
+app.use("/message", messageRouter);
 
 module.exports = app;
