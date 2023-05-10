@@ -79,13 +79,13 @@ export default class OrderLines {
     // POST
     public async PostNewOrderLine(req: Request, res: Response) {
         const validatedData = await this.checkDataIntegrity(req.body)
-        if (validatedData) {
-            console.log(validatedData)
+        if (validatedData != null)  {
             res.status(400).send({ message: validatedData });
             return;
         }
+        
         try {
-            req.body.ID_ORDER_LINE = 0
+            req.body.ID_ORDER_LINE = null;
             await this._repository.PostNewOrderLine(req.body)
                 .then(() => {
                     res.status(201).send({ message: "Création de la ligne de commande réussit" });
