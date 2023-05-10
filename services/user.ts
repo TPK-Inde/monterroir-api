@@ -126,7 +126,7 @@ export default class Users {
         try {
             //On défini la clé primaire à null
             req.body.ID_USER = null;
-            if(req.body.ID_ACCOUNT_STATUS == ""){
+            if(req.body.ID_ACCOUNT_STATUS == "" || req.body.ID_ACCOUNT_STATUS == undefined){
                 req.body.ID_ACCOUNT_STATUS = 1;
             }
 
