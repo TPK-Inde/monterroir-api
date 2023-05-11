@@ -30,6 +30,15 @@
  *             NAME:
  *               type: string
  *               description: Libellé du produit
+ *             VITRINE:
+ *               type: object
+ *               properties:
+ *                 ID_VITRINE:
+ *                   type: int
+ *                   description: ID de la vitrine
+ *                 NAME:
+ *                   type: string
+ *                   description: Nom de la vitrine
  *       example:
  *         ID_ORDER_LINE : 1
  *         ID_PRODUCT : 1
@@ -38,6 +47,10 @@
  *         PRICE : 5.90
  *         PRODUCT: {
  *           ID_PRODUCT: 1,
- *           NAME: "Patate"
+ *           NAME: "Patate",
+ *           VITRINE: {
+ *             ID_VITRINE: 7,
+ *             NAME: "Ma superbe vitrine"
+ *           }
  *         }
  */

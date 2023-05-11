@@ -1,11 +1,8 @@
 import {
     Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey
 } from 'sequelize-typescript';
-import {Optional} from "sequelize";
 import {OrderLineAttributes} from "../Lib/IModels/OrderLineAttributes";
 import { Product } from './Product';
-
-interface OrderLineCreationAttributes extends Optional<OrderLineAttributes, 'ID_ORDER_LINE'> {}
 
 @Table({
     timestamps: false,
@@ -31,6 +28,4 @@ export class OrderLine extends Model<OrderLine, OrderLineAttributes> {
 
     @Column
     PRICE : number;
-
-
 }
