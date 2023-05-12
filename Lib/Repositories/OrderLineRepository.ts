@@ -3,8 +3,8 @@ import sequelize from "../../sequelize/db";
 import { OrderLine } from "../../models/OrderLine";
 import { OrderLineDTO } from "../DTO/OrderLineDTO";
 
-const productAttibute = ["ID_PRODUCT", "NAME"]
-const vitrineAttibute = ["ID_VITRINE", "NAME"]
+const productAttibute = ["ID_PRODUCT", "NAME", "IMAGE"]
+const vitrineAttibute = ["ID_VITRINE", "NAME", "IMAGE"]
 
 export class OrderLineRepository implements IOrderLineRepository{
 

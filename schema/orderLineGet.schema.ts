@@ -30,6 +30,9 @@
  *             NAME:
  *               type: string
  *               description: Libellé du produit
+ *             IMAGE:
+ *               type: string
+ *               description: Image du produit
  *             VITRINE:
  *               type: object
  *               properties:
@@ -39,6 +42,9 @@
  *                 NAME:
  *                   type: string
  *                   description: Nom de la vitrine
+ *                 IMAGE:
+ *                   type: string
+ *                   description: Image de la vitrine
  *       example:
  *         ID_ORDER_LINE : 1
  *         ID_PRODUCT : 1
@@ -48,9 +54,11 @@
  *         PRODUCT: {
  *           ID_PRODUCT: 1,
  *           NAME: "Patate",
+ *           IMAGE: "Image Base64",
  *           VITRINE: {
  *             ID_VITRINE: 7,
- *             NAME: "Ma superbe vitrine"
+ *             NAME: "Ma superbe vitrine",
+ *             IMAGE: "Image Base64"
  *           }
  *         }
  */
