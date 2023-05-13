@@ -29,7 +29,7 @@ const conversationService = new Conversations();
  *         description: Une erreur s'est produite lors de la récupération des conversations
  *
  */
-router.get('/', conversationService.GetAll.bind(conversationService))
+router.get('/', jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification), conversationService.GetAll.bind(conversationService))
 
 /**
  * @swagger
@@ -67,7 +67,7 @@ router.get('/', conversationService.GetAll.bind(conversationService))
  *         description: Une erreur s'est produite lors de la création de la conversation
  *
  */
-router.post('/', conversationService.Post.bind(conversationService))
+router.post('/', jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification), conversationService.Post.bind(conversationService))
 
 /**
  * @swagger
@@ -98,7 +98,7 @@ router.post('/', conversationService.Post.bind(conversationService))
  *         description: Une erreur s'est produite lors de la récupération des conversations
  *
  */
-router.get('/:id', conversationService.GetByUser.bind(conversationService))
+router.get('/:id', jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification), conversationService.GetByUser.bind(conversationService))
 
 
 module.exports = router;

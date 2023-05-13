@@ -85,6 +85,39 @@ export default class Users {
         }
     }
 
+    public async GetLimitedInformationById(req: Request, res: Response) {
+        try {
+            //Récupération de la page souhaitée
+            const idUser: number = parseInt(req.params.ID_USER);
+
+            if (Number.isNaN(idUser)) {
+                res.status(400).send({
+                    message: "L'ID de la requête n'est pas valide"
+                })
+            }
+            else {
+                await this.userRepository.GetLimitedUserInformationById(idUser)
+                    .then(async (data: User | null) => {
+                        if (data != null) {
+                            data = await this.DecryptData(data);
+                            res.status(200).send(data);
+                        }
+                        else {
+                            res.status(400).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette ID" });
+                        }
+                    })
+                    .catch((err: { message: any; }) => {
+                        res.status(500).send({
+                            message: err.message || "Une erreur imprévue s'est produite lors de la récupération d'un utilisateur via son ID"
+                        })
+                    })
+            }
+        }
+        catch (error: any) {
+            res.status(500).send({ message: error.message || "Une erreur imprévue s'est produite lors de la récupération d'un utilisateur via son ID" });
+        }
+    }
+
     public async AuthUser(req: Request, res: Response) {
         try {
             //Récupération de la page souhaitée

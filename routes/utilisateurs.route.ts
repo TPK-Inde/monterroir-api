@@ -109,6 +109,54 @@ router.get(
  * tags:
  *   name: Utilisateurs
  *   description: CRUD utilisateur
+ * /users/limited/{ID_USER}:
+ *   get:
+ *     summary: Permet de récupérer les informations limité d'un utilisateur en fonction de son ID
+ *     tags: [Utilisateurs]
+ *     parameters:
+ *       - in: path
+ *         name: ID_USER
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de l'utilisateur
+ *     responses:
+ *       200:
+ *         description: La récupération d'utilisateur a réussit.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/UserGetLimited'
+ *       204:
+ *         description: Aucun utilisateur trouvé avec l'ID indiqué
+ *       400:
+ *         description: Un élément de la requête n'est pas valide
+ *       401:
+ *         description: Token vide ou invalide
+ *       403:
+ *         description: Token expiré ou pas les droits nécessaires
+ *         content: 
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               -  message: "Le token a expiré"
+ *               -  message: "Vous ne disposez pas des droits pour effectuer cette action"
+ *       500:
+ *         description: Erreur du serveur interne
+ *
+ */
+router.get(
+  '/limited/:ID_USER',
+  jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
+  userService.GetLimitedInformationById.bind(userService)
+); //Route nécessitant un token
+
+/**
+ * @swagger
+ * tags:
+ *   name: Utilisateurs
+ *   description: CRUD utilisateur
  * /users/authentification:
  *   post:
  *     summary: Permet de vérifier l'authentification d'un utilisateur
