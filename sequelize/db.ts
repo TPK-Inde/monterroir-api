@@ -18,4 +18,6 @@ const sequelize = new Sequelize(configuration.db.database, configuration.db.user
 //Importation des modèles de la base de données
 sequelize.addModels([`${__dirname}//..//models`]);
 
+sequelize.models["FavoriteVitrine"].removeAttribute("id");
+
 export default sequelize;

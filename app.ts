@@ -18,6 +18,7 @@ const orderHeaderRouter = require("./routes/orderheader.route.ts");
 const orderLineRouter = require("./routes/orderLine.route");
 const conversationRouter = require("./routes/conversation.route");
 const messageRouter = require("./routes/message.route");
+const favoriteVitrineRouter = require("./routes/favoriteVitrine.route");
 
 const app = express();
 
@@ -100,5 +101,6 @@ app.use("/orderline", orderLineRouter);
 app.use("/categoriesVitrine", categoriesVitrineRouter);
 app.use("/conversation", conversationRouter);
 app.use("/message", messageRouter);
+app.use("/favoriteVitrine", favoriteVitrineRouter);
 
 module.exports = app;

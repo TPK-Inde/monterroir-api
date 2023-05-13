@@ -224,8 +224,42 @@ export default class JwtAuthentification {
           }
 
           break;
+        case "favoritevitrine":
+            //Vérifie si l'ID dans le token est le même que celui dans le body
+            if (req.method == "POST"){
+              if (userDataToken.ID_USER != req.body.ID_USER){
+                return res.status(403).send({
+                  message: "Vous ne pouvez pas ajouter une vitrine au favori d'un autre utilisateur !"
+                })
+              }   
+              else{
+                next();
+              }           
+            }
+            else if (req.method == "DELETE" ){
+              if (userDataToken.ID_USER != req.params.ID_USER){
+                return res.status(403).send({
+                  message: "Vous ne pouvez pas supprimer une vitrine des favoris d'un autre utilisateur !"
+                })
+              }
+              else{
+                next();
+              }
+            }
+            else if (req.method == "GET" ){
+              if (userDataToken.ID_USER != req.params.ID_USER){
+                return res.status(403).send({
+                  message: "Vous ne pouvez pas récupérer les favoris d'un autre utilisateur !"
+                })
+              }
+              else{
+                next();
+              }
+            }
+  
+            break;
         default:
-          return res.status(500).send({ message: "Impossible de vérifier que vous êtes vien autorisé à utiliser cette appel" });
+          return res.status(500).send({ message: "Impossible de vérifier que vous êtes bien autorisé à utiliser cette appel" });
       }
     }
     catch (error: any) {
