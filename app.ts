@@ -85,8 +85,8 @@ app.get("/api-docs.json", function (req, res) {
 connectToMongo();
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.json({ limit: "20mb" }));
+app.use(bodyParser.json({ limit: '20mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '20mb' }));
 app.use(express.json());
 
 //Routes API

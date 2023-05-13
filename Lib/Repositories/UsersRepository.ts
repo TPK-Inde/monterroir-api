@@ -11,7 +11,7 @@ export class UsersRepository implements IUsersRepository {
   userRepository = sequelize.getRepository(User);
 
   // Constructor
-  constructor() {}
+  constructor() {} 
 
   async GetAllUsers(numPage: number): Promise<User[]> {
     return await this.userRepository.findAll({ 
@@ -25,6 +25,11 @@ export class UsersRepository implements IUsersRepository {
     return await this.userRepository.findByPk(userId, {
       include: [sequelize.models.AccountStatus],
       attributes: {exclude: ["PASSWORD"]}
+    });
+  }
+  async GetLimitedUserInformationById(userId: number): Promise<User | null> {
+    return await this.userRepository.findByPk(userId, {
+      attributes: {exclude: ["ID_ACCOUNT_STATUS", "LAST_NAME", "FIRST_NAME", "DATE_OF_BIRTH", "EMAIL", "ADDRESS_STREET", "ADDRESS_ZIP_CODE", "ADDRESS_CITY", "PASSWORD"]}
     });
   }
   async GetUserFullById(userId: number): Promise<User | null> {
