@@ -63,6 +63,33 @@ export default class Comments {
         }
     }
 
+    public async GetVitrineComments(req: Request, res: Response) {
+        if(parseInt(req.params.ID_VITRINE) > 0) {
+            try {
+                await this._repository.GetAllCommentsByVitrineId(req.params.ID_VITRINE)
+                .then((data: Comment[]) => {
+                    if(data != null && data.length > 0){
+                        res.status(200).send(data);
+                    } else {
+                        res.status(204).send();
+                    }
+                }).catch((err: { message: any; }) => {
+                    res.status(500).send({
+                        message: err.message || "Une erreur s'est produite lors de la récupération de tous les commentaires"
+                    })
+                })
+            } catch (error: any) {
+                res.status(500).send({
+                    message: error.message || `Une erreur s'est produite lors de la récupérations des commentaires concernant la vitrine ${req.params.ID_VITRINE}.`
+                })
+            }
+        } else {
+            res.status(400).send({
+                message: `Attention, l'identifiant de vitrine ${req.params.ID_VITRINE} n'est pas correct.`
+            })
+        }
+    }
+
     public async GetUserComments(req: Request, res: Response) {
         if (parseInt(req.params.ID_USER) > 0) {
             try {
@@ -125,6 +152,13 @@ export default class Comments {
             } else {
                 res.status(400).send({
                     message: "La DATE est NULL"
+                })
+            }
+            if (req.body.ID_VITRINE != null) {
+                newComment.ID_VITRINE = req.body.ID_VITRINE
+            } else {
+                res.status(400).send({
+                    message: "L'ID_VITRINE est NULL"
                 })
             }
             await this._repository.PostNewComment(newComment)

@@ -3,6 +3,7 @@ export interface CommentAttributes {
     ID_RATE: number,
     ID_USER: number,
     ID_PARENT: number,
+    ID_VITRINE: number,
     COMMENT: string,
     DATE: Date,
 }
