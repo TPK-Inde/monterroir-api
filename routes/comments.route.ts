@@ -78,6 +78,45 @@ router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
  * tags:
  *  name: Commentaires
  *  description: CRUD Commentaires
+ * /comments/vitrine/{ID_VITRINE}:
+ *   get:
+ *     summary: Permet de récupérer tous les commentaires affiliés à une vitrine reconnue
+ *     tags: [Commentaires]
+ *     parameters:
+ *       - in: path
+ *         name: ID_VITRINE
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID de la vitrine
+ *     responses:
+ *       200:
+ *         description: La récupération des commentaires a réussie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CommentGet'
+ *       204:
+ *         description: Aucun commentaire n'est présent dans la base de données
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Veuillez entrer un ID valide"
+ *       500:
+ *         description: Erreur du serveur interne
+ * 
+ */
+router.get('/vitrine/:ID_VITRINE', commentsService.GetVitrineComments.bind(commentsService));
+
+/**
+ * @swagger
+ * tags:
+ *  name: Commentaires
+ *  description: CRUD Commentaires
  * /comments/user/{ID_USER}:
  *   get:
  *     summary: Permet de récupérer le commentaire en fonction de l'ID de son utilisateur

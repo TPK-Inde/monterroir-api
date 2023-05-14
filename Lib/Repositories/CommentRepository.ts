@@ -12,6 +12,14 @@ export class CommentRepository implements ICommentRepository {
 
     // Constructor
     constructor() {}
+    async GetAllCommentsByVitrineId(vitrineId: string): Promise<Comment[]> {
+        const comments = await this.commentRepository.findAll({
+            where: {
+                ID_VITRINE: vitrineId
+            },
+        });
+        return comments;
+    }
 
     async GetAllComments(): Promise<Comment[]> {
         const comments = await this.commentRepository.findAll({include: {model: sequelize.models.User, attributes: userAttribute}});
@@ -40,6 +48,7 @@ export class CommentRepository implements ICommentRepository {
             ID_RATE: newComment.ID_RATE,
             ID_USER: newComment.ID_USER,
             ID_PARENT: newComment.ID_PARENT,
+            ID_VITRINE: newComment.ID_VITRINE,
             COMMENT: newComment.COMMENT,
             DATE: newComment.DATE
         })

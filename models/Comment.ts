@@ -4,6 +4,7 @@ import {
 } from 'sequelize-typescript';
 import { CommentAttributes } from '../Lib/IModels/CommentAttributes';
 import { User } from './User';
+import { Vitrine } from './Vitrine';
 
 interface CommentCreationAttributes extends Optional<CommentAttributes, 'ID_COMMENT'> { }
 
@@ -22,6 +23,10 @@ export class Comment extends Model<CommentAttributes, CommentCreationAttributes>
   @ForeignKey(() => User)
   @Column
   ID_USER: number;
+
+  @ForeignKey(() => Vitrine)
+  @Column
+  ID_VITRINE: number;
 
   @BelongsTo(() => User)
   OWNER: User;
