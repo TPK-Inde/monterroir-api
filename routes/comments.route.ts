@@ -95,7 +95,7 @@ router.get('/:ID_COMMENT', commentsService.GetById.bind(commentsService));
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/CommentGet'
+ *               $ref: '#/components/schemas/comments.schema'
  *       204:
  *         description: Aucun commentaire n'est présent dans la base de données
  *       400:

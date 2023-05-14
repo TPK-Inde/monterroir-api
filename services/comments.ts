@@ -154,6 +154,13 @@ export default class Comments {
                     message: "La DATE est NULL"
                 })
             }
+            if (req.body.ID_VITRINE != null) {
+                newComment.ID_VITRINE = req.body.ID_VITRINE
+            } else {
+                res.status(400).send({
+                    message: "L'ID_VITRINE est NULL"
+                })
+            }
             await this._repository.PostNewComment(newComment)
                 .then(() => res.status(204).send())
                 .catch((err: { message: any; }) => {
