@@ -75,6 +75,15 @@
  *             WORDING:
  *               type: string
  *               description: Libellé
+ *         IS_FAVORITE:
+ *           type: object
+ *           properties:
+ *             ID_USER:
+ *               type: int
+ *               description: ID de l'utilisateur
+ *             ID_VITRINE:
+ *               type: int
+ *               description: ID de la vitrine
  *       example:
  *         ID_VITRINE : 1
  *         ID_USER : 1
@@ -101,5 +110,9 @@
  *         CATEGORY_VITRINE: {
  *           ID_CATEGORY_VITRINE: 1,
  *           WORDING: "Poterie"
+ *         }
+ *         FAVORITE: {
+ *           ID_USER: 1,
+ *           ID_VITRINE: 1
  *         }
  */

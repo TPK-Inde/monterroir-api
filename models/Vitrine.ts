@@ -1,9 +1,10 @@
 import {
-  Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey
+  Model, Column, Table, ForeignKey, BelongsTo, PrimaryKey, HasOne
 } from 'sequelize-typescript';
 import { CategoryVitrine } from './CategoryVitrine';
 import { User } from './User';
 import { TypeVitrine } from './TypeVitrine';
+import { FavoriteVitrine } from './FavoriteVitrine';
 
 @Table({
   timestamps: false,
@@ -64,4 +65,7 @@ export class Vitrine extends Model<Vitrine> {
 
   @Column
   LONGITUDE: Number;
+
+  @HasOne(() => FavoriteVitrine)
+  FAVORITE: boolean;
 }
