@@ -5,7 +5,8 @@ import { Vitrine } from "../models/Vitrine";
 import { Request, Response } from "express";
 
 export default class Vitrines {
-  vitrineRepository: VitrineRepository
+  vitrineRepository: VitrineRepository;
+  maxRangeDistance: number = 15;
 
   constructor() {
     this.vitrineRepository = new VitrineRepository();
@@ -49,7 +50,7 @@ export default class Vitrines {
       let numPage: number;
 
       let idUser: number = 0;
-      if (req.headers.authorization! != undefined) {
+      if (req.headers.authorization! != undefined && req.headers.authorization! != "") {
         idUser = DecodeToken(req.headers.authorization!).ID_USER
       }
 
@@ -77,6 +78,41 @@ export default class Vitrines {
     } catch (error: any) {
       res.status(500).send({
         message: error.message || "Une erreur s'est produite lors de la récupération de toutes les vitrines"
+      })
+    }
+  }
+
+  public async PostUserCoordsToGetActivesVitrine(req: Request, res: Response) {
+    try {
+      let numPage: number;
+      let deviceLatitude = req.params.deviceLat;
+      let deviceLongitude = req.params.deviceLng;
+
+      let idUser: number = 0;
+      if (req.headers.authorization! != undefined) {
+        idUser = DecodeToken(req.headers.authorization!).ID_USER
+      }
+
+      //On défini le numéro de page
+      if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
+      if (!Number.isNaN(numPage) && numPage >= 1) {
+        await this.vitrineRepository.GetAllActiveWithCoordonates(numPage, idUser, parseFloat(deviceLatitude), parseFloat(deviceLongitude))
+          .then(async (data: Vitrine[]) => {
+            if (data != null) {
+              res.status(200).send(data);
+            }
+            else {
+              res.status(204).send();
+            }
+          })
+      } else {
+        res.status(400).send({
+          message: "Problème lors de la récupération des vitrines à portée."
+        })
+      }
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur est survenue lors de la récupération des vitrines à portée."
       })
     }
   }
