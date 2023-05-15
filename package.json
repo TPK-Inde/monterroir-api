@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "dev": "dotenv -e .env.development nodemon server.ts",
-    "start": "dotenv -e .ENV nodemon server.ts",
+    "start": "dotenv -e .ENV ts-node server.ts",
     "test": "dotenv -e .env.development jest --detectOpenHandles"
   },
   "keywords": [],

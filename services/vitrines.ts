@@ -1,4 +1,6 @@
+import { FavoriteVitrineRepository } from "../Lib/Repositories/FavoriteVitrineRepository";
 import { VitrineRepository } from "../Lib/Repositories/VitrineRepository";
+import DecodeToken from "../helper/DecodeToken";
 import { Vitrine } from "../models/Vitrine";
 import { Request, Response } from "express";
 
@@ -46,11 +48,17 @@ export default class Vitrines {
     try {
       let numPage: number;
 
+      let idUser: number = 0;
+      if (req.headers.authorization! != undefined) {
+        idUser = DecodeToken(req.headers.authorization!).ID_USER
+      }
+
+
       //On défini le numéro de page
       if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
 
       if (!Number.isNaN(numPage) && numPage >= 1) {
-        await this.vitrineRepository.GetAllActive(numPage)
+        await this.vitrineRepository.GetAllActive(numPage, idUser)
           .then((data: Vitrine[]) => {
             if (data.length > 0) {
               res.status(200).send(data);

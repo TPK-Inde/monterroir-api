@@ -75,6 +75,9 @@
  *             WORDING:
  *               type: string
  *               description: Libellé
+ *         IS_FAVORITE:
+ *           type: boolean
+ *           description: Détermine si la vitrine est au favori
  *       example:
  *         ID_VITRINE : 1
  *         ID_USER : 1
@@ -102,4 +105,5 @@
  *           ID_CATEGORY_VITRINE: 1,
  *           WORDING: "Poterie"
  *         }
+ *         IS_FAVORITE: false
  */

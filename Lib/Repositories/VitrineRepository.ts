@@ -15,48 +15,49 @@ export class VitrineRepository implements IVitrineRepository {
 
   async GetAll(pageNumber: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll(
-      { 
-        limit: parseInt(config.listPerPage!), 
-        offset: ((pageNumber - 1) * parseInt(config.listPerPage!)), 
+      {
+        limit: parseInt(config.listPerPage!),
+        offset: ((pageNumber - 1) * parseInt(config.listPerPage!)),
         include: [
-          sequelize.models.CategoryVitrine, 
-          sequelize.models.TypeVitrine, 
-          {model: sequelize.models.User, attributes: userAttribute}
-        ] 
+          sequelize.models.CategoryVitrine,
+          sequelize.models.TypeVitrine,
+          { model: sequelize.models.User, attributes: userAttribute }
+        ]
       });
   }
-  async GetAllActive(pageNumber: number): Promise<Vitrine[]> {
+  async GetAllActive(pageNumber: number, idUser: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll(
-      { 
-        where: { ACTIVATE: true }, 
-        limit: parseInt(config.listPerPage!), 
-        offset: ((pageNumber - 1) * parseInt(config.listPerPage!)), 
+      {
+        where: { ACTIVATE: true },
+        limit: parseInt(config.listPerPage!),
+        offset: ((pageNumber - 1) * parseInt(config.listPerPage!)),
         include: [
-          sequelize.models.CategoryVitrine, 
-          sequelize.models.TypeVitrine, 
-          {model: sequelize.models.User, attributes: userAttribute}
-        ] 
+          sequelize.models.CategoryVitrine,
+          sequelize.models.TypeVitrine,
+          { model: sequelize.models.User, attributes: userAttribute },
+          { model: sequelize.models.FavoriteVitrine, where: { ID_USER: idUser }, required: false }
+        ]
       });
   }
   async GetById(vitrineId: number): Promise<Vitrine | null> {
-    return await this.vitrineRepository.findByPk(vitrineId, { 
+    return await this.vitrineRepository.findByPk(vitrineId, {
       include: [
-        sequelize.models.CategoryVitrine, 
-        sequelize.models.TypeVitrine, 
-        {model: sequelize.models.User, attributes: userAttribute}
+        sequelize.models.CategoryVitrine,
+        sequelize.models.TypeVitrine,
+        { model: sequelize.models.User, attributes: userAttribute }
       ]
     });
   }
   async GetByUserId(userId: number): Promise<Vitrine[]> {
-    return await this.vitrineRepository.findAll({ 
-      where: { 
-        ID_USER: userId 
-      }, 
+    return await this.vitrineRepository.findAll({
+      where: {
+        ID_USER: userId
+      },
       include: [
-        sequelize.models.CategoryVitrine, 
-        sequelize.models.TypeVitrine, 
-        {model: sequelize.models.User, attributes: userAttribute}
-      ] 
+        sequelize.models.CategoryVitrine,
+        sequelize.models.TypeVitrine,
+        { model: sequelize.models.User, attributes: userAttribute }
+      ]
     });
   }
   async PostNewVitrine(vitrineToPost: Vitrine): Promise<void> {
