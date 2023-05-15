@@ -39,6 +39,27 @@ export class VitrineRepository implements IVitrineRepository {
         ]
       });
   }
+  async GetAllActiveWithCoordonates(pageNumber: number, idUser: number, lat: number, lng: number): Promise<Vitrine[]> {
+    return await this.vitrineRepository.findAll(
+      {
+        where: this.vitrineRepository.sequelize!.and(
+          sequelize.where(
+            sequelize.literal(`6371 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(${lng}) - radians(longitude)) + sin(radians(${lat})) * sin(radians(latitude)))`),
+            '<=',
+            30
+          ),
+          { ACTIVATE: true }
+        ),
+        limit: parseInt(config.listPerPage!),
+        offset: ((pageNumber - 1) * parseInt(config.listPerPage!)),
+        include: [
+          sequelize.models.CategoryVitrine,
+          sequelize.models.TypeVitrine,
+          { model: sequelize.models.User, attributes: userAttribute },
+          { model: sequelize.models.FavoriteVitrine, where: { ID_USER: idUser }, required: false }
+        ]
+      });
+  }
   async GetById(vitrineId: number): Promise<Vitrine | null> {
     return await this.vitrineRepository.findByPk(vitrineId, {
       include: [
