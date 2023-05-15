@@ -76,8 +76,14 @@
  *               type: string
  *               description: Libellé
  *         IS_FAVORITE:
- *           type: boolean
- *           description: Détermine si la vitrine est au favori
+ *           type: object
+ *           properties:
+ *             ID_USER:
+ *               type: int
+ *               description: ID de l'utilisateur
+ *             ID_VITRINE:
+ *               type: int
+ *               description: ID de la vitrine
  *       example:
  *         ID_VITRINE : 1
  *         ID_USER : 1
@@ -105,5 +111,8 @@
  *           ID_CATEGORY_VITRINE: 1,
  *           WORDING: "Poterie"
  *         }
- *         IS_FAVORITE: false
+ *         FAVORITE: {
+ *           ID_USER: 1,
+ *           ID_VITRINE: 1
+ *         }
  */
