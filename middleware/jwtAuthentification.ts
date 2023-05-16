@@ -69,10 +69,10 @@ export default class JwtAuthentification {
             //Vérification de si le token est celui dans la base de données
             await this.CheckTokenInDataBase(String(req.headers['authorization']))
               .then((resultDataBase: ResultCheckDataBaseToken) => {
-                if (resultDataBase == ResultCheckDataBaseToken.OK){
+                if (resultDataBase == ResultCheckDataBaseToken.OK) {
                   return next();
                 }
-                else{
+                else {
                   res.status(403).send({ message: "Votre token n'est pas valide, veuillez vous authentifier à nouveau" })
                 }
               })
@@ -225,39 +225,39 @@ export default class JwtAuthentification {
 
           break;
         case "favoritevitrine":
-            //Vérifie si l'ID dans le token est le même que celui dans le body
-            if (req.method == "POST"){
-              if (userDataToken.ID_USER != req.body.ID_USER){
-                return res.status(403).send({
-                  message: "Vous ne pouvez pas ajouter une vitrine au favori d'un autre utilisateur !"
-                })
-              }   
-              else{
-                next();
-              }           
+          //Vérifie si l'ID dans le token est le même que celui dans le body
+          if (req.method == "POST") {
+            if (userDataToken.ID_USER != req.body.ID_USER) {
+              return res.status(403).send({
+                message: "Vous ne pouvez pas ajouter une vitrine au favori d'un autre utilisateur !"
+              })
             }
-            else if (req.method == "DELETE" ){
-              if (userDataToken.ID_USER != req.params.ID_USER){
-                return res.status(403).send({
-                  message: "Vous ne pouvez pas supprimer une vitrine des favoris d'un autre utilisateur !"
-                })
-              }
-              else{
-                next();
-              }
+            else {
+              next();
             }
-            else if (req.method == "GET" ){
-              if (userDataToken.ID_USER != req.params.ID_USER){
-                return res.status(403).send({
-                  message: "Vous ne pouvez pas récupérer les favoris d'un autre utilisateur !"
-                })
-              }
-              else{
-                next();
-              }
+          }
+          else if (req.method == "DELETE") {
+            if (userDataToken.ID_USER != req.params.ID_USER) {
+              return res.status(403).send({
+                message: "Vous ne pouvez pas supprimer une vitrine des favoris d'un autre utilisateur !"
+              })
             }
-  
-            break;
+            else {
+              next();
+            }
+          }
+          else if (req.method == "GET") {
+            if (userDataToken.ID_USER != req.params.ID_USER) {
+              return res.status(403).send({
+                message: "Vous ne pouvez pas récupérer les favoris d'un autre utilisateur !"
+              })
+            }
+            else {
+              next();
+            }
+          }
+
+          break;
         default:
           return res.status(500).send({ message: "Impossible de vérifier que vous êtes bien autorisé à utiliser cette appel" });
       }
@@ -270,6 +270,27 @@ export default class JwtAuthentification {
   //Permet de vérifier que l'utilisateur à un token valide ET qu'il est modérateur
   public async CheckUserIsModerator(req: Request, res: Response, next: () => void) {
     await this.CheckTokenIsModerator(String(req.headers['authorization']))
+      .then((result: ResultCheckToken) => {
+        switch (result) {
+          case ResultCheckToken.OK:
+            next();
+            break;
+          case ResultCheckToken.AUTHORIZATION_DENIED:
+            return res.status(403).send({ message: "Vous ne disposez pas des droits nénessaire pour effectuer cette action" });
+          default:
+            return res.status(500).send({ message: "Votre token n'a pas pu être authentifié. Tenter de vous authentifier à nouveau" });
+        }
+      })
+      .catch(() => {
+        res.status(500).send({
+          message: "Une erreur s'est produite lors de la vérification de votre token"
+        })
+      })
+  }
+
+  //Permet de vérifier que l'utilisateur à un token valide ET qu'il est modérateur OU administrateur
+  public async CheckUserIsModeratorOrAdministrator(req: Request, res: Response, next: () => void) {
+    await this.CheckTokenIsModeratorOrAdministrator(String(req.headers['authorization']))
       .then((result: ResultCheckToken) => {
         switch (result) {
           case ResultCheckToken.OK:
@@ -353,7 +374,8 @@ export default class JwtAuthentification {
     return ResultCheckToken.OK;
   }
 
-  private async CheckTokenInDataBase(authorizationHeader: string) : Promise<ResultCheckDataBaseToken> {
+  //Permet de vérifier si le token est dans la base de données
+  private async CheckTokenInDataBase(authorizationHeader: string): Promise<ResultCheckDataBaseToken> {
     const userDataToken = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
 
     const authHeader = authorizationHeader;
@@ -362,14 +384,14 @@ export default class JwtAuthentification {
     let result = ResultCheckDataBaseToken.AUTHORIZATION_DENIED;
 
     await this._tokenRepository.GetByUserIdAndToken(userDataToken.ID_USER, token)
-    .then((data: Token | null) => {
-      if (data == null){
-        result =  ResultCheckDataBaseToken.AUTHORIZATION_DENIED;
-      }
-      else{
-        result = ResultCheckDataBaseToken.OK;        
-      }
-    })
+      .then((data: Token | null) => {
+        if (data == null) {
+          result = ResultCheckDataBaseToken.AUTHORIZATION_DENIED;
+        }
+        else {
+          result = ResultCheckDataBaseToken.OK;
+        }
+      })
 
     return result;
   }
@@ -429,7 +451,7 @@ export default class JwtAuthentification {
       await this._productRepository.GetById(Number.parseInt(params.ID_PRODUCT))
         .then(async (data: Product | null) => {
           if (data != null) {
-            await this._vitrineRepository.GetById(data.ID_VITRINE)
+            await this._vitrineRepository.GetById(data.ID_VITRINE, 0)
               .then((dateHeader: Vitrine | null) => {
                 if (dateHeader != null) {
                   dateHeader.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
@@ -473,7 +495,7 @@ export default class JwtAuthentification {
 
     //Vérification du propriétaire de la vitrine
     if (result == "" && params.ID_VITRINE != undefined) {
-      await this._vitrineRepository.GetById(Number.parseInt(params.ID_VITRINE))
+      await this._vitrineRepository.GetById(Number.parseInt(params.ID_VITRINE), 0)
         .then((data: Vitrine | null) => {
           if (data != null) {
             data.ID_USER == userDataToken.ID_USER ? null : result = "Vous ne disposez pas des autorisations nécessaires à la modifications/suppression de cette ressource"
@@ -491,6 +513,17 @@ export default class JwtAuthentification {
   private async CheckTokenIsModerator(authorizationHeader: string): Promise<ResultCheckToken> {
     const resultExtract = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
     if (resultExtract.IS_MODERATOR == true) {
+      return ResultCheckToken.OK;
+    }
+    else {
+      return ResultCheckToken.AUTHORIZATION_DENIED;
+    }
+  }
+
+  //Permet de vérifier si dans le token, l'utilisateur est modérateur ou administrateur
+  private async CheckTokenIsModeratorOrAdministrator(authorizationHeader: string): Promise<ResultCheckToken> {
+    const resultExtract = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
+    if (resultExtract.IS_MODERATOR == true || resultExtract.IS_ADMINISTRATOR == true) {
       return ResultCheckToken.OK;
     }
     else {

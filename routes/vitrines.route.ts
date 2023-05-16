@@ -41,7 +41,7 @@ const jwtAuthentification = new JwtAuthentification();
 router.get(
   '/',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
-  jwtAuthentification.CheckUserIsAdministrator.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserIsModeratorOrAdministrator.bind(jwtAuthentification),
   vitrinesService.GetAll.bind(vitrinesService)
 );
 
@@ -198,8 +198,7 @@ router.post(
  *   description: CRUD vitrines
  * /vitrines/active/{deviceLat}/{deviceLng}:
  *   post:
- *     summary: Permet d'ajouter une nouvelle vitrine
- *     description: Veuillez notez que le champ 'Actif' est automatiquement mis à false lors de la création (même si vous envoyez true) et que les coordonnées sont mis à jour par l'API via l'adresse. L'envoi de paramètre est inutile
+ *     summary: Permet de récupérer les vitrines active dans un rayon de 30 km autour des coordonnées
  *     tags: [Vitrines]
  *     parameters:
  *       - in: path
@@ -239,6 +238,52 @@ router.post(
  */
 router.post('/active/:deviceLat/:deviceLng', vitrinesService.PostUserCoordsToGetActivesVitrine.bind(vitrinesService));
 
+/**
+ * @swagger
+ * tags:
+ *   name: Vitrines
+ *   description: CRUD vitrines
+ * /vitrines/{deviceLat}/{deviceLng}:
+ *   get:
+ *     summary: Permet de récupérer le comptage du nombre de vitrine dans la zone géographique choisie
+ *     tags: [Vitrines]
+ *     parameters:
+ *       - in: path
+ *         name: deviceLat
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: latitude utilisateur
+ *       - in: path
+ *         name: deviceLng
+ *         schema:
+ *           type: number
+ *         required: true
+ *         description: longitude utilisateur
+ *     responses:
+ *       200:
+ *         description: la récupération des vitrines à portée à réussie.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "la récupération des vitrines à portée à réussie"
+ *       204:
+ *         description: Aucune vitrine trouvé avec l'ID utilisateur indiqué 
+ *       400:
+ *         description: Un élément est manquant dans la requête
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Message'
+ *             example:
+ *               message: "Erreur lors de la récupération des vitrines à portée"
+ *       500:
+ *         description: Une erreur s'est produite lors de la récupération des vitrines à portée
+ *
+ */
+router.get('/:deviceLat/:deviceLng', jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification), jwtAuthentification.CheckUserIsAdministrator.bind(jwtAuthentification), vitrinesService.GetAllVitrineWithCoordinate.bind(vitrinesService));
 
 /**
  * @swagger

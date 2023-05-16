@@ -66,6 +66,9 @@ export class Vitrine extends Model<Vitrine> {
   @Column
   LONGITUDE: Number;
 
+  @Column
+  DELETED: boolean;
+
   @HasOne(() => FavoriteVitrine)
   FAVORITE: boolean;
 }
