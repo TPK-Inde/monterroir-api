@@ -25,6 +25,12 @@ const jwtAuthentification = new JwtAuthentification();
  *           type: integer
  *         required: false
  *         description: Le numéro de page (1 par défaut)
+ *       - in: query
+ *         name: filter
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Permet de faire une recherche sur l'email, pseudonym, nom de famille et prénom
  *     responses:
  *       200:
  *         description: La récupération de la liste est réussit.
@@ -51,7 +57,7 @@ const jwtAuthentification = new JwtAuthentification();
 router.get(
   '/',
   jwtAuthentification.CheckTokenValidity.bind(jwtAuthentification),
-  jwtAuthentification.CheckUserIsSuperAdministrator.bind(jwtAuthentification),
+  jwtAuthentification.CheckUserAdministratorOrSuperAdministrator.bind(jwtAuthentification),
   userService.GetAll.bind(userService)
 ); //Route nécessitant un token
 
