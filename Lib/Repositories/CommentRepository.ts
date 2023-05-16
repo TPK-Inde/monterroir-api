@@ -17,6 +17,8 @@ export class CommentRepository implements ICommentRepository {
             where: {
                 ID_VITRINE: vitrineId
             },
+            include: {model: sequelize.models.User, attributes: userAttribute}
+
         });
         return comments;
     }
