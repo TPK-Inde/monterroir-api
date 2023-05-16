@@ -28,24 +28,50 @@ export default class Users {
             //Récupération de la page souhaitée
             const numPage: number = parseInt(String(req.query.page)) || 1;
 
-            await this.userRepository.GetAllUsers(numPage)
-                .then((data: User[]) => {
-                    if (data != null && data.length > 0) {
-                        data.forEach(async element => {
-                            element = await this.DecryptData(element)
-                        });
+            const filterValue: string | undefined = req.query.filter?.toString();
 
-                        res.status(200).send(data);
-                    }
-                    else {
-                        res.status(204).send();
-                    }
-                })
-                .catch((err: { message: any; }) => {
-                    res.status(500).send({
-                        message: err.message || "Une erreur imprévue s'est produite lors de la récupération de tous les utilisateurs"
+            if (filterValue !== undefined) {
+                await this.userRepository.GetAllUsersWithFilter(numPage, filterValue)
+                    .then((data: User[]) => {
+                        if (data != null && data.length > 0) {
+                            data.forEach(async element => {
+                                element = await this.DecryptData(element)
+                            });
+
+                            res.status(200).send(data);
+                        }
+                        else {
+                            res.status(204).send();
+                        }
                     })
-                })
+                    .catch((err: { message: any; }) => {
+                        res.status(500).send({
+                            message: err.message || "Une erreur imprévue s'est produite lors de la récupération de tous les utilisateurs"
+                        })
+                    })
+            }
+            else {
+                await this.userRepository.GetAllUsers(numPage)
+                    .then((data: User[]) => {
+                        if (data != null && data.length > 0) {
+                            data.forEach(async element => {
+                                element = await this.DecryptData(element)
+                            });
+
+                            res.status(200).send(data);
+                        }
+                        else {
+                            res.status(204).send();
+                        }
+                    })
+                    .catch((err: { message: any; }) => {
+                        res.status(500).send({
+                            message: err.message || "Une erreur imprévue s'est produite lors de la récupération de tous les utilisateurs"
+                        })
+                    })
+            }
+
+
         }
         catch (error: any) {
             res.status(500).send({ message: error.message || "Une erreur imprévue s'est produite lors de la récupération de tous les utilisateurs" });

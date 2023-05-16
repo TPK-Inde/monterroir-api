@@ -192,7 +192,7 @@ export default class JwtAuthentification {
           break;
         case "users":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
-          if (await this.CheckTokenIsSuperAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
+          if (await this.CheckTokenIsAdministratorOrSuperAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
           else {
             //Vérification du propriétaire en fonction des paramètres
             await this.CheckParamsOwner(req.params, userDataToken)
@@ -312,6 +312,27 @@ export default class JwtAuthentification {
   //Permet de vérifier que l'utilisateur à un token valide ET qu'il est administrateur
   public async CheckUserIsAdministrator(req: Request, res: Response, next: () => void) {
     await this.CheckTokenIsAdministrator(String(req.headers['authorization']))
+      .then((result: ResultCheckToken) => {
+        switch (result) {
+          case ResultCheckToken.OK:
+            next();
+            break;
+          case ResultCheckToken.AUTHORIZATION_DENIED:
+            return res.status(403).send({ message: "Vous ne disposez pas des droits nénessaire pour effectuer cette action" });
+          default:
+            return res.status(500).send({ message: "Votre token n'a pas pu être authentifié. Tenter de vous authentifier à nouveau" });
+        }
+      })
+      .catch(() => {
+        res.status(500).send({
+          message: "Une erreur s'est produite lors de la vérification de votre token"
+        })
+      })
+  }
+
+  //Permet de vérifier que l'utilisateur à un token valide ET qu'il est modérateur OU administrateur
+  public async CheckUserAdministratorOrSuperAdministrator(req: Request, res: Response, next: () => void) {
+    await this.CheckTokenIsAdministratorOrSuperAdministrator(String(req.headers['authorization']))
       .then((result: ResultCheckToken) => {
         switch (result) {
           case ResultCheckToken.OK:
@@ -535,6 +556,17 @@ export default class JwtAuthentification {
   private async CheckTokenIsAdministrator(authorizationHeader: string): Promise<ResultCheckToken> {
     const resultExtract = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
     if (resultExtract.IS_ADMINISTRATOR == true) {
+      return ResultCheckToken.OK;
+    }
+    else {
+      return ResultCheckToken.AUTHORIZATION_DENIED;
+    }
+  }
+
+  //Permet de vérifier si dans le token, l'utilisateur est modérateur ou administrateur
+  private async CheckTokenIsAdministratorOrSuperAdministrator(authorizationHeader: string): Promise<ResultCheckToken> {
+    const resultExtract = await this.ExtractUserDataFromAuthorisationHeader(authorizationHeader);
+    if (resultExtract.IS_ADMINISTRATOR == true || resultExtract.IS_SUPER_ADMINISTRATOR == true) {
       return ResultCheckToken.OK;
     }
     else {
