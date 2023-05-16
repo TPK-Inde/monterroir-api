@@ -209,7 +209,7 @@ export default class JwtAuthentification {
           break;
         case "vitrines":
           //Les modérateurs ont le droit de modifier et supprimer un commentaire
-          if (await this.CheckTokenIsAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
+          if (await this.CheckTokenIsModeratorOrAdministrator(String(req.headers['authorization'])) == ResultCheckToken.OK) { next() }
           else {
             //Vérification du propriétaire en fonction des paramètres
             await this.CheckParamsOwner(req.params, userDataToken)
