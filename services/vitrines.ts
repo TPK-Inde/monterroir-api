@@ -1,4 +1,3 @@
-import { FavoriteVitrineRepository } from "../Lib/Repositories/FavoriteVitrineRepository";
 import { VitrineRepository } from "../Lib/Repositories/VitrineRepository";
 import DecodeToken from "../helper/DecodeToken";
 import { Vitrine } from "../models/Vitrine";
@@ -54,7 +53,6 @@ export default class Vitrines {
         idUser = DecodeToken(req.headers.authorization!).ID_USER
       }
 
-
       //On défini le numéro de page
       if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
 
@@ -96,7 +94,7 @@ export default class Vitrines {
       //On défini le numéro de page
       if (req.query.page == undefined) { numPage = 1 } else { numPage = parseInt(String(req.query.page)); }
       if (!Number.isNaN(numPage) && numPage >= 1) {
-        await this.vitrineRepository.GetAllActiveWithCoordonates(numPage, idUser, parseFloat(deviceLatitude), parseFloat(deviceLongitude))
+        await this.vitrineRepository.GetAllActivateWithCoordonates(numPage, idUser, parseFloat(deviceLatitude), parseFloat(deviceLongitude))
           .then(async (data: Vitrine[]) => {
             if (data != null) {
               res.status(200).send(data);
@@ -117,13 +115,35 @@ export default class Vitrines {
     }
   }
 
+  public async GetAllVitrineWithCoordinate(req: Request, res: Response) {
+    try {
+      let deviceLatitude = req.params.deviceLat;
+      let deviceLongitude = req.params.deviceLng;
+
+      //On défini le numéro de page
+      await this.vitrineRepository.GetAllVitrineWithCoordinate(parseFloat(deviceLatitude), parseFloat(deviceLongitude))
+        .then(async (data: Vitrine[]) => {
+          res.status(200).send(data);
+        })
+    } catch (error: any) {
+      res.status(500).send({
+        message: error.message || "Une erreur est survenue lors de la récupération des vitrines à portée."
+      })
+    }
+  }
+
   //Fonction permettant de récupérer la liste de toutes les vitrines Active
   public async GetById(req: Request, res: Response) {
     try {
       const idVitrine = parseInt(req.params.ID_VITRINE);
 
+      let idUser: number = 0;
+      if (req.headers.authorization! != undefined && req.headers.authorization! != "") {
+        idUser = DecodeToken(req.headers.authorization!).ID_USER
+      }
+
       if (!Number.isNaN(idVitrine)) {
-        await this.vitrineRepository.GetById(idVitrine)
+        await this.vitrineRepository.GetById(idVitrine, idUser)
           .then((data: Vitrine | null) => {
             if (data != null) {
               res.status(200).send(data);
@@ -240,25 +260,29 @@ export default class Vitrines {
       const idVitrine = parseInt(req.params.ID_VITRINE);
 
       if (!Number.isNaN(idVitrine)) {
-        await this.vitrineRepository.DeleteVitrine(idVitrine)
-          .then((rowDeleted: number) => {
-            if (rowDeleted == 1) {
-              res.status(200).send({
-                message: "La suppression de la vitrine à réussit"
-              })
+        await this.vitrineRepository.GetById(idVitrine, 0)
+          .then(async (data: Vitrine | null) => {
+            if (data != null) {
+              await this.vitrineRepository.DeleteVitrine(data.ID_VITRINE)
+                .then(() => {
+                  res.status(204).send();
+                })
+                .catch((error) => {
+                  console.log(error)
+                  res.status(400).send({ message: error });
+                })
             }
             else {
-              res.status(400).send({
-                message: "La suppression de la vitrine à échouée"
-              })
+              res.status(400).send({ message: "Une erreur s'est produite lors de la suppression de la vitrine" })
             }
           })
-
-        res.status(204).send();
+          .catch(() => {
+            res.status(400).send({ message: "Une erreur s'est produite lors de la suppression de la vitrine" })
+          })
       }
       else {
         res.status(400).send({
-          message: "Veuillez entrer un ID valide d'un utilisateur dans la requête"
+          message: "Veuillez entrer un ID valide de vitrine dans la requête"
         })
       }
 

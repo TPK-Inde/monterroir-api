@@ -126,19 +126,25 @@ export default class Users {
             await this.userRepository.GetUserByEmail(userEmail)
                 .then(async (data: User | null) => {
                     if (data != null) {
-                        const resultCheck = await this.ValidateUser(req.body.PASSWORD, data.PASSWORD);
-                        if (resultCheck) {
-                            const token: string = await this.GenerateAccessToken(data);
+                        if (data.ID_ACCOUNT_STATUS != 5) {
+                            const resultCheck = await this.ValidateUser(req.body.PASSWORD, data.PASSWORD);
+                            if (resultCheck) {
+                                const token: string = await this.GenerateAccessToken(data);
 
-                            //Enregistrement du token en BDD
-                            const tokenForDatabase : TokenAttributes = { ID_USER : data.ID_USER, TOKEN : token, DATE_TOKEN: new Date(Date.now())};
-                            await this.tokenRepository.PostNewToken(tokenForDatabase)
+                                //Enregistrement du token en BDD
+                                const tokenForDatabase: TokenAttributes = { ID_USER: data.ID_USER, TOKEN: token, DATE_TOKEN: new Date(Date.now()) };
+                                await this.tokenRepository.PostNewToken(tokenForDatabase)
 
-                            res.status(200).send({ resultat: true, message: "Authentification réussit", token: token });
+                                res.status(200).send({ resultat: true, message: "Authentification réussit", token: token });
+                            }
+                            else {
+                                res.status(400).send({ resultat: false, message: "L'authentification a échouée" });
+                            }
                         }
                         else {
-                            res.status(400).send({ resultat: false, message: "L'authentification a échouée" });
+                            res.status(401).send({ resultat: false, message: "Votre compte est désactivé" })
                         }
+
                     }
                     else {
                         res.status(400).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette adresse email" });
@@ -159,7 +165,7 @@ export default class Users {
         try {
             //On défini la clé primaire à null
             req.body.ID_USER = null;
-            if(req.body.ID_ACCOUNT_STATUS == "" || req.body.ID_ACCOUNT_STATUS == undefined){
+            if (req.body.ID_ACCOUNT_STATUS == "" || req.body.ID_ACCOUNT_STATUS == undefined) {
                 req.body.ID_ACCOUNT_STATUS = 1;
             }
 
@@ -226,38 +232,38 @@ export default class Users {
                         else {
                             //Vérification que l'email ou le pseudonym n'est pas déjà utilisée
                             await this.CheckUnitEmailAndPseudonym(req.body)
-                            .then(async (result: string | null) => {
-                                if (result != null) {
-                                    res.status(400).send({ message: result })
-                                }
-                                else {
-                                    let resultCheck: string | null = null;
-                                    //Si le mot de passe est vide, alors on récupère celui dans la base de données
-                                    if (!req.body.PASSWORD) { 
-                                        req.body.PASSWORD = data!.PASSWORD 
-                                        resultCheck = await this.CheckDataIntegrity(req.body, false);
-                                    }
-                                    else{                                        
-                                        resultCheck = await this.CheckDataIntegrity(req.body, true);
-                                        req.body.PASSWORD = await this.HashPassword(req.body.PASSWORD);
-                                    }
-                                    
-                                    if (resultCheck == null) {
-                                        this.userRepository.PutUser(req.body)
-                                            .then(() => res.status(204).send())
-                                            .catch((err: { message: any; }) => {
-                                                res.status(500).send({
-                                                    message: err.message || "Une erreur imprévue s'est produite lors de la modification d'un utilisateur"
-                                                })
-                                            })
+                                .then(async (result: string | null) => {
+                                    if (result != null) {
+                                        res.status(400).send({ message: result })
                                     }
                                     else {
-                                        res.status(400).send({
-                                            message: resultCheck
-                                        })
+                                        let resultCheck: string | null = null;
+                                        //Si le mot de passe est vide, alors on récupère celui dans la base de données
+                                        if (!req.body.PASSWORD) {
+                                            req.body.PASSWORD = data!.PASSWORD
+                                            resultCheck = await this.CheckDataIntegrity(req.body, false);
+                                        }
+                                        else {
+                                            resultCheck = await this.CheckDataIntegrity(req.body, true);
+                                            req.body.PASSWORD = await this.HashPassword(req.body.PASSWORD);
+                                        }
+
+                                        if (resultCheck == null) {
+                                            this.userRepository.PutUser(req.body)
+                                                .then(() => res.status(204).send())
+                                                .catch((err: { message: any; }) => {
+                                                    res.status(500).send({
+                                                        message: err.message || "Une erreur imprévue s'est produite lors de la modification d'un utilisateur"
+                                                    })
+                                                })
+                                        }
+                                        else {
+                                            res.status(400).send({
+                                                message: resultCheck
+                                            })
+                                        }
                                     }
-                                }
-                            })                            
+                                })
                         }
                     })
                     .catch((err: { message: any; }) => {
@@ -323,7 +329,7 @@ export default class Users {
     }
 
     //Fonction permettant de générer un token
-    private async GenerateAccessToken(dataUser: User) : Promise<string> {
+    private async GenerateAccessToken(dataUser: User): Promise<string> {
         return new Promise((resolve, reject) => {
             resolve(
                 jwt.sign(
@@ -376,31 +382,31 @@ export default class Users {
     }
 
     //Permet de vérifier l'unicité de l'email et pseudo de l'utilisateur
-    private async CheckUnitEmailAndPseudonym(user: User){
+    private async CheckUnitEmailAndPseudonym(user: User) {
         let result = null;
 
         await this.userRepository.GetUserByEmail(user.EMAIL)
             .then(async (data: User | null) => {
                 if (data != null) {
                     //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
-                    if (data.ID_USER != user.ID_USER){
+                    if (data.ID_USER != user.ID_USER) {
                         result = "Cette adresse email est déjà utilisé sur un autre compte"
-                    }                    
-                }
-            })
-
-        if (result == null){
-            await this.userRepository.GetUserByPseudonym(user.PSEUDONYM)
-            .then(async (data: User | null) => {
-                if (data != null){
-                    //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
-                    if (data.ID_USER != user.ID_USER){
-                        result = "Ce pseudonyme est déjà utilisé par un autre utilisateur"
                     }
                 }
             })
-        }       
-        
+
+        if (result == null) {
+            await this.userRepository.GetUserByPseudonym(user.PSEUDONYM)
+                .then(async (data: User | null) => {
+                    if (data != null) {
+                        //On vérifie si l'utilisateur retourné n'est pas l'utilisateur qu'on veux modifier
+                        if (data.ID_USER != user.ID_USER) {
+                            result = "Ce pseudonyme est déjà utilisé par un autre utilisateur"
+                        }
+                    }
+                })
+        }
+
         return result;
     }
 

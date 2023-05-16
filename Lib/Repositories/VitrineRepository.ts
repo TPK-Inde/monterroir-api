@@ -22,13 +22,14 @@ export class VitrineRepository implements IVitrineRepository {
           sequelize.models.CategoryVitrine,
           sequelize.models.TypeVitrine,
           { model: sequelize.models.User, attributes: userAttribute }
-        ]
+        ],
+        where: { DELETED: false }
       });
   }
   async GetAllActive(pageNumber: number, idUser: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll(
       {
-        where: { ACTIVATE: true },
+        where: { ACTIVATE: true, DELETED: false },
         limit: parseInt(config.listPerPage!),
         offset: ((pageNumber - 1) * parseInt(config.listPerPage!)),
         include: [
@@ -39,7 +40,7 @@ export class VitrineRepository implements IVitrineRepository {
         ]
       });
   }
-  async GetAllActiveWithCoordonates(pageNumber: number, idUser: number, lat: number, lng: number): Promise<Vitrine[]> {
+  async GetAllActivateWithCoordonates(pageNumber: number, idUser: number, lat: number, lng: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll(
       {
         where: this.vitrineRepository.sequelize!.and(
@@ -48,7 +49,7 @@ export class VitrineRepository implements IVitrineRepository {
             '<=',
             30
           ),
-          { ACTIVATE: true }
+          { ACTIVATE: true, DELETED: false }
         ),
         limit: parseInt(config.listPerPage!),
         offset: ((pageNumber - 1) * parseInt(config.listPerPage!)),
@@ -60,12 +61,31 @@ export class VitrineRepository implements IVitrineRepository {
         ]
       });
   }
-  async GetById(vitrineId: number): Promise<Vitrine | null> {
+  async GetAllVitrineWithCoordinate(lat: number, lng: number): Promise<Vitrine[]> {
+    return await this.vitrineRepository.findAll(
+      {
+        where: this.vitrineRepository.sequelize!.and(
+          sequelize.where(
+            sequelize.literal(`6371 * acos(cos(radians(${lat})) * cos(radians(latitude)) * cos(radians(${lng}) - radians(longitude)) + sin(radians(${lat})) * sin(radians(latitude)))`),
+            '<=',
+            30
+          ),
+          { DELETED: false }
+        ),
+        include: [
+          sequelize.models.CategoryVitrine,
+          sequelize.models.TypeVitrine,
+          { model: sequelize.models.User, attributes: userAttribute },
+        ]
+      });
+  }
+  async GetById(vitrineId: number, idUser: number): Promise<Vitrine | null> {
     return await this.vitrineRepository.findByPk(vitrineId, {
       include: [
         sequelize.models.CategoryVitrine,
         sequelize.models.TypeVitrine,
-        { model: sequelize.models.User, attributes: userAttribute }
+        { model: sequelize.models.User, attributes: userAttribute },
+        { model: sequelize.models.FavoriteVitrine, where: { ID_USER: idUser }, required: false }
       ]
     });
   }
@@ -87,8 +107,8 @@ export class VitrineRepository implements IVitrineRepository {
   async PutVitrine(vitrineToModify: Vitrine): Promise<void> {
     await this.vitrineRepository.update(vitrineToModify, { where: { ID_VITRINE: vitrineToModify.ID_VITRINE } })
   }
-  async DeleteVitrine(vitrineToDeleteId: number): Promise<number> {
-    return await this.vitrineRepository.destroy({ where: { ID_VITRINE: vitrineToDeleteId } })
+  async DeleteVitrine(idVitrine: number): Promise<void> {
+    await this.vitrineRepository.update({ DELETED: true }, { where: { ID_VITRINE: idVitrine } })
   }
 
 }
