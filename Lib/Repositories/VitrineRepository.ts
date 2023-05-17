@@ -80,7 +80,8 @@ export class VitrineRepository implements IVitrineRepository {
       });
   }
   async GetById(vitrineId: number, idUser: number): Promise<Vitrine | null> {
-    return await this.vitrineRepository.findByPk(vitrineId, {
+    return await this.vitrineRepository.findOne({
+      where: { ID_VITRINE: vitrineId, ACTIVATE: true, DELETED: false },
       include: [
         sequelize.models.CategoryVitrine,
         sequelize.models.TypeVitrine,
@@ -92,7 +93,8 @@ export class VitrineRepository implements IVitrineRepository {
   async GetByUserId(userId: number): Promise<Vitrine[]> {
     return await this.vitrineRepository.findAll({
       where: {
-        ID_USER: userId
+        ID_USER: userId,
+        DELETED: false
       },
       include: [
         sequelize.models.CategoryVitrine,
