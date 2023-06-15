@@ -2,7 +2,7 @@ import express from 'express';
 import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
-const service = require('../services/rates.ts');
+const service = require('../services/rates');
 const jwtAuthentification = new JwtAuthentification();
 
 

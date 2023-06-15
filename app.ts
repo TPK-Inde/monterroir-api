@@ -1,20 +1,20 @@
 require('dotenv');
 import bodyParser = require("body-parser");
 import express from 'express';
-import {connectToMongo} from './mongo/db'
+import { connectToMongo } from './mongo/db'
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
 //Constante de route
-const utilisateursRouter = require("./routes/utilisateurs.route.ts");
-const vitrinesRouter = require("./routes/vitrines.route.ts");
-const categoriesVitrineRouter = require("./routes/categorieVitrine.route.ts");
-const commentsRouter = require("./routes/comments.route.ts");
-const productsRouter = require("./routes/products.route.ts");
-const ratesRouter = require("./routes/rates.route.ts");
-const orderHeaderRouter = require("./routes/orderheader.route.ts");
+const utilisateursRouter = require("./routes/utilisateurs.route");
+const vitrinesRouter = require("./routes/vitrines.route");
+const categoriesVitrineRouter = require("./routes/categorieVitrine.route");
+const commentsRouter = require("./routes/comments.route");
+const productsRouter = require("./routes/products.route");
+const ratesRouter = require("./routes/rates.route");
+const orderHeaderRouter = require("./routes/orderheader.route");
 const orderLineRouter = require("./routes/orderLine.route");
 const conversationRouter = require("./routes/conversation.route");
 const messageRouter = require("./routes/message.route");
@@ -63,7 +63,7 @@ const optionsSwagger = {
       },
     ],
   },
-  apis: ["./routes/*.ts", "./schema/*.ts"],
+  apis: ["./routes/*", "./schema/*"],
 };
 
 const specs = swaggerJsdoc(optionsSwagger);

@@ -3,7 +3,6 @@ import CategoriesVitrine from '../services/categoriesVitrine';
 import JwtAuthentification from "../middleware/jwtAuthentification";
 
 const router = express.Router();
-const categoryVitrine = require('../services/categoriesVitrine.ts');
 
 //Constante de middleware
 const jwtAuthentification = new JwtAuthentification();
