@@ -12,6 +12,5 @@
     "outDir": "compile",
     "moduleResolution": "node",
   },
-  "exclude": ["node_modules", ".vscode"],
-
+  "exclude": ["node_modules", ".vscode", "tests"]
 }
