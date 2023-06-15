@@ -2,20 +2,47 @@
   "name": "monterroir-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server.ts",
   "scripts": {
-    "devStart": "dotenv -e .env.development nodemon server.js",
-    "start": "nodemon server.js"
+    "dev": "dotenv -e .env.development nodemon server.ts",
+    "start": "dotenv -e .ENV ts-node server.ts",
+    "test": "dotenv -e .env.development jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/express": "^4.17.17",
+    "@types/express-serve-static-core": "^4.17.33",
+    "@types/node": "^18.13.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "dotenv-cli": "^7.0.0",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "jwt-decode": "^3.1.2",
+    "mongoose": "^7.0.5",
     "mysql2": "^3.0.1",
+    "nodemon": "^2.0.20",
+    "reflect-metadata": "^0.1.13",
+    "sequelize": "^6.28.0",
+    "sequelize-typescript": "^2.1.5",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^4.6.0"
+    "swagger-ui-express": "^4.6.0",
+    "ts-node": "^10.9.1"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "@types/jest": "^29.5.0",
+    "@types/supertest": "^2.0.12",
+    "@types/validator": "^13.7.12",
+    "jest": "^29.5.0",
+    "sequelize-mock": "^0.10.2",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^4.9.5"
   }
 }

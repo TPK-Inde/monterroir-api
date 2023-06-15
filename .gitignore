@@ -1,3 +1,7 @@
 #Répertoire des dépendances
 node_modules
 .ENV.development
+.ENV.production
+
+#Fichier de sortie de compilation
+compile
