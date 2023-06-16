@@ -1,6 +1,6 @@
 services:
-  api:
-    container_name: api-monterroir
+  api-recette:
+    container_name: api-recette-monterroir
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -11,34 +11,34 @@ services:
       - "traefik.http.routers.monterroir-api-recette.entrypoints=web"
     restart: always
     networks:
-      - netapi
+      - netapirecette
       - net-reverse-proxy
 
-  bdd:
-    container_name: mysql-monterroir
+  bdd-recette:
+    container_name: mysql-recette-monterroir
     image: mysql:8.0
     restart: always
     networks:
-      - netapi
+      - netapirecette
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: monterroir
       MYSQL_USER: monterroir
       MYSQL_PASSWORD: monterroirpassword
     volumes:
-      - volbdd:/var/lib/mysql
+      - volbddrecette:/var/lib/mysql
 
 networks:
-  netapi:
+  netapirecette:
     name: monterroir-recette-api
   net-reverse-proxy:
     name: net-reverse-proxy
     external: true
 
 volumes:
-  volbdd:
+  volbddrecette:
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /home/paulin/docker-monterroir/bdd-data
+      device: /home/paulin/docker-monterroir/bdd-data-recette
