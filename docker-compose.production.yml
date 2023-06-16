@@ -13,6 +13,7 @@ services:
         networks:
             - netapi
             - net-reverse-proxy
+        env_file: .ENV.production
 
     bdd:
         container_name: mysql-monterroir
@@ -20,13 +21,9 @@ services:
         restart: always
         networks:
             - netapi
-        environment:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: monterroir
-            MYSQL_USER: monterroir
-            MYSQL_PASSWORD: monterroirpassword
         volumes:
             - volbdd:/var/lib/mysql
+        env_file: .ENV.production
 
 networks:
     netapi:
