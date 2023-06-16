@@ -22,7 +22,7 @@ services:
     networks:
       - netapi-recette
     volumes:
-      - volbddrecette:/var/lib/mysql
+      - volbdd-recette:/var/lib/mysql
     env_file: .ENV.recette
 
 networks:
@@ -33,7 +33,7 @@ networks:
     external: true
 
 volumes:
-  volbddrecette:
+  volbdd-recette:
     driver: local
     driver_opts:
       o: bind
