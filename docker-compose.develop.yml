@@ -1,60 +1,49 @@
 version: "3.7"
+
 services:
-    api:
-        container_name: api-monterroir
+    api-develop:
+        container_name: api-monterroir-develop
         build:
             context: .
             dockerfile: ./Dockerfile
-        restart: always
         ports:
-            - "3000:3000"
+            - 3000:3000
+        restart: always
         networks:
-            - netapi
-            - netbdd
+            - netapi-develop
+            - netbdd-develop
+        env_file: .ENV.development
 
-    bdd:
-        container_name: mysql-monterroir
-        image: mysql:latest
+    bdd-develop:
+        container_name: mysql-monterroir-develop
+        image: mysql:8.0
         restart: always
         networks:
-            - netbdd
-        environment:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: monterroir
-            MYSQL_USER: monterroir
-            MYSQL_PASSWORD: monterroirpassword
+            - netbdd-develop
+        env_file: .ENV.development
         volumes:
-            - volbdd:/var/lib/mysql
-        ports:
-            - "3306:3306"
+            - volbdd-develop:/var/lib/mysql        
     
-    phpmyadmin:
-        container_name: phpmyadmin-monterroir
+    phpmyadmin-develop:
+        container_name: phpmyadmin-monterroir-develop
         image: phpmyadmin:latest
         depends_on:
-            - bdd
+            - bdd-develop
         restart: always
         networks:
-            - netbdd
+            - netbdd-develop
+        env_file: .ENV.development
         ports:
-            - "8080:80"
-        environment:
-            PMA_HOST: bdd
-            PMA_PORT: 3306
-            PMA_USER: monterroir
-            PMA_PASSWORD: monterroirpassword
-            PMA_PMADB: monterroir
-            UPLOAD_LIMIT: 20M
+            - 8081:80
 
 networks:
-    netapi:
-    netbdd:
-    netsocketio:
+    netapi-develop:
+    netbdd-develop:
 
 volumes:
-    volbdd:
+    volbdd-develop:
         driver: local
         driver_opts: 
             o: bind
             type: none
-            device: /home/paulin/docker-monterroir/bdd-data
+            device: /home/paulin/docker-monterroir/bdd-data-develop
