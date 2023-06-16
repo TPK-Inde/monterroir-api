@@ -8,7 +8,6 @@ services:
           - "traefik.http.routers.monterroir-api-prod.entrypoints=web"
         restart: always
         networks:
-            - netapi
             - net-reverse-proxy
         env_file: .ENV.production
 
@@ -17,14 +16,12 @@ services:
         image: mysql:8.0
         restart: always
         networks:
-            - netapi
+            - net-reverse-proxy
         volumes:
             - volbdd:/var/lib/mysql
         env_file: .ENV.production
 
 networks:
-    netapi:
-      name: monterroir-prod-api
     net-reverse-proxy:
       name: net-reverse-proxy
       external: true

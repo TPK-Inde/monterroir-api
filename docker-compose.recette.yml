@@ -8,7 +8,6 @@ services:
       - "traefik.http.routers.monterroir-api-recette.entrypoints=web"
     restart: always
     networks:
-      - netapi-recette
       - net-reverse-proxy
     env_file: .ENV.recette
 
@@ -17,14 +16,12 @@ services:
     image: mysql:8.0
     restart: always
     networks:
-      - netapi-recette
+      - net-reverse-proxy
     volumes:
       - volbdd-recette:/var/lib/mysql
     env_file: .ENV.recette
 
 networks:
-  netapi-recette:
-    name: monterroir-recette-api
   net-reverse-proxy:
     name: net-reverse-proxy
     external: true
