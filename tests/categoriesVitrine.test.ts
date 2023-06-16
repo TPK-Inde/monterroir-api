@@ -1,9 +1,9 @@
-import { Response } from "express";
-import request from "supertest";
-import { CategoryVitrine } from "../models/CategoryVitrine";
-import { CategoryVitrineRepository } from "../Lib/Repositories/CategoryVitrineRepository";
-import CategoriesVitrine from "../services/categoriesVitrine";
-const app = require("../app");
+// import { Response } from "express";
+// import request from "supertest";
+// import { CategoryVitrine } from "../models/CategoryVitrine";
+// import { CategoryVitrineRepository } from "../Lib/Repositories/CategoryVitrineRepository";
+// import CategoriesVitrine from "../services/categoriesVitrine";
+// const app = require("../app");
 
 // describe("Route - Catégories de vitrine", () => {
 //   test("Récupérer toutes les catégories de vitrine", async () => {
