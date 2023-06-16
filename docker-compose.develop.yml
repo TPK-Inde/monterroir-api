@@ -1,25 +1,23 @@
+version: "3.7"
 services:
     api:
         container_name: api-monterroir
         build:
             context: .
             dockerfile: ./Dockerfile
-            target: prod
-        labels:
-          - "traefik.enable=true"
-          - "traefik.http.routers.monterroir-api-prod.rule=Host(`api.monterroir.local`) && PathPrefix(`/`)"
-          - "traefik.http.routers.monterroir-api-prod.entrypoints=web"
         restart: always
+        ports:
+            - "3000:3000"
         networks:
             - netapi
-            - net-reverse-proxy
+            - netbdd
 
     bdd:
         container_name: mysql-monterroir
-        image: mysql:8.0
+        image: mysql:latest
         restart: always
         networks:
-            - netapi
+            - netbdd
         environment:
             MYSQL_ROOT_PASSWORD: rootpassword
             MYSQL_DATABASE: monterroir
@@ -27,13 +25,31 @@ services:
             MYSQL_PASSWORD: monterroirpassword
         volumes:
             - volbdd:/var/lib/mysql
+        ports:
+            - "3306:3306"
+    
+    phpmyadmin:
+        container_name: phpmyadmin-monterroir
+        image: phpmyadmin:latest
+        depends_on:
+            - bdd
+        restart: always
+        networks:
+            - netbdd
+        ports:
+            - "8080:80"
+        environment:
+            PMA_HOST: bdd
+            PMA_PORT: 3306
+            PMA_USER: monterroir
+            PMA_PASSWORD: monterroirpassword
+            PMA_PMADB: monterroir
+            UPLOAD_LIMIT: 20M
 
 networks:
     netapi:
-      name: monterroir-prod-api
-    net-reverse-proxy:
-      name: net-reverse-proxy
-      external: true
+    netbdd:
+    netsocketio:
 
 volumes:
     volbdd:
