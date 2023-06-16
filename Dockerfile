@@ -11,4 +11,4 @@ COPY --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./.ENV ./.ENV
 RUN ls -al
 EXPOSE 3000
-CMD npx dotenv -e .ENV node server.js
+CMD node server.js

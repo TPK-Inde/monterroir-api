@@ -1,4 +1,5 @@
 version: "3.7"
+
 services:
     api:
         container_name: api-monterroir
@@ -11,6 +12,7 @@ services:
         networks:
             - netapi
             - netbdd
+        env_file: .ENV.development
 
     bdd:
         container_name: mysql-monterroir
@@ -18,11 +20,7 @@ services:
         restart: always
         networks:
             - netbdd
-        environment:
-            MYSQL_ROOT_PASSWORD: rootpassword
-            MYSQL_DATABASE: monterroir
-            MYSQL_USER: monterroir
-            MYSQL_PASSWORD: monterroirpassword
+        env_file: .ENV.development
         volumes:
             - volbdd:/var/lib/mysql
         ports:
@@ -38,13 +36,7 @@ services:
             - netbdd
         ports:
             - "8080:80"
-        environment:
-            PMA_HOST: bdd
-            PMA_PORT: 3306
-            PMA_USER: monterroir
-            PMA_PASSWORD: monterroirpassword
-            PMA_PMADB: monterroir
-            UPLOAD_LIMIT: 20M
+        env_file: .ENV.development
 
 networks:
     netapi:
