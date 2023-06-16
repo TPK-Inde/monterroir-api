@@ -1,15 +1,19 @@
 services:
   watchtower:
+    container_name: watchtower-monterroir
     image: containrrr/watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /home/paulin/docker-monterroir/configWatchTower/config.json:/config.json
     command: --interval 30
 
   traefik-proxy:
+    container_name: traefik-monterroir
     image: traefik:v2.10
     command: 
+      - --log.level=DEBUG 
       - --api.insecure=true 
-      - --providers.docker
+      - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
     ports:
@@ -23,3 +27,4 @@ services:
 networks:
     net-reverse-proxy:
       name: net-reverse-proxy
+      driver: bridge

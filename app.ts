@@ -59,7 +59,7 @@ const optionsSwagger = {
     ],
     servers: [
       {
-        url: process.env.URL_API + ":" + process.env.PORT,
+        url: process.env.URL_API
       },
     ],
   },

@@ -46,4 +46,4 @@ volumes:
         driver_opts: 
             o: bind
             type: none
-            device: /home/paulin/docker-monterroir/bdd-data-develop
+            device: ~/docker-monterroir/bdd-data-develop
