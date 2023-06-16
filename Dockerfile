@@ -1,8 +1,13 @@
-FROM node:18
+FROM node:18 as build
 WORKDIR /usr/src/app
-COPY ./package*.json ./
+COPY ./ ./
 RUN npm ci --omit=dev
-COPY ./compile/ ./
-COPY ./.ENV.production ./.ENV
+RUN npx tsc
+
+FROM node:18 as prod
+WORKDIR /usr/src/app
+COPY --from=build /usr/src/app/compile/ ./
+COPY --from=build /usr/src/app/node_modules/ ./node_modules/
+RUN ls -al
 EXPOSE 3000
-CMD npx dotenv -e .ENV node server.js
+CMD node server.js

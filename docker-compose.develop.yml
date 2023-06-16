@@ -1,0 +1,49 @@
+version: "3.7"
+
+services:
+    api-develop:
+        container_name: api-monterroir-develop
+        build:
+            context: .
+            dockerfile: ./Dockerfile
+        ports:
+            - 3000:3000
+        restart: always
+        networks:
+            - netapi-develop
+            - netbdd-develop
+        env_file: .ENV.development
+
+    bdd-develop:
+        container_name: mysql-monterroir-develop
+        image: mysql:8.0
+        restart: always
+        networks:
+            - netbdd-develop
+        env_file: .ENV.development
+        volumes:
+            - volbdd-develop:/var/lib/mysql        
+    
+    phpmyadmin-develop:
+        container_name: phpmyadmin-monterroir-develop
+        image: phpmyadmin:latest
+        depends_on:
+            - bdd-develop
+        restart: always
+        networks:
+            - netbdd-develop
+        env_file: .ENV.development
+        ports:
+            - 8081:80
+
+networks:
+    netapi-develop:
+    netbdd-develop:
+
+volumes:
+    volbdd-develop:
+        driver: local
+        driver_opts: 
+            o: bind
+            type: none
+            device: /home/paulin/docker-monterroir/bdd-data-develop
