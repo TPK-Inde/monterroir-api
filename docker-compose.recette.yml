@@ -1,10 +1,7 @@
 services:
   api-recette:
     container_name: api-recette-monterroir
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-      target: prod
+    image: ghcr.io/tpk-inde/monterroir-api:recette
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.monterroir-api-recette.rule=Host(`api-recette.monterroir.local`) && PathPrefix(`/`)"
