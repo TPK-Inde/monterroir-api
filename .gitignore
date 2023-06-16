@@ -2,6 +2,7 @@
 node_modules
 .ENV.development
 .ENV.production
+.ENV.recette
 
 #Fichier de sortie de compilation
 compile
