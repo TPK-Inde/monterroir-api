@@ -16,7 +16,7 @@ services:
 
     bdd-develop:
         container_name: mysql-monterroir-develop
-        image: mysql:latest
+        image: mysql:8.0
         restart: always
         networks:
             - netbdd-develop
