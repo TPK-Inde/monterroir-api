@@ -72,11 +72,14 @@ export default class CategoriesVitrine {
 
     try {
       //Vérification de la request
-      if (req.body.WORDING == null || req.body.WORDING.length == 0) { res.status(400).send({ message: "Veuillez entrer un libellé !" }) }
-
-      //Ajout de la nouvelle catégorie de vitrine
-      await categoryVitrineRepository.PostNewCategoryVitrine(req.body);
-      res.status(201).send({ message: "Création de la catégorie de vitrine réussit" });
+      if (req.body.WORDING == null || req.body.WORDING.length == 0) {
+        res.status(400).send({ message: "Veuillez entrer un libellé !" })
+      }
+      else {
+        //Ajout de la nouvelle catégorie de vitrine
+        await categoryVitrineRepository.PostNewCategoryVitrine(req.body);
+        res.status(201).send({ message: "Création de la catégorie de vitrine réussit" });
+      }
 
     } catch (error: any) {
       console.log(error);
@@ -94,11 +97,14 @@ export default class CategoriesVitrine {
         req.body.ID_CATEGORY_VITRINE = parseInt(req.params.ID_CATEGORY_VITRINE);
 
         //Vérifie la validité des données
-        if (req.body.WORDING == null || req.body.WORDING.length == 0) { res.status(400).send({ message: "Veuillez entrer un libellé !" }) }
-
-        //Modifie la catégorie de vitrine
-        await categoryVitrineRepository.PutCategoryVitrine(req.body);
-        res.status(200).send({ message: "La modification de la catégorie de vitrine à réussit" });
+        if (req.body.WORDING == null || req.body.WORDING.length == 0) {
+          res.status(400).send({ message: "Veuillez entrer un libellé !" })
+        }
+        else {
+          //Modifie la catégorie de vitrine
+          await categoryVitrineRepository.PutCategoryVitrine(req.body);
+          res.status(200).send({ message: "La modification de la catégorie de vitrine à réussit" });
+        }
       }
       else {
         res.status(400).send({
