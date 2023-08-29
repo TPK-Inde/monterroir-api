@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "dotenv -e .env.development nodemon server.ts",
     "start": "dotenv -e .ENV ts-node server.ts",
-    "test": "dotenv -e .ENV jest --detectOpenHandles"
+    "test": "dotenv -e .ENV.recette jest --detectOpenHandles",
+    "recette": "dotenv -e .ENV.recette ts-node server.ts"
   },
   "keywords": [],
   "author": "",
