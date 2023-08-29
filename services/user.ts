@@ -96,7 +96,7 @@ export default class Users {
                             res.status(200).send(data);
                         }
                         else {
-                            res.status(400).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette ID" });
+                            res.status(204).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette ID" });
                         }
                     })
                     .catch((err: { message: any; }) => {

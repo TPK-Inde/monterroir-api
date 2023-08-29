@@ -87,7 +87,7 @@ router.get(
  *       204:
  *         description: Aucun utilisateur trouvé avec l'ID indiqué
  *       400:
- *         description: Un élément de la requête n'est pas valide
+ *         description: Un élément de la requête n'est pas valide ma couille
  *       401:
  *         description: Token vide ou invalide
  *       403:
