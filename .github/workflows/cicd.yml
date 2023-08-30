@@ -15,6 +15,10 @@ env:
   DB_MPASS: ${{ secrets.DB_MPASS }}
   DB_MURL: ${{ secrets.DB_MURL }}
   DB_MNAME: ${{ secrets.DB_MNAME }}
+  TOKEN_USER: ${{ secrets.TOKEN_USER }}
+  TOKEN_MODERATEUR: ${{ secrets.TOKEN_MODERATEUR }}
+  TOKEN_ADMIN: ${{ secrets.TOKEN_ADMIN }}
+  TOKEN_SUPER_ADMIN: ${{ secrets.TOKEN_SUPER_ADMIN }}
 jobs:
   build:
     runs-on: ubuntu-latest

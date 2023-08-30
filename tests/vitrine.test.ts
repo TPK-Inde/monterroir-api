@@ -1,179 +1,243 @@
-// import request from "supertest";
-// const app = require("../app");
+import request from "supertest";
+const app = require("../app");
+import {VitrineRepository} from "../Lib/Repositories/VitrineRepository";
+import {Vitrine} from "../models/Vitrine";
+import sequelize from "../sequelize/db";
 
-// let newVitrine = {
-//     ID_USER : 1,
-//     ID_CATEGORY_VITRINE : 1,
-//     ID_TYPE_VITRINE : 1,
-//     NAME : "Name vitrine",
-//     IMAGE : "Image vitrine",
-//     ADDRESS_STREET : "Street vitrine",
-//     ADDRESS_ZIP_CODE : "76800",
-//     ADDRESS_CITY : "City vitrine",
-//     DESCRIPTION : "Description vitrine",
-//     CREATION_DATE : Date.now(),
-//     ACTIVATE : false,
-//     LATITUDE : 1,
-//     LONGITUDE : 1
-// };
-// describe('Route GET - Vitrines', () => {
+let newVitrine: Vitrine = sequelize.getRepository(Vitrine).build({
+    ID_VITRINE: 1,
+    ID_USER: 1,
+    ID_CATEGORY_VITRINE: 1,
+    ID_TYPE_VITRINE: 1,
+    NAME: "Les choux de la ferme",
+    IMAGE: "IMAGE_BASE_64",
+    ADDRESS_STREET: "14 Rue du Général",
+    ADDRESS_ZIP_CODE: "76600",
+    ADDRESS_CITY: "Le Havre",
+    DESCRIPTION: "Vendeur de choux depuis 10 ans",
+    CREATION_DATE: new Date(),
+    ACTIVATE: true,
+    LATITUDE: 48.866667,
+    LONGITUDE: 2.333333,
+    DELETED: false,
+    FAVORITE: false,
+});
 
-//     test("Récuperer toutes les vitrines actives", async () => {
-//         const res = await request(app)
-//             .get("/vitrines/active")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+describe('Route GET - Vitrines', () => {
 
-//         expect(res.statusCode).toBe(200);
-//     });
+    jest.mock("../Lib/Repositories/VitrineRepository");
 
-//     test("Récuperer toutes les vitrines - Non connecté", async () => {
-//         const res = await request(app)
-//             .get("/vitrines");
+    afterEach(() => {
+        jest.clearAllMocks();
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
 
-//         expect(res.statusCode).toBe(401);
-//         expect(res.body).toBeDefined();
-//     });
+    test("Récuperer toutes les vitrines actives", async () => {
 
-//     test("Récuperer toutes les vitrines - User", async () => {
-//         const res = await request(app)
-//             .get("/vitrines").set("Authorization", `Bearer ${process.env.TOKEN_USER}`);
+        jest.spyOn(VitrineRepository.prototype, "GetAllActive").mockImplementation(async () => {
+            return [newVitrine, newVitrine, newVitrine];
+        });
 
-//         expect(res.statusCode).toBe(403);
-//         expect(res.body).toBeDefined();
-//     });
+        const res = await request(app)
+            .get("/vitrines/active")
+        expect(res.statusCode).toBe(200);
+    });
 
-//     test("Récuperer toutes les vitrines - Moderator", async () => {
-//         const res = await request(app)
-//             .get("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`);
+    test("Récuperer toutes les vitrines - Non connecté", async () => {
+        const res = await request(app)
+            .get("/vitrines");
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toBeDefined();
-//     });
+        expect(res.statusCode).toBe(401);
+        expect(res.body).toBeDefined();
+    });
 
-//     test("Récuperer toutes les vitrines - Admin", async () => {
-//         const res = await request(app)
-//             .get("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+    test("Récuperer toutes les vitrines - User", async () => {
+        const res = await request(app)
+            .get("/vitrines").set("Authorization", `Bearer ${process.env.TOKEN_USER}`);
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toBeDefined();
-//     });
+        expect(res.statusCode).toBe(403);
+        expect(res.body).toBeDefined();
+    });
 
-//     test("Récuperer toutes les vitrines - Super Admin", async () => {
-//         const res = await request(app)
-//             .get("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_SUPER_ADMIN}`);
+    test("Récuperer toutes les vitrines - Moderator", async () => {
 
-//         expect(res.statusCode).toBe(403);
-//         expect(res.body).toBeDefined();
-//     });
+        jest.spyOn(VitrineRepository.prototype, "GetAll").mockImplementation(async () => {
+            return [newVitrine, newVitrine, newVitrine];
+        });
 
-//     test("Récuperer une vitrine", async () => {
-//         const allVitrines = await request(app)
-//             .get("/vitrines/active");
+        const res = await request(app)
+            .get("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`);
 
-//         const res = await request(app)
-//             .get("/vitrines/" + allVitrines.body[0].ID_VITRINE)
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toBeDefined();
+    });
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toBeDefined();
-//     });
+    test("Récuperer toutes les vitrines - Admin", async () => {
 
-//     test("Récuperer toutes les vitrines d'un utilisateur", async() => {
-//         const users = await request(app)
-//             .get("/users")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+        jest.spyOn(VitrineRepository.prototype, "GetAll").mockImplementation(async () => {
+            return [newVitrine, newVitrine, newVitrine];
+        });
 
-//         const res = await request(app)
-//             .get("/vitrines/user/" + users.body[0].ID_USER);
+        const res = await request(app)
+            .get("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
 
-//         expect(res.statusCode).toBe(200);
-//         expect(res.body).toBeDefined();
-//     });
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toBeDefined();
+    });
 
-// });
+    test("Récuperer toutes les vitrines - Super Admin", async () => {
+        const res = await request(app)
+            .get("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_SUPER_ADMIN}`);
 
-// describe('Route Post - Vitrines', () => {
+        expect(res.statusCode).toBe(403);
+        expect(res.body).toBeDefined();
+    });
 
-//     test("Créer une nouvelle vitrine - Non connecté", async () => {
-//         const res = await request(app)
-//             .post("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_USER}`)
-//             .send(newVitrine);
-//         expect(res.statusCode).toBe(201);
-//     });
+    test("Récuperer une vitrine", async () => {
 
-//     test("Créer une nouvelle vitrine - User", async () => {
-//         const res = await request(app)
-//             .post("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_USER}`)
-//             .send(newVitrine);
-//         expect(res.statusCode).toBe(201);
-//     });
+        jest.spyOn(VitrineRepository.prototype, "GetById").mockImplementation(async () => {
+            return newVitrine;
+        });
 
-//     test("Créer une nouvelle vitrine - Moderateur", async () => {
-//         const res = await request(app)
-//             .post("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
-//             .send(newVitrine);
-//         expect(res.statusCode).toBe(201);
-//     });
+        const res = await request(app)
+            .get("/vitrines/1")
+            .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
 
-//     test("Créer une nouvelle vitrine - Admin", async () => {
-//         const res = await request(app)
-//             .post("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`)
-//             .send(newVitrine);
-//         expect(res.statusCode).toBe(201);
-//     });
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toBeDefined();
+    });
 
-//     test("Créer une nouvelle vitrine - Super admin", async () => {
-//         const res = await request(app)
-//             .post("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_SUPER_ADMIN}`)
-//             .send(newVitrine);
-//         expect(res.statusCode).toBe(201);
-//     });
+    test("Récuperer toutes les vitrines d'un utilisateur", async() => {
 
-// });
+        jest.spyOn(VitrineRepository.prototype, "GetAllActive").mockImplementation(async () => {
+            return [newVitrine, newVitrine, newVitrine];
+        });
 
-// describe("Route Put - Vitrines", () => {
+        const res = await request(app)
+            .get("/vitrines/user/1");
 
-//     test("Modifier une vitrine", async () => {
-//         const allVitrines = await request(app)
-//             .get("/vitrines")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toBeDefined();
+    });
 
-//         const res = await request(app)
-//             .put("/vitrines/" + allVitrines.body[allVitrines.body.length - 1].ID_VITRINE)
-//             .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
-//             .send(allVitrines.body[0])
+});
 
-//         expect(res.statusCode).toBe(204)
-//     });
+describe('Route Post - Vitrines', () => {
 
-// });
+    jest.mock("../Lib/Repositories/VitrineRepository");
 
-// describe("Route Delete - Vitrines", () => {
+    afterEach(() => {
+        jest.clearAllMocks();
+        jest.resetAllMocks();
+        jest.restoreAllMocks();
+    });
 
-//     test("Supprimer une vitrine", async () => {
-//         const allVitrines = await request(app)
-//             .get("/vitrines/active")
-//             .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+    test("Créer une nouvelle vitrine - Non connecté", async () => {
+        const res = await request(app)
+            .post("/vitrines")
+            .send(newVitrine);
+        expect(res.statusCode).toBe(401);
+    });
 
-//         const res = await request(app)
-//             .delete("/vitrines/" + allVitrines.body[allVitrines.body.length - 1].ID_VITRINE)
-//             .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
-//         console.log(res)
-//         expect(res.statusCode).toBe(204)
-//     })
+    test("Créer une nouvelle vitrine - Sans nom", async () => {
+        const res = await request(app)
+            .post("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`)
+            .send({ ...newVitrine, NAME: "" });
+        expect(res.statusCode).toBe(400);
+    });
 
-//     test("Supprimer une vitrine - Id non trouvé", async () => {
-//         const res = await request(app)
-//             .delete("/vitrines/" + Math.round(Math.random()) * 100000)
+    test("Créer une nouvelle vitrine - User", async () => {
 
-//         expect(res.statusCode).toBe(401);
-//     });
-// });
+        jest.spyOn(VitrineRepository.prototype, "PostNewVitrine").mockImplementation(async () => {});
+
+        const res = await request(app)
+            .post("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_USER}`)
+            .send(newVitrine.toJSON());
+        expect(res.statusCode).toBe(201);
+    });
+
+    test("Créer une nouvelle vitrine - Moderateur", async () => {
+
+        jest.spyOn(VitrineRepository.prototype, "PostNewVitrine").mockImplementation(async () => {});
+
+        const res = await request(app)
+            .post("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
+            .send(newVitrine.toJSON());
+        expect(res.statusCode).toBe(201);
+    });
+
+    test("Créer une nouvelle vitrine - Admin", async () => {
+
+        jest.spyOn(VitrineRepository.prototype, "PostNewVitrine").mockImplementation(async () => {});
+
+        const res = await request(app)
+            .post("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`)
+            .send(newVitrine.toJSON());
+        expect(res.statusCode).toBe(201);
+    });
+
+    test("Créer une nouvelle vitrine - Super admin", async () => {
+
+        jest.spyOn(VitrineRepository.prototype, "PostNewVitrine").mockImplementation(async () => {});
+
+        const res = await request(app)
+            .post("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_SUPER_ADMIN}`)
+            .send(newVitrine.toJSON());
+        expect(res.statusCode).toBe(201);
+    });
+
+});
+
+describe("Route Put - Vitrines", () => {
+
+    test("Modifier une vitrine", async () => {
+
+        jest.spyOn(VitrineRepository.prototype, "GetAll").mockImplementation(async () => {
+            return [newVitrine, newVitrine, newVitrine]
+        });
+
+        jest.spyOn(VitrineRepository.prototype, "PutVitrine").mockImplementation(async () => {});
+
+        const allVitrines = await request(app)
+            .get("/vitrines")
+            .set("Authorization", `Bearer ${process.env.TOKEN_ADMIN}`);
+
+        const res = await request(app)
+            .put("/vitrines/" + allVitrines.body[allVitrines.body.length - 1].ID_VITRINE)
+            .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
+            .send(allVitrines.body[0])
+
+        expect(res.statusCode).toBe(204)
+    });
+
+});
+
+describe("Route Delete - Vitrines", () => {
+
+    test("Supprimer une vitrine", async () => {
+
+        jest.spyOn(VitrineRepository.prototype, "GetById").mockImplementation(async () => {return newVitrine});
+        jest.spyOn(VitrineRepository.prototype, "DeleteVitrine").mockImplementation(async () => {});
+
+        const res = await request(app)
+            .delete("/vitrines/1")
+            .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
+        expect(res.statusCode).toBe(204)
+    })
+
+    test("Supprimer une vitrine - Id non trouvé", async () => {
+        const res = await request(app)
+            .delete("/vitrines/" + Math.round(Math.random()) * 100000)
+
+        expect(res.statusCode).toBe(401);
+    });
+});
