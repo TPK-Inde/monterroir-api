@@ -2,7 +2,6 @@ import {
   Model, Column, Table, ForeignKey, PrimaryKey, BelongsTo
 } from 'sequelize-typescript';
 import { AccountStatus } from './AccountStatus';
-import { UserAttributes } from '../Lib/IModels/UserAttributes';
 import { InferAttributes, InferCreationAttributes, Optional } from 'sequelize';
 
 interface UserCreationAttributes extends Optional<User, 'ID_USER' | 'ACCOUNT_STATUS'> { }
