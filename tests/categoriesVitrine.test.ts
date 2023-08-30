@@ -1,153 +1,151 @@
-// import request from "supertest";
-// const app = require("../app");
+import request from "supertest";
+import { CategoryVitrineRepository } from "../Lib/Repositories/CategoryVitrineRepository";
+import sequelize from "../sequelize/db";
+import { CategoryVitrine } from "../models/CategoryVitrine";
 
-// beforeAll(async () => {
-//   //Permet de détruire et remonter la base de données (Non fonctionnel)
-//   // //Drop and restore database
-//   // var fs = require('fs');
-//   // var allSqlContent = fs.readFileSync('./tests/sql/DatabaseForTest.sql', 'utf-8');
+const app = require("../app");
 
-//   // const mariadb = require('mariadb');
-//   // const pool = mariadb.createPool({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASSWORD, database: process.env.DB_NAME });
+describe("Catégorie de vitrine", () => {
+  const nouvelleCategorieVitrine: CategoryVitrine = sequelize.getRepository(CategoryVitrine).build({
+    ID_CATEGORY_VITRINE: 10,
+    WORDING: "NouvelleCategorie"
+  });
 
-//   // var conn = await pool.getConnection();
-//   // allSqlContent.split(/\r?\n/).forEach(async (line: any) => {
-//   //   try {
-//   //     await conn.execute(line, function (err: any, result: any) { if (err) throw err; console.log(result); });
-//   //   }
-//   //   catch (error: any) {
-//   //     console.log(error);
-//   //   }
-//   // });
+  const nouvelleCategorieVitrineUpdate: CategoryVitrine = sequelize.getRepository(CategoryVitrine).build({
+    WORDING: "NouvelleCategorieUpdate"
+  });
 
-//   // conn.end();
-// })
+  const nouvelleCategorieVitrineEchec: CategoryVitrine = sequelize.getRepository(CategoryVitrine).build({
+    WORDING: ""
+  });
 
-// describe("Catégorie de vitrine", () => {
-//   const nouvelleCategorieVitrine = {
-//     ID_CATEGORY_VITRINE: 666,
-//     WORDING: "NouvelleCategorie"
-//   }
+  describe("Route CREATE", () => {
+    test("Ajout d'une catégorie de vitrine - SuperAdministrateur", async () => {
+      jest.spyOn(CategoryVitrineRepository.prototype, "PostNewCategoryVitrine").mockImplementation(async () => { });
 
-//   const nouvelleCategorieVitrineUpdate = {
-//     WORDING: "NouvelleCategorieUpdate"
-//   }
+      const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrine.toJSON());
+      expect(res.statusCode).toEqual(201);
+    })
 
-//   const nouvelleCategorieVitrineEchec = {
-//     WORDING: ""
-//   }
+    test("Ajout d'une catégorie de vitrine - Administrateur", async () => {
+      const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`).send(nouvelleCategorieVitrine.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//   describe("Route CREATE", () => {
-//     test("Ajout d'une catégorie de vitrine - SuperAdministrateur", async () => {
-//       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrine);
-//       console.log(res.statusCode);
-//       console.log(res.body);
+    test("Ajout d'une catégorie de vitrine - Modérateur", async () => {
+      const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`).send(nouvelleCategorieVitrine.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//       expect(res.statusCode).toEqual(201);
-//     })
+    test("Ajout d'une catégorie de vitrine - Utilisateur", async () => {
+      const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_USER}`).send(nouvelleCategorieVitrine.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Ajout d'une catégorie de vitrine - Administrateur", async () => {
-//       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`).send(nouvelleCategorieVitrine);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Ajout d'une catégorie de vitrine - Non authentifié", async () => {
+      const res = await request(app).post("/categoriesVitrine").send(nouvelleCategorieVitrine).send(nouvelleCategorieVitrine.toJSON());
+      expect(res.statusCode).toEqual(401);
+    })
 
-//     test("Ajout d'une catégorie de vitrine - Modérateur", async () => {
-//       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`).send(nouvelleCategorieVitrine);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Catégorie de vitrine incorrect - SuperAdministrateur", async () => {
+      const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineEchec.toJSON());
+      expect(res.statusCode).toEqual(400);
+    })
+  });
 
-//     test("Ajout d'une catégorie de vitrine - Utilisateur", async () => {
-//       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_USER}`).send(nouvelleCategorieVitrine);
-//       expect(res.statusCode).toEqual(403);
-//     })
+  describe("Route GET", () => {
+    test("Récupérer toutes les catégories de vitrine", async () => {
+      const listCategorieVitrine: CategoryVitrine[] = [nouvelleCategorieVitrine, nouvelleCategorieVitrine, nouvelleCategorieVitrine];
 
-//     test("Ajout d'une catégorie de vitrine - Non authentifié", async () => {
-//       const res = await request(app).post("/categoriesVitrine").send(nouvelleCategorieVitrine).send(nouvelleCategorieVitrine);
-//       expect(res.statusCode).toEqual(401);
-//     })
+      jest.spyOn(CategoryVitrineRepository.prototype, "GetAll").mockImplementation(async () => { return listCategorieVitrine });
 
-//     test("Catégorie de vitrine incorrect - SuperAdministrateur", async () => {
-//       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineEchec);
-//       expect(res.statusCode).toEqual(400);
-//     })
-//   });
+      const res = await request(app).get("/categoriesVitrine");
+      expect(res.statusCode).toEqual(200);
+      expect(JSON.stringify(listCategorieVitrine) == res.body);
+    });
 
-//   describe("Route GET", () => {
-//     test("Récupérer toutes les catégories de vitrine", async () => {
-//       const res = await request(app).get("/categoriesVitrine");
+    test("Récupérer une catégorie de vitrine", async () => {
+      const categoryVitrine: CategoryVitrine = nouvelleCategorieVitrine;
 
-//       expect(res.statusCode).toEqual(200);
-//     });
+      jest.spyOn(CategoryVitrineRepository.prototype, "GetById").mockImplementation(async () => { return nouvelleCategorieVitrine });
 
-//     test("Récupérer une catégorie de vitrine", async () => {
-//       const res = await request(app).get("/categoriesVitrine/1");
+      const res = await request(app).get("/categoriesVitrine/1");
+      expect(res.statusCode).toEqual(200);
+      expect(JSON.stringify(categoryVitrine) == res.body);
+    });
 
-//       expect(res.statusCode).toEqual(200);
-//     });
+    test("Argument invalide sur le get", async () => {
+      const res = await request(app).get("/categoriesVitrine/a");
 
-//     test("Argument invalide sur le get", async () => {
-//       const res = await request(app).get("/categoriesVitrine/a");
+      expect(res.statusCode).toEqual(400);
+    });
+  });
 
-//       expect(res.statusCode).toEqual(400);
-//     });
-//   });
+  describe("Route UPDATE", () => {
+    test("Modification d'une catégorie de vitrine - Administrateur", async () => {
+      const res = await request(app).put("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`).send(nouvelleCategorieVitrineUpdate.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//   describe("Route UPDATE", () => {
-//     test("Modification d'une catégorie de vitrine - Administrateur", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`).send(nouvelleCategorieVitrineUpdate);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Modification d'une catégorie de vitrine - Modérateur", async () => {
+      const res = await request(app).put("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`).send(nouvelleCategorieVitrineUpdate.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Modification d'une catégorie de vitrine - Modérateur", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`).send(nouvelleCategorieVitrineUpdate);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Modification d'une catégorie de vitrine - Utilisateur", async () => {
+      const res = await request(app).put("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_USER}`).send(nouvelleCategorieVitrineUpdate.toJSON());
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Modification d'une catégorie de vitrine - Utilisateur", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_USER}`).send(nouvelleCategorieVitrineUpdate);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Modification d'une catégorie de vitrine - Non authentifié", async () => {
+      const res = await request(app).put("/categoriesVitrine/10").send(nouvelleCategorieVitrineUpdate).send(nouvelleCategorieVitrineUpdate.toJSON());
+      expect(res.statusCode).toEqual(401);
+    })
 
-//     test("Modification d'une catégorie de vitrine - Non authentifié", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").send(nouvelleCategorieVitrineUpdate).send(nouvelleCategorieVitrineUpdate);
-//       expect(res.statusCode).toEqual(401);
-//     })
+    test("Modification d'une catégorie de vitrine - SuperAdministrateur", async () => {
+      jest.spyOn(CategoryVitrineRepository.prototype, "PutCategoryVitrine").mockImplementation(async () => { });
 
-//     test("Modification d'une catégorie de vitrine - SuperAdministrateur", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineUpdate);
-//       expect(res.statusCode).toEqual(200);
-//     })
+      const res = await request(app).put("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineUpdate.toJSON());
+      expect(res.statusCode).toEqual(200);
+    })
 
-//     test("Catégorie de vitrine incorrect - SuperAdministrateur", async () => {
-//       const res = await request(app).put("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineEchec);
-//       expect(res.statusCode).toEqual(400);
-//     })
-//   });
+    test("Catégorie de vitrine incorrect - SuperAdministrateur", async () => {
+      const res = await request(app).put("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrineEchec.toJSON());
+      expect(res.statusCode).toEqual(400);
+    })
+  });
 
-//   describe("Route DELETE", () => {
-//     test("Suppression d'une catégorie de vitrine - Administrateur", async () => {
-//       const res = await request(app).delete("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`);
-//       expect(res.statusCode).toEqual(403);
-//     })
+  describe("Route DELETE", () => {
+    test("Suppression d'une catégorie de vitrine - Administrateur", async () => {
+      const res = await request(app).delete("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_ADMIN}`);
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Suppression d'une catégorie de vitrine - Modérateur", async () => {
-//       const res = await request(app).delete("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Suppression d'une catégorie de vitrine - Modérateur", async () => {
+      const res = await request(app).delete("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_MODERATEUR}`);
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Suppression d'une catégorie de vitrine - Utilisateur", async () => {
-//       const res = await request(app).delete("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_USER}`);
-//       expect(res.statusCode).toEqual(403);
-//     })
+    test("Suppression d'une catégorie de vitrine - Utilisateur", async () => {
+      const res = await request(app).delete("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_USER}`);
+      expect(res.statusCode).toEqual(403);
+    })
 
-//     test("Suppression d'une catégorie de vitrine - Non authentifié", async () => {
-//       const res = await request(app).delete("/categoriesVitrine/666");
-//       expect(res.statusCode).toEqual(401);
-//     })
+    test("Suppression d'une catégorie de vitrine - Non authentifié", async () => {
+      const res = await request(app).delete("/categoriesVitrine/10");
+      expect(res.statusCode).toEqual(401);
+    })
 
-//     test("Suppression d'une catégorie de vitrine - SuperAdministrateur", async () => {
-//       const res = await request(app).delete("/categoriesVitrine/666").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`);
-//       expect(res.statusCode).toEqual(200);
-//     })
-//   });
-// })
+    test("Suppression d'une catégorie de vitrine - SuperAdministrateur", async () => {
+      jest.spyOn(CategoryVitrineRepository.prototype, "DeleteCategoryVitrine").mockImplementation(async () => { return 1 });
+
+      const res = await request(app).delete("/categoriesVitrine/10").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`);
+      expect(res.statusCode).toEqual(200);
+    })
+
+    test("Paramètre incorrect (ID) - SuperAdministrateur", async () => {
+      const res = await request(app).delete("/categoriesVitrine/a").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`);
+      expect(res.statusCode).toEqual(400);
+    })
+  });
+})
