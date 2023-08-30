@@ -1,7 +1,7 @@
 require('dotenv');
 import bodyParser = require("body-parser");
 import express from 'express';
-import { connectToMongo } from './mongo/db'
+import { connectToMongo } from './mongo/db';
 
 //Constantes pour SWAGGER
 const swaggerJsdoc = require("swagger-jsdoc");

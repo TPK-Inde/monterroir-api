@@ -6,7 +6,7 @@ const sequelize = new Sequelize(configuration.db.database, configuration.db.user
   host: configuration.db.host,
   dialect: "mysql",
   repositoryMode: true,
-
+  logging: false,
   pool: {
     max: configuration.db.pool.max,
     min: configuration.db.pool.min,

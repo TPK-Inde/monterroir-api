@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import cryptoAES from "../helper/cryptoAES";
 import { Token } from "../models/Token";
 import { TokenAttributes } from "../Lib/IModels/TokenAttributes";
+import sequelize from "../sequelize/db";
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
