@@ -41,7 +41,6 @@ describe('Route GET - Vitrines', () => {
 
         const res = await request(app)
             .get("/vitrines/active")
-        console.log(res)
         expect(res.statusCode).toBe(200);
     });
 
@@ -232,7 +231,6 @@ describe("Route Delete - Vitrines", () => {
         const res = await request(app)
             .delete("/vitrines/1")
             .set("Authorization", `Bearer ${process.env.TOKEN_MODERATEUR}`)
-        console.log(res)
         expect(res.statusCode).toBe(204)
     })
 
