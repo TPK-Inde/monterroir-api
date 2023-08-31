@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "dotenv -e .env.development nodemon server.ts",
     "start": "dotenv -e .ENV ts-node server.ts",
-    "test": "dotenv -e .env.development jest --detectOpenHandles"
+    "test": "dotenv -e .ENV.recette jest --runInBand --detectOpenHandles --forceExit",
+    "recette": "dotenv -e .ENV.recette ts-node server.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +26,7 @@
     "jwt-decode": "^3.1.2",
     "mongoose": "^7.0.5",
     "mysql2": "^3.0.1",
-    "nodemon": "^2.0.20",
+    "nodemon": "^3.0.1",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.28.0",
     "sequelize-typescript": "^2.1.5",

@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import cryptoAES from "../helper/cryptoAES";
 import { Token } from "../models/Token";
 import { TokenAttributes } from "../Lib/IModels/TokenAttributes";
+import sequelize from "../sequelize/db";
 
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
@@ -96,7 +97,7 @@ export default class Users {
                             res.status(200).send(data);
                         }
                         else {
-                            res.status(400).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette ID" });
+                            res.status(204).send({ resultat: false, message: "Aucun utilisateur trouvé avec cette ID" });
                         }
                     })
                     .catch((err: { message: any; }) => {
