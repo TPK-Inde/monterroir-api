@@ -78,6 +78,6 @@ jobs:
         cd /home/paulin/docker-monterroir/Docker/monterroir-api
         git pull
         cp /home/paulin/docker-monterroir/Docker/.ENV.recette /home/paulin/docker-monterroir/Docker/monterroir-api/.ENV.recette
-        rm -rf /home/paulin/docker-monterroir/Docker/monterroir-api/*
+        rm -rf /home/paulin/docker-monterroir/code-api-recette/*
         docker-compose -f docker-compose.recette.yml build --no-cache
         docker-compose -f docker-compose.recette.yml up -d --build
