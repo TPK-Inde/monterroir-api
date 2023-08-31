@@ -35,7 +35,7 @@ const optionsSwagger = {
     openapi: "3.0.0",
     info: {
       title: "API de l'application 'Mon Terroir'",
-      version: "0.1.0",
+      version: "1.0.0",
       description:
         "Documentation de l'API",
       license: {
