@@ -5,12 +5,16 @@ import { CategoryVitrine } from './CategoryVitrine';
 import { User } from './User';
 import { TypeVitrine } from './TypeVitrine';
 import { FavoriteVitrine } from './FavoriteVitrine';
+import {Optional, InferAttributes, InferCreationAttributes} from "sequelize";
+
+interface vitrineCreationAttributes extends Optional<Vitrine, 'ID_VITRINE' | 'OWNER' | 'TYPE_VITRINE' | 'CATEGORY_VITRINE'> {}
 
 @Table({
   timestamps: false,
   tableName: 'F_VITRINES'
 })
-export class Vitrine extends Model<Vitrine> {
+export class Vitrine extends Model<InferAttributes<Vitrine>,InferCreationAttributes<vitrineCreationAttributes>> {
+
   @PrimaryKey
   @Column
   ID_VITRINE: number;

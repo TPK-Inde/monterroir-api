@@ -2,12 +2,15 @@ import {
   Model, Column, Table, ForeignKey, PrimaryKey, BelongsTo
 } from 'sequelize-typescript';
 import { AccountStatus } from './AccountStatus';
+import { InferAttributes, InferCreationAttributes, Optional } from 'sequelize';
+
+interface UserCreationAttributes extends Optional<User, 'ID_USER' | 'ACCOUNT_STATUS'> { }
 
 @Table({
   timestamps: false,
   tableName: 'F_USERS'
 })
-export class User extends Model<User> {
+export class User extends Model<InferAttributes<User>, InferCreationAttributes<UserCreationAttributes>> {
   @PrimaryKey
   @Column
   ID_USER: number;
