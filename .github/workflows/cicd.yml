@@ -67,24 +67,15 @@ jobs:
           push: true
           tags: ghcr.io/tpk-inde/monterroir-api:latest
   package-recette:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: test
     environment: recette
     if: github.ref_name == 'recette'
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - uses: actions/checkout@v3
-      - name: Log in to the Container registry
-        uses: docker/login-action@v2
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/tpk-inde/monterroir-api:recette
+    - name: Pull Project
+      run: |
+        cd /home/paulin/docker-monterroir/Docker/monterroir-api
+        git pull
+        cp /home/paulin/docker-monterroir/Docker/.ENV.recette /home/paulin/docker-monterroir/Docker/monterroir-api/.ENV.recette
+        docker-compose -f docker-compose.recette.yml build --no-cache
+        docker-compose -f docker-compose.recette.yml up -d --build
