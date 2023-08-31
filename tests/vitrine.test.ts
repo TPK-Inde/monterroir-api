@@ -3,6 +3,7 @@ const app = require("../app");
 import {VitrineRepository} from "../Lib/Repositories/VitrineRepository";
 import {Vitrine} from "../models/Vitrine";
 import sequelize from "../sequelize/db";
+import mongoose from "mongoose";
 
 let newVitrine: Vitrine = sequelize.getRepository(Vitrine).build({
     ID_VITRINE: 1,
@@ -21,6 +22,11 @@ let newVitrine: Vitrine = sequelize.getRepository(Vitrine).build({
     LONGITUDE: 2.333333,
     DELETED: false,
     FAVORITE: false,
+});
+
+afterAll(async () => {
+    await sequelize.close();
+    await mongoose.connection.close();
 });
 
 describe('Route GET - Vitrines', () => {
