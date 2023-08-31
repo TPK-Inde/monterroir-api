@@ -5,6 +5,7 @@ import Users from '../services/user';
 import { UsersRepository } from "../Lib/Repositories/UsersRepository";
 import { User } from '../models/User';
 import sequelize from "../sequelize/db";
+import mongoose from "mongoose";
 
 const app = require('../app');
 
@@ -37,6 +38,11 @@ afterEach(() => {
     jest.clearAllMocks();
     jest.resetAllMocks();
     jest.restoreAllMocks();
+});
+
+afterAll(async () => {
+    await sequelize.close();
+    await mongoose.connection.close();
 });
 
 describe("Route POST - users", () => {

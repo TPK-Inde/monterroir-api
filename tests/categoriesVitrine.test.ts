@@ -2,8 +2,14 @@ import request from "supertest";
 import { CategoryVitrineRepository } from "../Lib/Repositories/CategoryVitrineRepository";
 import sequelize from "../sequelize/db";
 import { CategoryVitrine } from "../models/CategoryVitrine";
+import mongoose from "mongoose";
 
 const app = require("../app");
+
+afterAll(async () => {
+  await sequelize.close();
+  await mongoose.connection.close();
+});
 
 describe("Catégorie de vitrine", () => {
   const nouvelleCategorieVitrine: CategoryVitrine = sequelize.getRepository(CategoryVitrine).build({
