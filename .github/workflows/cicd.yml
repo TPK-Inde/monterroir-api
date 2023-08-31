@@ -66,6 +66,7 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/tpk-inde/monterroir-api:latest
+          
   package-recette:
     runs-on: self-hosted
     needs: test
