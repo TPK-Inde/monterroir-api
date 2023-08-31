@@ -1,7 +1,9 @@
 services:
   api-recette:
     container_name: api-recette-monterroir
-    image: ghcr.io/tpk-inde/monterroir-api:recette
+    build:
+        context: .
+        dockerfile: ./Dockerfile
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.monterroir-api-recette.rule=Host(`api-recette.monterroir.local`) && PathPrefix(`/`)"
@@ -9,6 +11,8 @@ services:
     restart: always
     networks:
       - net-reverse-proxy
+    volumes:
+      - volcode-recette:/usr/src/app
     env_file: .ENV.recette
 
   bdd-recette:
@@ -33,3 +37,9 @@ volumes:
       o: bind
       type: none
       device: ~/docker-monterroir/bdd-data-recette
+  volcode-recette:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ~/docker-monterroir/code-api-recette
