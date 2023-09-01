@@ -6,6 +6,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/paulin/docker-monterroir/configWatchTower/config.json:/config.json
     command: --interval 30
+    restart: always
 
   traefik-proxy:
     container_name: traefik-monterroir
@@ -23,6 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - net-reverse-proxy
+      restart: always
 
 networks:
     net-reverse-proxy:
