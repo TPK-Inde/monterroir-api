@@ -46,6 +46,7 @@ export class UsersRepository implements IUsersRepository {
   }
   async GetLimitedUserInformationById(userId: number): Promise<User | null> {
     return await this.userRepository.findByPk(userId, {
+      include: [sequelize.models.AccountStatus],
       attributes: { exclude: ["ID_ACCOUNT_STATUS", "LAST_NAME", "FIRST_NAME", "DATE_OF_BIRTH", "EMAIL", "ADDRESS_STREET", "ADDRESS_ZIP_CODE", "ADDRESS_CITY", "PASSWORD"] }
     });
   }
