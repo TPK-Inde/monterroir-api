@@ -24,7 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - net-reverse-proxy
-      restart: always
+    restart: always
 
 networks:
     net-reverse-proxy:
