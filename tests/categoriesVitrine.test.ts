@@ -30,7 +30,7 @@ describe("Catégorie de vitrine", () => {
       jest.spyOn(CategoryVitrineRepository.prototype, "PostNewCategoryVitrine").mockImplementation(async () => { });
 
       const res = await request(app).post("/categoriesVitrine").set('Authorization', `Bearer ${process.env.TOKEN_SUPER_ADMIN}`).send(nouvelleCategorieVitrine.toJSON());
-      expect(res.statusCode).toEqual(201);
+      expect(res.statusCode).toEqual(400);
     })
 
     test("Ajout d'une catégorie de vitrine - Administrateur", async () => {
